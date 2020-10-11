@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
-import { User, UserJWT, JWTFnAccess, JWTFnVerify } from '../utils/types';
+import { User, UserJWT, JWTFnAccessFn, JWTFnVerifyFn } from '../utils/types';
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
@@ -26,7 +26,7 @@ const auth: RequestHandler = (req, res, next) => {
     }
 };
 
-const createAccessToken: JWTFnAccess = (user: User) => {
+const createAccessToken: JWTFnAccessFn = (user: User) => {
     return jwt.sign(
         { _id: user._id, firstName: user.firstName, lastName: user.lastName },
         JWT_SECRET_KEY,
@@ -34,7 +34,7 @@ const createAccessToken: JWTFnAccess = (user: User) => {
     );
 };
 
-const createVerificationToken: JWTFnVerify = (mode, expiration) => {
+const createVerificationToken: JWTFnVerifyFn = (mode, expiration) => {
     return jwt.sign({ mode }, JWT_VERIFICATION_SECRET_KEY, {
         expiresIn: expiration,
     });

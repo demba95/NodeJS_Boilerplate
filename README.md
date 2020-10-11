@@ -98,7 +98,6 @@
     npm i jsonwebtoken
     npm i mongoose
     npm i morgan
-    npm i validator
 
     # Dev Dependencies
     # npm i -D @types/bcrypt @types/cors @types/express @types/jsonwebtoken @types/mongoose @types/morgan @types/node @types/validator jest supertest ts-node typescript
@@ -109,7 +108,6 @@
     npm i -D @types/mongoose
     npm i -D @types/morgan
     npm i -D @types/node
-    npm i -D @types/validator
     npm i -D jest
     npm i -D supertest
     npm i -D ts-node

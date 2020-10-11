@@ -1,3 +1,4 @@
+import { NextFunction } from 'express';
 import { Document } from 'mongoose';
 
 declare module 'express-serve-static-core' {
@@ -5,6 +6,8 @@ declare module 'express-serve-static-core' {
         user?: UserJWT | LoginForm | SignUpForm;
     }
 }
+
+type Callback = (error: string, isMatch: boolean) => void;
 
 export interface IUser extends Document {
     firstName: string;
@@ -14,6 +17,7 @@ export interface IUser extends Document {
     isEmailVerified: boolean;
     password: string;
     admin: boolean;
+    comparePassword(password: string, callback: Callback): void;
 }
 
 export interface User {
@@ -26,14 +30,6 @@ export interface UserJWT extends User {
     iat: number;
 }
 
-export interface JWTFnAccess {
-    (user: User): string;
-}
-
-export interface JWTFnVerify {
-    (mode: string, expiration: string): string;
-}
-
 export interface LoginForm {
     email: string;
     password: string;
@@ -44,11 +40,41 @@ export interface SignUpForm extends User, LoginForm {
     verifyToken?: string;
 }
 
-export interface SignUpMSG {
+export interface UpdateUserForm extends User {
+    newEmail: string;
+    newPassword: string;
+}
+
+export interface SignUpMSGFn {
     (user: IUser, host: string): {
         from: string;
         to: string;
         subject: string;
         html: string;
     };
+}
+
+export interface JWTFnAccessFn {
+    (user: User): string;
+}
+
+export interface JWTFnVerifyFn {
+    (mode: string, expiration: string): string;
+}
+
+export interface CheckFn {
+    (string: string): boolean;
+}
+
+export type FormData = LoginForm & SignUpForm & UpdateUserForm;
+
+export interface ValidatorFn {
+    (data: FormData): {
+        errors: ErrorContainer;
+        valid: boolean;
+    };
+}
+
+export interface ErrorContainer {
+    [key: string]: string;
 }

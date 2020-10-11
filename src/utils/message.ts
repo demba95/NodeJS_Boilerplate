@@ -1,6 +1,6 @@
-import { SignUpMSG } from './types';
+import { SignUpMSGFn } from './types';
 
-export const signUpMSG: SignUpMSG = (user, host) => {
+export const signUpMSG: SignUpMSGFn = (user, host) => {
     return {
         from: process.env.SENDGRID_EMAIL,
         to: user.email,

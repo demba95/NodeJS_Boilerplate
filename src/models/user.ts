@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import validator from 'validator';
+import { isEmail } from '../utils/validator';
 import bcrypt from 'bcrypt';
 import { NextFunction } from 'express';
 import { IUser } from '../utils/types';
@@ -26,7 +26,7 @@ const userSchema = new Schema(
             unique: true,
             lowercase: true,
             validate(value: string): any {
-                if (!validator.isEmail(value)) {
+                if (!isEmail(value)) {
                     throw new Error('Email is invalid');
                 }
             },
