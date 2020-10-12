@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
-import { User, UserJWT, JWTFnAccessFn, JWTFnVerifyFn } from '../utils/types';
+import * as type from '../utils/types';
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
@@ -12,8 +12,7 @@ const auth: RequestHandler = (req, res, next) => {
 
         if (token) {
             token = token.replace('Bearer ', '');
-            const user = <UserJWT>jwt.verify(token, JWT_SECRET_KEY);
-
+            const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
             if (!user) {
                 return res.status(400).json({ message: 'Not authorized.' });
             }
@@ -26,7 +25,7 @@ const auth: RequestHandler = (req, res, next) => {
     }
 };
 
-const createAccessToken: JWTFnAccessFn = (user: User) => {
+const createAccessToken: type.JWTFnAccessFn = (user: type.User) => {
     return jwt.sign(
         { _id: user._id, firstName: user.firstName, lastName: user.lastName },
         JWT_SECRET_KEY,
@@ -34,7 +33,7 @@ const createAccessToken: JWTFnAccessFn = (user: User) => {
     );
 };
 
-const createVerificationToken: JWTFnVerifyFn = (mode, expiration) => {
+const createVerificationToken: type.JWTFnVerifyFn = (mode, expiration) => {
     return jwt.sign({ mode }, JWT_VERIFICATION_SECRET_KEY, {
         expiresIn: expiration,
     });

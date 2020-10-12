@@ -2,22 +2,22 @@ import { RequestHandler } from 'express';
 import User from '../models/user';
 import sgMail from '@sendgrid/mail';
 import * as auth from '../middlewares/auth';
-import { validateSignUpData, validateLoginData } from '../utils/validator';
-import { IUser, FormData } from '../utils/types';
-import { signUpMSG } from '../utils/message';
+import * as validator from '../utils/validator';
+import * as MSG from '../utils/message';
+import * as type from '../utils/types';
 
 sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 const signUpUser: RequestHandler = async (req, res) => {
-    const form: FormData = req.body;
+    const form: type.FormData = req.body;
 
-    const { valid, errors } = validateSignUpData(form);
+    const { valid, errors } = validator.validateSignUpData(form);
     if (!valid) {
         return res.status(400).json(errors);
     }
 
     try {
-        const user: IUser = await User.findOne({ email: form.email });
+        const user: type.UserI = await User.findOne({ email: form.email });
 
         if (user) {
             return res
@@ -32,7 +32,7 @@ const signUpUser: RequestHandler = async (req, res) => {
         await newUser.save();
 
         try {
-            const msg = signUpMSG(newUser, req.headers.host);
+            const msg = MSG.signUp(newUser, req.headers.host);
             await sgMail.send(msg);
         } catch (error) {
             console.log(error);
@@ -56,15 +56,15 @@ const signUpUser: RequestHandler = async (req, res) => {
 };
 
 const loginUser: RequestHandler = async (req, res) => {
-    const form: FormData = req.body;
+    const form: type.FormData = req.body;
 
-    const { valid, errors } = validateLoginData(form);
+    const { valid, errors } = validator.validateLoginData(form);
     if (!valid) {
         return res.status(400).json(errors);
     }
 
     try {
-        const user: IUser = await User.findOne({ email: form.email });
+        const user: type.UserI = await User.findOne({ email: form.email });
         if (!user) {
             return res.status(404).json({ message: 'ERROR: User not found.' });
         }
@@ -75,10 +75,12 @@ const loginUser: RequestHandler = async (req, res) => {
                     const token = await auth.createAccessToken(user);
                     return res.json({ token });
                 }
+
                 return res.status(403).json({
                     message: 'ERROR: Please verify your email first.',
                 });
             }
+
             res.status(400).json({ message: 'ERROR: Wrong credentials' });
         });
     } catch (error) {
@@ -90,9 +92,109 @@ const loginUser: RequestHandler = async (req, res) => {
     }
 };
 
+const getUser: RequestHandler = async (req, res) => {
+    try {
+        const user: type.UserI = await User.findOne({ _id: req.user._id });
+        if (!user) {
+            return res.status(404).json({ message: 'ERROR: User not found.' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message:
+                'ERROR: Something went wrong while trying to get profile. Please try again later or contact our support.',
+        });
+    }
+};
+
+const updateUser: RequestHandler = async (req, res) => {
+    const form: type.FormData = req.body;
+
+    const { valid, errors } = validator.validateUpdateData(form);
+    if (!valid) return res.status(400).json(errors);
+
+    try {
+        const user: type.UserI = await User.findOne({
+            _id: req.user._id,
+        }).select('-tempEmail');
+        if (!user) {
+            return res.status(404).json({ message: 'ERROR: User not found.' });
+        }
+
+        user.comparePassword(form.password, async (_, isMatch) => {
+            if (isMatch) {
+                if (form.firstName) user.firstName = form.firstName;
+                if (form.lastName) user.lastName = form.lastName;
+                if (form.newPassword) user.password = form.newPassword;
+                if (form.newEmail) {
+                    user.tempEmail = form.newEmail;
+
+                    user.verifyToken = auth.createVerificationToken(
+                        'email',
+                        '1d'
+                    );
+
+                    try {
+                        const msg = MSG.updateEmail(user, req.headers.host);
+                        await sgMail.send(msg);
+                    } catch (error) {
+                        console.log(error);
+                        res.status(500).json({
+                            message:
+                                'ERROR: Something went wrong sending you the email verification. Please try again later.',
+                        });
+                    }
+                }
+
+                await user.save();
+                return res.json(user);
+            }
+
+            res.status(400).json({ message: 'ERROR: Wrong credentials' });
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message:
+                'ERROR: Something went wrong while updating. Please try again later or contact our support.',
+        });
+    }
+};
+
+const deleteUser: RequestHandler = async (req, res) => {
+    const form: type.FormData = req.body;
+
+    const { valid, errors } = validator.validatePassword(form);
+    if (!valid) return res.status(400).json(errors);
+
+    try {
+        const user: type.UserI = await User.findOne({ _id: req.user._id });
+        if (!user) {
+            return res.status(404).json({ message: 'ERROR: User not found.' });
+        }
+
+        user.comparePassword(form.password, async (_, isMatch) => {
+            if (isMatch) {
+                await user.remove();
+                return res.json({ message: 'Your account has been deleted.' });
+            }
+
+            res.status(400).json({ message: 'ERROR: Wrong password' });
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message:
+                'ERROR: Something went wrong while deleting. Please try again later or contact our support.',
+        });
+    }
+};
+
 const verifyEmail: RequestHandler = async (req, res) => {
     try {
-        const user: IUser = await User.findOne({
+        const user: type.UserI = await User.findOne({
             verifyToken: req.params.verifyToken,
         });
 
@@ -104,6 +206,12 @@ const verifyEmail: RequestHandler = async (req, res) => {
 
         user.verifyToken = null;
         user.isEmailVerified = true;
+
+        if (user.tempEmail) {
+            user.email = user.tempEmail;
+            user.tempEmail = null;
+        }
+
         await user.save();
 
         res.json({ message: 'Thank you! Your email has been verified.' });
@@ -119,5 +227,8 @@ const verifyEmail: RequestHandler = async (req, res) => {
 export default {
     signUpUser,
     loginUser,
+    getUser,
+    updateUser,
+    deleteUser,
     verifyEmail,
 };

@@ -1,26 +1,28 @@
-import { CheckFn, ValidatorFn, ErrorContainer } from './types';
+import * as type from './types';
 
-const isEmpty: CheckFn = (string) => {
+const isEmpty: type.CheckFn = (string) => {
     if (!string || string.trim() === '') return true;
     return false;
 };
 
-export const isEmail: CheckFn = (email) => {
+export const isEmail: type.CheckFn = (email) => {
     const emailRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (email && email.match(emailRegEx)) return true;
     return false;
 };
 
-const validateSignUpData: ValidatorFn = (data) => {
-    const errors: ErrorContainer = {};
+const validateSignUpData: type.ValidatorFn = (data) => {
+    const errors: type.ErrorContainer = {};
 
-    if (isEmpty(data.email)) errors.email = 'Must not be empty';
-    else if (!isEmail(data.email))
+    if (isEmpty(data.email)) {
+        errors.email = 'Must not be empty';
+    } else if (!isEmail(data.email)) {
         errors.email = 'Must be a valid email address';
+    }
     if (isEmpty(data.firstName)) errors.firstName = 'Must not be empty';
     if (isEmpty(data.lastName)) errors.lastName = 'Must not be empty';
     if (isEmpty(data.password)) errors.password = 'Must not be empty';
-    if (data.password && data.password.length < 4)
+    if (data.password && data.password.length < +process.env.PASSWORD_LEN)
         errors.passwordLength = 'Must not be greater than 3 characters';
 
     return {
@@ -29,8 +31,8 @@ const validateSignUpData: ValidatorFn = (data) => {
     };
 };
 
-const validateLoginData: ValidatorFn = (data) => {
-    const errors: ErrorContainer = {};
+const validateLoginData: type.ValidatorFn = (data) => {
+    const errors: type.ErrorContainer = {};
 
     if (isEmpty(data.email)) errors.email = 'Must not be empty';
     else if (!isEmail(data.email))
@@ -43,14 +45,15 @@ const validateLoginData: ValidatorFn = (data) => {
     };
 };
 
-const validateUpdateData: ValidatorFn = (data) => {
-    const errors: ErrorContainer = {};
+const validateUpdateData: type.ValidatorFn = (data) => {
+    const errors: type.ErrorContainer = {};
     let count = 0;
 
-    if (data.newEmail && isEmpty(data.newEmail))
+    if (data.newEmail && isEmpty(data.newEmail)) {
         errors.lastName = 'Must not be empty';
-    else if (data.newEmail && !isEmail(data.newEmail))
+    } else if (data.newEmail && !isEmail(data.newEmail)) {
         errors.newEmail = 'Must be a valid email address';
+    }
     if (data.firstName && isEmpty(data.firstName))
         errors.firstName = 'Must not be empty';
     if (data.lastName && isEmpty(data.lastName))
@@ -58,6 +61,10 @@ const validateUpdateData: ValidatorFn = (data) => {
     if (isEmpty(data.password)) errors.password = 'Must not be empty';
     if (data.newPassword && isEmpty(data.newPassword))
         errors.newPassword = 'Must not be empty';
+    if (data.confirmNewPassword && isEmpty(data.confirmNewPassword))
+        errors.confNewPassword = 'Must not be empty';
+    if (data.newPassword !== data.confirmNewPassword)
+        errors.confirmNewPassword = "Doesn't match";
 
     Object.keys(data).forEach((key) => {
         if (data[key]) count++;
@@ -71,10 +78,12 @@ const validateUpdateData: ValidatorFn = (data) => {
     };
 };
 
-const validatePassword: ValidatorFn = (data) => {
-    const errors: ErrorContainer = {};
+const validatePassword: type.ValidatorFn = (data) => {
+    const errors: type.ErrorContainer = {};
 
     if (isEmpty(data.password)) errors.password = 'Must not be empty';
+    if (data.password && data.password.length < +process.env.PASSWORD_LEN)
+        errors.passwordLength = 'Must not be greater than 3 characters';
 
     return {
         errors,
@@ -82,8 +91,8 @@ const validatePassword: ValidatorFn = (data) => {
     };
 };
 
-const validateEmail: ValidatorFn = (data) => {
-    const errors: ErrorContainer = {};
+const validateEmail: type.ValidatorFn = (data) => {
+    const errors: type.ErrorContainer = {};
 
     if (isEmpty(data.email)) errors.email = 'Must not be empty';
     else if (!isEmail(data.email))

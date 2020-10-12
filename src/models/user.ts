@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-import { isEmail } from '../utils/validator';
-import bcrypt from 'bcrypt';
 import { NextFunction } from 'express';
-import { IUser } from '../utils/types';
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
+import * as type from '../utils/types';
+import * as validator from '../utils/validator';
 
 const Schema = mongoose.Schema;
 const SALT_ROUNDS: number = 6;
@@ -26,7 +26,18 @@ const userSchema = new Schema(
             unique: true,
             lowercase: true,
             validate(value: string): any {
-                if (!isEmail(value)) {
+                if (!validator.isEmail(value)) {
+                    throw new Error('Email is invalid');
+                }
+            },
+        },
+        tempEmail: {
+            type: String,
+            trim: true,
+            unique: true,
+            lowercase: true,
+            validate(value: string): any {
+                if (value && !validator.isEmail(value)) {
                     throw new Error('Email is invalid');
                 }
             },
@@ -57,21 +68,23 @@ const userSchema = new Schema(
     }
 );
 
-userSchema.pre<IUser>('save', async function (next) {
+userSchema.pre<type.UserI>('save', async function (next) {
     const user = this;
 
     if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
+        if (user.password) {
+            user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
+        }
     }
 
     next();
 });
 
-userSchema.methods.comparePassword = function (
+userSchema.methods.comparePassword = async function (
     tryPassword: string,
     callback: NextFunction
 ) {
-    bcrypt.compare(tryPassword, this.password, callback);
+    await bcrypt.compare(tryPassword, this.password, callback);
 };
 
 userSchema.set('toJSON', {
@@ -79,9 +92,12 @@ userSchema.set('toJSON', {
         delete ret.password;
         delete ret.createdAt;
         delete ret.updatedAt;
+        delete ret.isEmailVerified;
+        delete ret.admin;
+        delete ret.verifyToken;
         delete ret.__v;
         return ret;
     },
 });
 
-export default mongoose.model<IUser>('User', userSchema);
+export default mongoose.model<type.UserI>('User', userSchema);

@@ -1,4 +1,3 @@
-import { NextFunction } from 'express';
 import { Document } from 'mongoose';
 
 declare module 'express-serve-static-core' {
@@ -9,10 +8,12 @@ declare module 'express-serve-static-core' {
 
 type Callback = (error: string, isMatch: boolean) => void;
 
-export interface IUser extends Document {
+export interface UserI extends Document {
+    _id: string;
     firstName: string;
     lastName: string;
     email: string;
+    tempEmail: string;
     verifyToken: string;
     isEmailVerified: boolean;
     password: string;
@@ -21,21 +22,22 @@ export interface IUser extends Document {
 }
 
 export interface User {
-    _id?: string;
+    _id: string;
     firstName: string;
     lastName: string;
 }
 
 export interface UserJWT extends User {
     iat: number;
+    exp: number;
 }
 
-export interface LoginForm {
+export interface LoginForm extends User {
     email: string;
     password: string;
 }
 
-export interface SignUpForm extends User, LoginForm {
+export interface SignUpForm extends LoginForm {
     confirmPassword: string;
     verifyToken?: string;
 }
@@ -43,9 +45,10 @@ export interface SignUpForm extends User, LoginForm {
 export interface UpdateUserForm extends User {
     newEmail: string;
     newPassword: string;
+    confirmNewPassword: string;
 }
 
-export interface SignUpMSGFn {
+export interface MSGFn {
     (user: IUser, host: string): {
         from: string;
         to: string;
