@@ -7,6 +7,7 @@
     - [Init Typescript](#init-typescript)
     - [package.json](#packagejson)
   - [Environment Variables](#environment-variables)
+  - [Types](#types)
   - [Database Connection](#database-connection)
     - [MongoDB](#mongodb)
   - [Controllers](#controllers)
@@ -22,7 +23,6 @@
     - [User's Routes](#users-routes)
   - [Utilities](#utilities)
     - [Message](#message)
-    - [Types](#types)
     - [Validator](#validator)
   - [Server](#server)
     - [App.ts](#appts)
@@ -60,7 +60,7 @@
   - Using my custom touch command to create files and folders
 
     ```Bash
-      touch -n env/dev.env + prod.env + test.env src/config/database.ts src/controllers/users.ts src/middlewares/auth.ts src/models/user.ts src/routes/users.ts src/tests/user.test.js + fixures/database.js src/utils/message.ts + types.ts + validator.ts src/app.ts src/index.ts
+      touch -n @types/types.ts env/dev.env + prod.env + test.env src/config/database.ts src/controllers/users.ts src/middlewares/auth.ts src/models/user.ts src/routes/users.ts src/tests/user.test.js + database/database.js src/utils/message.ts + validator.ts src/app.ts src/index.ts jest.config.js
     ```
 
 - Final Structure
@@ -72,6 +72,8 @@
     │   ├── prod.env
     │   └── test.env
     ├── src
+    │   ├── @types
+    │   │   └── types.ts
     │   ├── config
     │   │   └── database.ts
     │   ├── controllers
@@ -83,16 +85,16 @@
     │   ├── routes
     │   │   └── users.ts
     │   ├── tests
-    │   │   ├── fixtures
+    │   │   ├── database
     │   │   │   └── database.js
     │   │   └── user.test.js
     │   ├── utils
     │   │   ├── message.ts
-    │   │   ├── types.ts
     │   │   └── validator.ts
     │   ├── app.ts
     │   └── index.ts
     ├── .gitignore
+    └── jest.config.js
     ├── LICENSE
     ├── package-lock.json
     └── package.json
@@ -118,7 +120,7 @@
     npm i morgan
 
     # Dev Dependencies
-    # npm i -D @types/bcrypt @types/cors @types/express @types/jsonwebtoken @types/mongoose @types/morgan @types/node @types/validator jest supertest ts-node typescript
+    # npm i -D @types/bcrypt @types/cors @types/express @types/jsonwebtoken @types/mongoose @types/morgan @types/node @types/validator @types/jest jest ts-jest supertest ts-node-dev  tsconfig-paths typescript
     npm i -D @types/bcrypt
     npm i -D @types/cors
     npm i -D @types/express
@@ -126,9 +128,12 @@
     npm i -D @types/mongoose
     npm i -D @types/morgan
     npm i -D @types/node
+    npm i -D @types/jest
     npm i -D jest
+    npm i -D ts-jest
     npm i -D supertest
-    npm i -D ts-node
+    npm i -D ts-node-dev
+    npm i -D tsconfig-paths
     npm i -D typescript
   ```
 
@@ -150,16 +155,34 @@
       {
           "compilerOptions": {
               "target": "ES6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
+              "allowJs": true /* Allow javascript files to be compiled. */,
               "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
               "sourceMap": true /* Generates corresponding '.map' file. */,
               "outDir": "./dist" /* Redirect output structure to the directory. */,
-              // "rootDir": "./" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
+              "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
+              "removeComments": true /* Do not emit comments to output. */,
               "moduleResolution": "node",
               "noEmitOnError": true,
+              "resolveJsonModule": true /* Enable import JSON files in the code */,
               "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
+              "typeRoots": [
+                  "./node_modules/@types",
+                  "src/@_types"
+              ] /* List of folders to include type definitions from. */,
               "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
               "skipLibCheck": true /* Skip type checking of declaration files. */,
-              "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
+              "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
+              "baseUrl": "./src",
+              "paths": {
+                  "~/*": ["./src/*"],
+                  "@custom_types/*": ["./@types/*"],
+                  "@config/*": ["./config/*"],
+                  "@controllers/*": ["./controllers/*"],
+                  "@middlewares/*": ["./middlewares/*"],
+                  "@models/*": ["./models/*"],
+                  "@routes/*": ["./routes/*"],
+                  "@utils/*": ["./utils/*"]
+              }
           },
           "exclude": ["**/node_modules"]
       }
@@ -174,7 +197,7 @@
   ```JSON
     "scripts": {
         "start": "env-cmd -f ./env/prod.env node dist/index.js",
-        "dev": "env-cmd -f ./env/dev.env nodemon src/index.ts",
+        "dev": "env-cmd -f ./env/dev.env ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts",
         "build": "tsc -p .",
         "test": "env-cmd -f ./env/test.env jest --watch --runInBand --detectOpenHandles"
     },
@@ -184,6 +207,9 @@
         "testEnvironment": "node"
     },
   ```
+
+  - `ts-node-dev --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts` responsible for fast reloading the server using TypeScript, `--no-notify` (for linux users)
+  - `-r tsconfig-paths/register` register custom typescript paths
 
 - Complete json file
 
@@ -195,7 +221,7 @@
         "main": "index.js",
         "scripts": {
             "start": "env-cmd -f ./env/prod.env node dist/index.js",
-            "dev": "env-cmd -f ./env/dev.env nodemon src/index.ts",
+            "dev": "env-cmd -f ./env/dev.env ts-node-dev --respawn --ignore-watch node_modules --no-notify src/index.ts",
             "build": "tsc -p .",
             "test": "env-cmd -f ./env/test.env jest --watch --runInBand --detectOpenHandles"
         },
@@ -258,6 +284,100 @@
     SENDGRID_EMAIL=your_email_address
     PASSWORD_LEN=4
     PORT=3001
+  ```
+
+## Types
+
+[Go Back to Contents](#contents)
+
+- In `src/@types/types.ts`
+
+  - We store our TypeScript types
+
+  ```TypeScript
+    import { Document } from 'mongoose';
+
+    declare module 'express-serve-static-core' {
+        export interface Request {
+            user?: UserJWT | LoginForm | SignUpForm;
+        }
+    }
+
+    type Callback = (error: string, isMatch: boolean) => void;
+
+    export interface UserI extends Document {
+        _id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        tempEmail: string;
+        verifyToken: string;
+        isEmailVerified: boolean;
+        password: string;
+        admin: boolean;
+        comparePassword(password: string, callback: Callback): void;
+    }
+
+    export interface User {
+        _id: string;
+        firstName: string;
+        lastName: string;
+    }
+
+    export interface UserJWT extends User {
+        iat: number;
+        exp: number;
+    }
+
+    export interface LoginForm extends User {
+        email: string;
+        password: string;
+    }
+
+    export interface SignUpForm extends LoginForm {
+        confirmPassword: string;
+        verifyToken?: string;
+    }
+
+    export interface UpdateUserForm extends User {
+        newEmail: string;
+        newPassword: string;
+        confirmNewPassword: string;
+    }
+
+    export interface MSGFn {
+        (user: IUser, host: string): {
+            from: string;
+            to: string;
+            subject: string;
+            html: string;
+        };
+    }
+
+    export interface JWTFnAccessFn {
+        (user: User): string;
+    }
+
+    export interface JWTFnVerifyFn {
+        (mode: string, expiration: string): string;
+    }
+
+    export interface CheckFn {
+        (string: string): boolean;
+    }
+
+    export type FormData = LoginForm & SignUpForm & UpdateUserForm;
+
+    export interface ValidatorFn {
+        (data: FormData): {
+            errors: ErrorContainer;
+            valid: boolean;
+        };
+    }
+
+    export interface ErrorContainer {
+        [key: string]: string;
+    }
   ```
 
 ## Database Connection
@@ -326,12 +446,12 @@
 
   ```TypeScript
     import { RequestHandler } from 'express';
-    import User from '../models/user';
+    import User from '@models/user';
     import sgMail from '@sendgrid/mail';
-    import * as auth from '../middlewares/auth';
-    import * as validator from '../utils/validator';
-    import * as MSG from '../utils/message';
-    import * as type from '../utils/types';
+    import * as auth from '@middlewares/auth';
+    import * as validator from '@utils/validator';
+    import * as MSG from '@utils/message';
+    import * as type from '@custom_types/types';
 
     sgMail.setApiKey(process.env.SENDGRID_KEY);
 
@@ -639,7 +759,7 @@
     ```TypeScript
       import { RequestHandler } from 'express';
       import jwt from 'jsonwebtoken';
-      import * as type from '../utils/types';
+      import * as type from '@custom_types/types';
 
       const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
       const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
@@ -697,8 +817,8 @@
     import { NextFunction } from 'express';
     import mongoose from 'mongoose';
     import bcrypt from 'bcrypt';
-    import * as type from '../utils/types';
-    import * as validator from '../utils/validator';
+    import * as type from '@custom_types/types';
+    import * as validator from '@utils/validator';
 
     const Schema = mongoose.Schema;
     const SALT_ROUNDS: number = 6;
@@ -890,8 +1010,9 @@
 
   ```TypeScript
     import express from 'express';
-    import userCtrl from '../controllers/users';
-    import { auth } from '../middlewares/auth';
+    import userCtrl from '@controllers/users';
+    import { auth } from '@middlewares/auth';
+
 
     const router = express.Router();
 
@@ -933,7 +1054,7 @@
   ```
 
   ```TypeScript
-    import * as type from './types';
+    import * as type from '@custom_types/types';
 
     export const signUp: type.MSGFn = (user, host) => {
         return {
@@ -961,100 +1082,6 @@
     };
   ```
 
-### Types
-
-[Go Back to Contents](#contents)
-
-- In `src/utils/types.ts`
-
-  - We store our TypeScript types
-
-  ```TypeScript
-    import { Document } from 'mongoose';
-
-    declare module 'express-serve-static-core' {
-        export interface Request {
-            user?: UserJWT | LoginForm | SignUpForm;
-        }
-    }
-
-    type Callback = (error: string, isMatch: boolean) => void;
-
-    export interface UserI extends Document {
-        _id: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        tempEmail: string;
-        verifyToken: string;
-        isEmailVerified: boolean;
-        password: string;
-        admin: boolean;
-        comparePassword(password: string, callback: Callback): void;
-    }
-
-    export interface User {
-        _id: string;
-        firstName: string;
-        lastName: string;
-    }
-
-    export interface UserJWT extends User {
-        iat: number;
-        exp: number;
-    }
-
-    export interface LoginForm extends User {
-        email: string;
-        password: string;
-    }
-
-    export interface SignUpForm extends LoginForm {
-        confirmPassword: string;
-        verifyToken?: string;
-    }
-
-    export interface UpdateUserForm extends User {
-        newEmail: string;
-        newPassword: string;
-        confirmNewPassword: string;
-    }
-
-    export interface MSGFn {
-        (user: IUser, host: string): {
-            from: string;
-            to: string;
-            subject: string;
-            html: string;
-        };
-    }
-
-    export interface JWTFnAccessFn {
-        (user: User): string;
-    }
-
-    export interface JWTFnVerifyFn {
-        (mode: string, expiration: string): string;
-    }
-
-    export interface CheckFn {
-        (string: string): boolean;
-    }
-
-    export type FormData = LoginForm & SignUpForm & UpdateUserForm;
-
-    export interface ValidatorFn {
-        (data: FormData): {
-            errors: ErrorContainer;
-            valid: boolean;
-        };
-    }
-
-    export interface ErrorContainer {
-        [key: string]: string;
-    }
-  ```
-
 ### Validator
 
 [Go Back to Contents](#contents)
@@ -1064,7 +1091,7 @@
   - Helper file to validate incoming data
 
   ```TypeScript
-    import * as type from './types';
+    import * as type from '@custom_types/types';
 
     const isEmpty: type.CheckFn = (string) => {
         if (!string || string.trim() === '') return true;
@@ -1196,9 +1223,9 @@
     import logger from 'morgan';
     import cors from 'cors';
     import helmet from 'helmet';
-    import './config/database';
+    import '@config/database';
 
-    import userRoutes from './routes/users';
+    import userRoutes from '@routes/users';
 
     const app: Application = express();
     app.use(logger('dev'));
@@ -1222,7 +1249,7 @@
 - In `src/index.ts`
 
   ```TypeScript
-    import app from './app';
+    import app from '~/app';
     const port = process.env.PORT || 3001;
 
     app.listen(port, () => {

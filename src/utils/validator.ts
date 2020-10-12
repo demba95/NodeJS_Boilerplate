@@ -1,4 +1,4 @@
-import * as type from './types';
+import * as type from '@custom_types/types';
 
 const isEmpty: type.CheckFn = (string) => {
     if (!string || string.trim() === '') return true;

@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
-import * as type from '../utils/types';
+import * as type from '@custom_types/types';
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;

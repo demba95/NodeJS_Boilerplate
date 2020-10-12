@@ -1,10 +1,10 @@
 import { RequestHandler } from 'express';
-import User from '../models/user';
+import User from '@models/user';
 import sgMail from '@sendgrid/mail';
-import * as auth from '../middlewares/auth';
-import * as validator from '../utils/validator';
-import * as MSG from '../utils/message';
-import * as type from '../utils/types';
+import * as auth from '@middlewares/auth';
+import * as validator from '@utils/validator';
+import * as MSG from '@utils/message';
+import * as type from '@custom_types/types';
 
 sgMail.setApiKey(process.env.SENDGRID_KEY);
 

@@ -1,4 +1,4 @@
-import * as type from './types';
+import * as type from '@custom_types/types';
 
 export const signUp: type.MSGFn = (user, host) => {
     return {

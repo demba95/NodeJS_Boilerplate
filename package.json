@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "env-cmd -f ./env/prod.env node dist/index.js",
-        "dev": "env-cmd -f ./env/dev.env nodemon src/index.ts",
+        "dev": "env-cmd -f ./env/dev.env ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts",
         "build": "tsc -p .",
         "test": "env-cmd -f ./env/test.env jest --watch --runInBand --detectOpenHandles"
     },
@@ -43,9 +43,12 @@
         "@types/mongoose": "^5.7.36",
         "@types/morgan": "^1.9.1",
         "@types/node": "^14.11.8",
-        "jest": "^26.5.2",
+        "jest": "^26.5.3",
         "supertest": "^5.0.0",
+        "ts-jest": "^26.4.1",
         "ts-node": "^9.0.0",
+        "ts-node-dev": "^1.0.0-pre.63",
+        "tsconfig-paths": "^3.9.0",
         "typescript": "^4.0.3"
     }
 }
