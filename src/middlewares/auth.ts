@@ -22,6 +22,10 @@ const auth: RequestHandler = (req, res, next) => {
         }
     } catch (error) {
         console.log(error);
+        res.status(500).json({
+            message:
+                'ERROR: Something went wrong while authorizing request. Please try again later.',
+        });
     }
 };
 

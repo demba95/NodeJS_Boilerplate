@@ -224,6 +224,45 @@ const verifyEmail: RequestHandler = async (req, res) => {
     }
 };
 
+const resendVerifyEmail: RequestHandler = async (req, res) => {
+    const form: type.FormData = req.body;
+
+    const { valid, errors } = validator.validateEmail(form);
+    if (!valid) return res.status(400).json(errors);
+
+    try {
+        const user: type.UserI = await User.findOne({ email: req.body.email });
+        if (!user) {
+            return res.status(404).json({ message: 'ERROR: User not found.' });
+        }
+
+        if (user.isEmailVerified) {
+            return res.json({ message: 'Your account is already verified.' });
+        }
+
+        try {
+            const msg = MSG.signUp(user, req.headers.host);
+            await sgMail.send(msg);
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({
+                message:
+                    'ERROR: Something went wrong sending you the email verification. Please try again later.',
+            });
+        }
+
+        res.json({
+            message: 'Please check your email to verify your account.',
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message:
+                'ERROR: Something went wrong with the email verification. Please try again later.',
+        });
+    }
+};
+
 export default {
     signUpUser,
     loginUser,
@@ -231,4 +270,5 @@ export default {
     updateUser,
     deleteUser,
     verifyEmail,
+    resendVerifyEmail,
 };
