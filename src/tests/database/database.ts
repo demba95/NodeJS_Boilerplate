@@ -34,6 +34,7 @@ const user1 = new UserClass(
     'test123',
     true
 );
+
 const user2 = new UserClass(
     'Roger 1',
     'That 1',
@@ -47,6 +48,5 @@ const setupDatabase = async () => {
     await new User(user1).save();
     await new User(user2).save();
 };
-const newUser = async () => {};
 
-export { user1, user2, setupDatabase, newUser };
+export { user1, user2, setupDatabase };

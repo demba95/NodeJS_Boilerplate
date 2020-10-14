@@ -60,12 +60,12 @@ export interface MSGFn {
     };
 }
 
-export interface JWTFnAccessFn {
+export interface JWTAccessFn {
     (user: User): string;
 }
 
-export interface JWTFnVerifyFn {
-    (mode: string, expiration: string): string;
+export interface JWTVerifyFn {
+    (mode: string): string;
 }
 
 export interface CheckFn {

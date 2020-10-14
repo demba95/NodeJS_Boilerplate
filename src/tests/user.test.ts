@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import * as type from '@custom_types/types';
 import { user1, user2, setupDatabase } from './database/database';
 const URL = '/users';
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 interface LoginResponse {
     body: {
@@ -236,6 +237,66 @@ describe("User's API", () => {
         });
     });
 
+    it('Should verify account', async () => {
+        const form: type.SignUpForm = {
+            email: 'your_email_3@test.com',
+            firstName: 'Roger 3',
+            lastName: 'That 3',
+            password: 'test123',
+            confirmPassword: 'test123',
+        };
+
+        await request(app).post(`${URL}/signup`).send(form).expect(201);
+        const user: type.UserI = await User.findOne({ email: form.email });
+        expect(user).not.toBeNull();
+
+        const response = await request(app)
+            .get(`${URL}/verify-email/${user.verifyToken}`)
+            .expect(200);
+        expect(response.body).toMatchObject({
+            message: 'Thank you! Your email has been verified.',
+        });
+    });
+
+    it('Should not verify account - empty email token', async () => {
+        const form: type.SignUpForm = {
+            email: 'your_email_3@test.com',
+            firstName: 'Roger 3',
+            lastName: 'That 3',
+            password: 'test123',
+            confirmPassword: 'test123',
+        };
+
+        await request(app).post(`${URL}/signup`).send(form).expect(201);
+        const user: type.UserI = await User.findOne({ email: form.email });
+        expect(user).not.toBeNull();
+
+        await request(app).get(`${URL}/verify-email/`).expect(404);
+    });
+
+    it('Should not verify account - invalid email token', async () => {
+        const form: type.SignUpForm = {
+            email: 'your_email_3@test.com',
+            firstName: 'Roger 3',
+            lastName: 'That 3',
+            password: 'test123',
+            confirmPassword: 'test123',
+        };
+
+        await request(app).post(`${URL}/signup`).send(form).expect(201);
+        const user: type.UserI = await User.findOne({ email: form.email });
+        expect(user).not.toBeNull();
+
+        const response = await request(app)
+            .get(
+                `${URL}/verify-email/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZW1haWwiLCJpYXQiOjE2MDI2ODg3MjEsImV4cCI6MTYwMzI5MzUyMX0.CWhtDg0BYoaL9sld0hwOd7U12agsXSB-7SZ6XYF9hko`
+            )
+            .expect(404);
+        expect(response.body).toMatchObject({
+            message: 'ERROR: Invalid/Expired email token.',
+        });
+    });
+
     it('Should login - verified email', async () => {
         const form: type.LoginForm = {
             email: user1.email,
@@ -247,7 +308,7 @@ describe("User's API", () => {
             .send(form)
             .expect(200);
         const userData = <type.UserJWT>(
-            jwt.verify(response.body.token, process.env.JWT_SECRET_KEY)
+            jwt.verify(response.body.token, JWT_SECRET_KEY)
         );
         const user: type.UserI = await User.findOne({ email: form.email });
         expect(user).not.toBeNull();
@@ -482,7 +543,6 @@ describe("User's API", () => {
             .send(updateUser)
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
-        console.log(response2);
         expect(response2.body).toMatchObject({
             passwordLength: `Must not be greater than ${process.env.PASSWORD_LEN} characters.`,
         });

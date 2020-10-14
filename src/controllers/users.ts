@@ -1,10 +1,13 @@
 import { RequestHandler } from 'express';
 import User from '@models/user';
 import sgMail from '@sendgrid/mail';
+import jwt from 'jsonwebtoken';
 import * as auth from '@middlewares/auth';
 import * as validator from '@utils/validator';
 import * as MSG from '@utils/message';
 import * as type from '@custom_types/types';
+
+const JWT_VERIFICATION_EXPIRES_IN = process.env.JWT_VERIFICATION_EXPIRES_IN;
 
 sgMail.setApiKey(process.env.SENDGRID_KEY);
 
@@ -26,7 +29,7 @@ const signUpUser: RequestHandler = async (req, res) => {
         }
 
         delete form.confirmPassword;
-        form.verifyToken = auth.createVerificationToken('email', '1d');
+        form.verifyToken = auth.createVerificationToken('email');
         const newUser: any = new User(form);
         await newUser.save();
 
@@ -141,10 +144,7 @@ const updateUser: RequestHandler = async (req, res) => {
                 if (form.newEmail) {
                     user.tempEmail = form.newEmail;
 
-                    user.verifyToken = auth.createVerificationToken(
-                        'email',
-                        '1d'
-                    );
+                    user.verifyToken = auth.createVerificationToken('email');
 
                     try {
                         const msg = MSG.updateEmail(user, req.headers.host);
@@ -204,14 +204,23 @@ const deleteUser: RequestHandler = async (req, res) => {
 
 const verifyEmail: RequestHandler = async (req, res) => {
     try {
+        const token = req.params.verifyToken;
+        try {
+            jwt.verify(token, process.env.JWT_VERIFICATION_SECRET_KEY);
+        } catch (error) {
+            return res
+                .status(401)
+                .json({ message: 'ERROR: Expired email token.' });
+        }
+
         const user: type.UserI = await User.findOne({
-            verifyToken: req.params.verifyToken,
+            verifyToken: token,
         });
 
         if (!user) {
             return res
                 .status(404)
-                .json({ message: 'ERROR: Invalid email token.' });
+                .json({ message: 'ERROR: Invalid/Expired email token.' });
         }
 
         user.verifyToken = null;
@@ -249,8 +258,9 @@ const resendVerifyEmail: RequestHandler = async (req, res) => {
         if (user.isEmailVerified) {
             return res.json({ message: 'Your account is already verified.' });
         }
-
         try {
+            user.verifyToken = auth.createVerificationToken('email');
+            await user.save();
             const msg = MSG.signUp(user, req.headers.host);
             await sgMail.send(msg);
         } catch (error) {

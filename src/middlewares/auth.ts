@@ -3,7 +3,9 @@ import jwt from 'jsonwebtoken';
 import * as type from '@custom_types/types';
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN;
 const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
+const JWT_VERIFICATION_EXPIRES_IN = process.env.JWT_VERIFICATION_EXPIRES_IN;
 
 const auth: RequestHandler = (req, res, next) => {
     try {
@@ -35,17 +37,17 @@ const auth: RequestHandler = (req, res, next) => {
     }
 };
 
-const createAccessToken: type.JWTFnAccessFn = (user: type.User) => {
+const createAccessToken: type.JWTAccessFn = (user: type.User) => {
     return jwt.sign(
         { _id: user._id, firstName: user.firstName, lastName: user.lastName },
         JWT_SECRET_KEY,
-        { expiresIn: '7d' }
+        { expiresIn: JWT_SECRET_EXPIRES_IN }
     );
 };
 
-const createVerificationToken: type.JWTFnVerifyFn = (mode, expiration) => {
+const createVerificationToken: type.JWTVerifyFn = (mode) => {
     return jwt.sign({ mode }, JWT_VERIFICATION_SECRET_KEY, {
-        expiresIn: expiration,
+        expiresIn: JWT_VERIFICATION_EXPIRES_IN,
     });
 };
 
