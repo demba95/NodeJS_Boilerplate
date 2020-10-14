@@ -27,6 +27,11 @@
   - [Server](#server)
     - [App.ts](#appts)
     - [Index.ts](#indexts)
+  - [Jest - Test](#jest---test)
+    - [Init](#init)
+    - [Jest Config File](#jest-config-file)
+  - [Babel](#babel)
+    - [Config](#config)
 
 # NODE.JS BOILERPLATE
 
@@ -120,7 +125,7 @@
     npm i morgan
 
     # Dev Dependencies
-    # npm i -D @types/bcrypt @types/cors @types/express @types/jsonwebtoken @types/mongoose @types/morgan @types/node @types/validator @types/jest jest ts-jest supertest ts-node-dev  tsconfig-paths typescript
+    # npm i -D @types/bcrypt @types/cors @types/express @types/jsonwebtoken @types/mongoose @types/morgan @types/node @types/validator @types/jest jest ts-jest supertest ts-node-dev tsconfig-paths typescript
     npm i -D @types/bcrypt
     npm i -D @types/cors
     npm i -D @types/express
@@ -155,9 +160,8 @@
       {
           "compilerOptions": {
               "target": "ES6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
-              "allowJs": true /* Allow javascript files to be compiled. */,
               "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
-              "sourceMap": true /* Generates corresponding '.map' file. */,
+              "allowJs": true /* Allow javascript files to be compiled. */,
               "outDir": "./dist" /* Redirect output structure to the directory. */,
               "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
               "removeComments": true /* Do not emit comments to output. */,
@@ -167,14 +171,14 @@
               "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
               "typeRoots": [
                   "./node_modules/@types",
-                  "src/@_types"
+                  "src/@types"
               ] /* List of folders to include type definitions from. */,
               "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
               "skipLibCheck": true /* Skip type checking of declaration files. */,
               "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
               "baseUrl": "./src",
               "paths": {
-                  "~/*": ["./src/*"],
+                  "~/*": ["./*"],
                   "@custom_types/*": ["./@types/*"],
                   "@config/*": ["./config/*"],
                   "@controllers/*": ["./controllers/*"],
@@ -184,6 +188,7 @@
                   "@utils/*": ["./utils/*"]
               }
           },
+          "include": ["src/**/*"],
           "exclude": ["**/node_modules"]
       }
     ```
@@ -196,20 +201,26 @@
 
   ```JSON
     "scripts": {
-        "start": "env-cmd -f ./env/prod.env node dist/index.js",
+        "start": "node dist/index.js",
         "dev": "env-cmd -f ./env/dev.env ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts",
-        "build": "tsc -p .",
+        "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
         "test": "env-cmd -f ./env/test.env jest --watch --runInBand --detectOpenHandles"
     },
     "jest": {
         "bail": 1,
         "verbose": true,
-        "testEnvironment": "node"
+        "testEnvironment": "node",
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx"
+        ]
     },
   ```
 
   - `ts-node-dev --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts` responsible for fast reloading the server using TypeScript, `--no-notify` (for linux users)
-  - `-r tsconfig-paths/register` register custom typescript paths
+  - `-r tsconfig-paths/register` register (`-r`) custom typescript before executing the rest.
 
 - Complete json file
 
@@ -220,15 +231,21 @@
         "description": "Node.js Boilerplate",
         "main": "index.js",
         "scripts": {
-            "start": "env-cmd -f ./env/prod.env node dist/index.js",
-            "dev": "env-cmd -f ./env/dev.env ts-node-dev --respawn --ignore-watch node_modules --no-notify src/index.ts",
-            "build": "tsc -p .",
+            "start": "node dist/index.js",
+            "dev": "env-cmd -f ./env/dev.env ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts",
+            "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
             "test": "env-cmd -f ./env/test.env jest --watch --runInBand --detectOpenHandles"
         },
         "jest": {
             "bail": 1,
             "verbose": true,
-            "testEnvironment": "node"
+            "testEnvironment": "node",
+            "moduleFileExtensions": [
+                "ts",
+                "tsx",
+                "js",
+                "jsx"
+            ]
         },
         "repository": {
             "type": "git",
@@ -249,9 +266,14 @@
             "helmet": "^4.1.1",
             "jsonwebtoken": "^8.5.1",
             "mongoose": "^5.10.9",
-            "morgan": "^1.10.0",
+            "morgan": "^1.10.0"
         },
         "devDependencies": {
+            "@babel/cli": "^7.11.6",
+            "@babel/core": "^7.11.6",
+            "@babel/node": "^7.10.5",
+            "@babel/preset-env": "^7.11.5",
+            "@babel/preset-typescript": "^7.10.4",
             "@types/bcrypt": "^3.0.0",
             "@types/cors": "^2.8.8",
             "@types/express": "^4.17.8",
@@ -259,13 +281,15 @@
             "@types/mongoose": "^5.7.36",
             "@types/morgan": "^1.9.1",
             "@types/node": "^14.11.8",
-            "jest": "^26.5.2",
+            "babel-plugin-module-resolver": "^4.0.0",
+            "jest": "^26.5.3",
             "supertest": "^5.0.0",
-            "ts-node": "^9.0.0",
+            "ts-jest": "^26.4.1",
+            "ts-node-dev": "^1.0.0-pre.63",
+            "tsconfig-paths": "^3.9.0",
             "typescript": "^4.0.3"
         }
     }
-
   ```
 
 ## Environment Variables
@@ -319,7 +343,7 @@
     }
 
     export interface User {
-        _id: string;
+        _id?: string;
         firstName: string;
         lastName: string;
     }
@@ -329,12 +353,15 @@
         exp: number;
     }
 
-    export interface LoginForm extends User {
+    export interface LoginForm {
+        _id?: string;
         email: string;
         password: string;
     }
 
-    export interface SignUpForm extends LoginForm {
+    type ConcatForm = User & LoginForm;
+
+    export interface SignUpForm extends ConcatForm {
         confirmPassword: string;
         verifyToken?: string;
     }
@@ -346,7 +373,7 @@
     }
 
     export interface MSGFn {
-        (user: IUser, host: string): {
+        (user: UserI, host: string): {
             from: string;
             to: string;
             subject: string;
@@ -402,6 +429,7 @@
     db.once('connected', () => {
         console.log(`Connected to MongoDB ${db.name} at ${db.host}:${db.port}`);
     });
+
   ```
 
 - To fix all deprecation warnings, follow the below steps:
@@ -474,7 +502,6 @@
 
             delete form.confirmPassword;
             form.verifyToken = auth.createVerificationToken('email', '1d');
-
             const newUser: any = new User(form);
             await newUser.save();
 
@@ -528,7 +555,7 @@
                     });
                 }
 
-                res.status(400).json({ message: 'ERROR: Wrong credentials' });
+                res.status(403).json({ message: 'ERROR: Wrong credentials.' });
             });
         } catch (error) {
             console.log(error);
@@ -570,6 +597,17 @@
                 return res.status(404).json({ message: 'ERROR: User not found.' });
             }
 
+            if (form.newEmail) {
+                const email: type.UserI = await User.findOne({
+                    email: form.newEmail,
+                });
+                if (email) {
+                    return res.status(400).json({
+                        message: `ERROR: Email (${form.newEmail}) is already in use.`,
+                    });
+                }
+            }
+
             user.comparePassword(form.password, async (_, isMatch) => {
                 if (isMatch) {
                     if (form.firstName) user.firstName = form.firstName;
@@ -599,7 +637,7 @@
                     return res.json(user);
                 }
 
-                res.status(400).json({ message: 'ERROR: Wrong credentials' });
+                res.status(403).json({ message: 'ERROR: Wrong credentials.' });
             });
         } catch (error) {
             console.log(error);
@@ -628,7 +666,7 @@
                     return res.json({ message: 'Your account has been deleted.' });
                 }
 
-                res.status(400).json({ message: 'ERROR: Wrong password' });
+                res.status(403).json({ message: 'ERROR: Wrong password.' });
             });
         } catch (error) {
             console.log(error);
@@ -769,15 +807,21 @@
               let token: string =
                   req.get('Authorization') || req.query.token || req.body.token;
 
-              if (token) {
-                  token = token.replace('Bearer ', '');
-                  const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
-                  if (!user) {
-                      return res.status(400).json({ message: 'Not authorized.' });
-                  }
+              try {
+                  if (token) {
+                      token = token.replace('Bearer ', '');
+                      const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
+                      if (!user) {
+                          return res.status(401).json({ message: 'Not authorized.' });
+                      }
 
-                  req.user = user;
-                  next();
+                      req.user = user;
+                      next();
+                  } else {
+                      throw new Error();
+                  }
+              } catch (error) {
+                  return res.status(401).json({ message: 'Invalid token.' });
               }
           } catch (error) {
               console.log(error);
@@ -850,7 +894,6 @@
             tempEmail: {
                 type: String,
                 trim: true,
-                unique: true,
                 lowercase: true,
                 validate(value: string): any {
                     if (value && !validator.isEmail(value)) {
@@ -1013,7 +1056,6 @@
     import userCtrl from '@controllers/users';
     import { auth } from '@middlewares/auth';
 
-
     const router = express.Router();
 
     router.post('/signup', userCtrl.signUpUser);
@@ -1108,15 +1150,24 @@
         const errors: type.ErrorContainer = {};
 
         if (isEmpty(data.email)) {
-            errors.email = 'Must not be empty';
+            errors.email = 'Must not be empty.';
         } else if (!isEmail(data.email)) {
-            errors.email = 'Must be a valid email address';
+            errors.email = 'Must be a valid email address.';
         }
-        if (isEmpty(data.firstName)) errors.firstName = 'Must not be empty';
-        if (isEmpty(data.lastName)) errors.lastName = 'Must not be empty';
-        if (isEmpty(data.password)) errors.password = 'Must not be empty';
-        if (data.password && data.password.length < +process.env.PASSWORD_LEN)
-            errors.passwordLength = 'Must not be greater than 3 characters';
+        if (isEmpty(data.firstName)) errors.firstName = 'Must not be empty.';
+        if (isEmpty(data.lastName)) errors.lastName = 'Must not be empty.';
+        if (isEmpty(data.password)) errors.password = 'Must not be empty.';
+        if (isEmpty(data.confirmPassword))
+            errors.confirmPassword = 'Must not be empty.';
+        if (
+            (data.password && data.password.length < +process.env.PASSWORD_LEN) ||
+            (data.confirmPassword &&
+                data.confirmPassword.length < +process.env.PASSWORD_LEN)
+        ) {
+            errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
+        }
+        if (data.password !== data.confirmPassword)
+            errors.passwords = 'Must be equal.';
 
         return {
             errors,
@@ -1127,10 +1178,10 @@
     const validateLoginData: type.ValidatorFn = (data) => {
         const errors: type.ErrorContainer = {};
 
-        if (isEmpty(data.email)) errors.email = 'Must not be empty';
+        if (isEmpty(data.email)) errors.email = 'Must not be empty.';
         else if (!isEmail(data.email))
-            errors.email = 'Must be a valid email address';
-        if (isEmpty(data.password)) errors.password = 'Must not be empty';
+            errors.email = 'Must be a valid email address.';
+        if (isEmpty(data.password)) errors.password = 'Must not be empty.';
 
         return {
             errors,
@@ -1143,27 +1194,35 @@
         let count = 0;
 
         if (data.newEmail && isEmpty(data.newEmail)) {
-            errors.lastName = 'Must not be empty';
+            errors.lastName = 'Must not be empty.';
         } else if (data.newEmail && !isEmail(data.newEmail)) {
-            errors.newEmail = 'Must be a valid email address';
+            errors.newEmail = 'Must be a valid email address.';
         }
         if (data.firstName && isEmpty(data.firstName))
-            errors.firstName = 'Must not be empty';
+            errors.firstName = 'Must not be empty.';
         if (data.lastName && isEmpty(data.lastName))
-            errors.lastName = 'Must not be empty';
-        if (isEmpty(data.password)) errors.password = 'Must not be empty';
+            errors.lastName = 'Must not be empty.';
+        if (isEmpty(data.password)) errors.password = 'Must not be empty.';
         if (data.newPassword && isEmpty(data.newPassword))
-            errors.newPassword = 'Must not be empty';
+            errors.newPassword = 'Must not be empty.';
         if (data.confirmNewPassword && isEmpty(data.confirmNewPassword))
-            errors.confNewPassword = 'Must not be empty';
+            errors.confNewPassword = 'Must not be empty.';
+        if (
+            (data.newPassword &&
+                data.newPassword.length < +process.env.PASSWORD_LEN) ||
+            (data.confirmNewPassword &&
+                data.confirmNewPassword.length < +process.env.PASSWORD_LEN)
+        ) {
+            errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
+        }
         if (data.newPassword !== data.confirmNewPassword)
-            errors.confirmNewPassword = "Doesn't match";
+            errors.passwords = 'Must be equal.';
 
         Object.keys(data).forEach((key) => {
             if (data[key]) count++;
         });
 
-        if (count === 0) errors.unchanged = 'Must modify something';
+        if (count === 0) errors.unchanged = 'Must modify something.';
 
         return {
             errors,
@@ -1174,9 +1233,9 @@
     const validatePassword: type.ValidatorFn = (data) => {
         const errors: type.ErrorContainer = {};
 
-        if (isEmpty(data.password)) errors.password = 'Must not be empty';
+        if (isEmpty(data.password)) errors.password = 'Must not be empty.';
         if (data.password && data.password.length < +process.env.PASSWORD_LEN)
-            errors.passwordLength = 'Must not be greater than 3 characters';
+            errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
 
         return {
             errors,
@@ -1187,9 +1246,9 @@
     const validateEmail: type.ValidatorFn = (data) => {
         const errors: type.ErrorContainer = {};
 
-        if (isEmpty(data.email)) errors.email = 'Must not be empty';
+        if (isEmpty(data.email)) errors.email = 'Must not be empty.';
         else if (!isEmail(data.email))
-            errors.email = 'Must be a valid email address';
+            errors.email = 'Must be a valid email address.';
 
         return {
             errors,
@@ -1256,3 +1315,154 @@
         console.log(`Server is running on port ${port}`);
     });
   ```
+
+## Jest - Test
+
+### Init
+
+[Go Back to Contents](#contents)
+
+- Initializing Jest
+
+  ```Bash
+    ./node_modules/.bin/jest --init
+  ```
+
+- Setting Jest
+
+  ```Bash
+    It seems that you already have a jest configuration, do you want to override it?
+    # Y
+
+    Would you like to use Jest when running "test" script in "package.json"?
+    # Y
+
+    Choose the test environment that will be used for testing
+    # node
+
+    Do you want Jest to add coverage reports?
+    # N (we are going to change later to Yes)
+
+    Which provider should be used to instrument code for coverage?
+    # babel
+
+    Automatically clear mock calls and instances between every test?
+    # Y
+  ```
+
+### Jest Config File
+
+[Go Back to Contents](#contents)
+
+- By default jest doesn't work with TypeScript, that's why need to install `ts-jest`
+- the `ts-jest` helps us to test the file without the need to compile the file (transform from `.ts` to `.js`)
+- In `./jest.config.js`
+
+  - We define the **root path** using the `path` module, and set the `rootDir` to `root`
+  - we need to define `moduleNameMapper` so jest can map the right path since we are using TypeScript alias
+  - Short version
+
+    ```JavaScript
+      const { resolve } = require('path');
+      const root = resolve(__dirname);
+
+      module.exports = {
+          rootDir: root,
+          displayName: 'TEST',
+          testMatch: ['<rootDir>/src/**/*.test.ts'],
+          testEnvironment: 'node',
+          clearMocks: true,
+          preset: 'ts-jest',
+          moduleNameMapper: {
+              '~/(.*)': '<rootDir>/src/$1',
+              '@custom_types/(.*)': '<rootDir>/src/@types/$1',
+              '@config/(.*)': '<rootDir>/src/config/$1',
+              '@controllers/(.*)': '<rootDir>/src/controllers/$1',
+              '@middlewares/(.*)': '<rootDir>/src/middlewares/$1',
+              '@models/(.*)': '<rootDir>/src/models/$1',
+              '@routes/(.*)': '<rootDir>/src/routes/$1',
+              '@utils/(.*)': '<rootDir>/src/utils/$1',
+          },
+      };
+    ```
+
+## Babel
+
+[Go Back to Contents](#contents)
+
+- Using babel to transpile our code into JavaScript
+
+  - Babel is necessary because only TSC can't convert 100% correct. Since we are using alias, tsc can't convert the alias to correct path.
+  - To do so, we need babel and its dependencies
+
+  ```Bash
+    # npm i -D @babel/cli @babel/core @babel/node @babel/preset-env @babel/preset-typescript babel-plugin-module-resolver
+
+    npm i -D @babel/cli
+    npm i -D @babel/core
+    npm i -D @babel/node
+    npm i -D @babel/preset-env
+    npm i -D @babel/preset-typescript
+    npm i -D babel-plugin-module-resolver
+  ```
+
+### Config
+
+[Go Back to Contents](#contents)
+
+- Create new file on root's folder called `babel.config.js`
+
+  ```Bash
+    touch babel.config.js
+  ```
+
+- In `babel.config.js`
+
+  ```JavaScript
+    module.exports = {
+        presets: [
+            [
+                '@babel/preset-env',
+                {
+                    targets: {
+                        node: 'current',
+                    },
+                },
+            ],
+            '@babel/preset-typescript',
+        ],
+        plugins: [
+            [
+                'module-resolver',
+                {
+                    alias: {
+                        '~': './src',
+                        '@custom_types': './src/@types',
+                        '@config': './src/config',
+                        '@controllers': './src/controllers',
+                        '@middlewares': './src/middlewares',
+                        '@models': './src/models',
+                        '@routes': './src/routes',
+                        '@utils': './src/utils',
+                    },
+                },
+            ],
+        ],
+        ignore: ['**/*.test.ts', '**/*.spec.ts'],
+    };
+  ```
+
+  - **presets**
+    - `@babel/preset-env` and tells to convert our code to the **current node version**
+    - `@babel/preset-typescript` so babel can understand TypeScript
+  - **plugins**
+
+    - We have our `module-resolver` responsible for change/understand our alias (@controllers, @modules, ...) path. we add them manually again
+
+  - in our scripts in `package.json`:
+    - we have `"build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",`
+      - we are using **babel** to transpile, then we tell what folder (`src`)
+      - `--extensions \".js,.ts\"`, what files babel should use/convert
+      - `--out-dir dist`, output dir -> dist folder
+      - `--copy-files`, copy other files like `html`, `css`, `images`...
+      - `--no-copy-ignored`, don't copy ignored files

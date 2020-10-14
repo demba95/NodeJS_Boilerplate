@@ -72,6 +72,14 @@ const validateUpdateData: type.ValidatorFn = (data) => {
         errors.newPassword = 'Must not be empty.';
     if (data.confirmNewPassword && isEmpty(data.confirmNewPassword))
         errors.confNewPassword = 'Must not be empty.';
+    if (
+        (data.newPassword &&
+            data.newPassword.length < +process.env.PASSWORD_LEN) ||
+        (data.confirmNewPassword &&
+            data.confirmNewPassword.length < +process.env.PASSWORD_LEN)
+    ) {
+        errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
+    }
     if (data.newPassword !== data.confirmNewPassword)
         errors.passwords = 'Must be equal.';
 

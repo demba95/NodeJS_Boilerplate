@@ -10,15 +10,21 @@ const auth: RequestHandler = (req, res, next) => {
         let token: string =
             req.get('Authorization') || req.query.token || req.body.token;
 
-        if (token) {
-            token = token.replace('Bearer ', '');
-            const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
-            if (!user) {
-                return res.status(400).json({ message: 'Not authorized.' });
-            }
+        try {
+            if (token) {
+                token = token.replace('Bearer ', '');
+                const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
+                if (!user) {
+                    return res.status(401).json({ message: 'Not authorized.' });
+                }
 
-            req.user = user;
-            next();
+                req.user = user;
+                next();
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            return res.status(401).json({ message: 'Invalid token.' });
         }
     } catch (error) {
         console.log(error);

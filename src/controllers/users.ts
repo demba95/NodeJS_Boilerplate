@@ -80,7 +80,7 @@ const loginUser: RequestHandler = async (req, res) => {
                 });
             }
 
-            res.status(400).json({ message: 'ERROR: Wrong credentials.' });
+            res.status(403).json({ message: 'ERROR: Wrong credentials.' });
         });
     } catch (error) {
         console.log(error);
@@ -162,7 +162,7 @@ const updateUser: RequestHandler = async (req, res) => {
                 return res.json(user);
             }
 
-            res.status(400).json({ message: 'ERROR: Wrong credentials.' });
+            res.status(403).json({ message: 'ERROR: Wrong credentials.' });
         });
     } catch (error) {
         console.log(error);
@@ -191,7 +191,7 @@ const deleteUser: RequestHandler = async (req, res) => {
                 return res.json({ message: 'Your account has been deleted.' });
             }
 
-            res.status(400).json({ message: 'ERROR: Wrong password.' });
+            res.status(403).json({ message: 'ERROR: Wrong password.' });
         });
     } catch (error) {
         console.log(error);
