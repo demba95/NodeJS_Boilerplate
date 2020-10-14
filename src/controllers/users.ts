@@ -27,7 +27,6 @@ const signUpUser: RequestHandler = async (req, res) => {
 
         delete form.confirmPassword;
         form.verifyToken = auth.createVerificationToken('email', '1d');
-
         const newUser: any = new User(form);
         await newUser.save();
 
@@ -81,7 +80,7 @@ const loginUser: RequestHandler = async (req, res) => {
                 });
             }
 
-            res.status(400).json({ message: 'ERROR: Wrong credentials' });
+            res.status(400).json({ message: 'ERROR: Wrong credentials.' });
         });
     } catch (error) {
         console.log(error);
@@ -123,6 +122,17 @@ const updateUser: RequestHandler = async (req, res) => {
             return res.status(404).json({ message: 'ERROR: User not found.' });
         }
 
+        if (form.newEmail) {
+            const email: type.UserI = await User.findOne({
+                email: form.newEmail,
+            });
+            if (email) {
+                return res.status(400).json({
+                    message: `ERROR: Email (${form.newEmail}) is already in use.`,
+                });
+            }
+        }
+
         user.comparePassword(form.password, async (_, isMatch) => {
             if (isMatch) {
                 if (form.firstName) user.firstName = form.firstName;
@@ -152,7 +162,7 @@ const updateUser: RequestHandler = async (req, res) => {
                 return res.json(user);
             }
 
-            res.status(400).json({ message: 'ERROR: Wrong credentials' });
+            res.status(400).json({ message: 'ERROR: Wrong credentials.' });
         });
     } catch (error) {
         console.log(error);
@@ -181,7 +191,7 @@ const deleteUser: RequestHandler = async (req, res) => {
                 return res.json({ message: 'Your account has been deleted.' });
             }
 
-            res.status(400).json({ message: 'ERROR: Wrong password' });
+            res.status(400).json({ message: 'ERROR: Wrong password.' });
         });
     } catch (error) {
         console.log(error);

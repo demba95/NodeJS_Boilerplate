@@ -15,15 +15,24 @@ const validateSignUpData: type.ValidatorFn = (data) => {
     const errors: type.ErrorContainer = {};
 
     if (isEmpty(data.email)) {
-        errors.email = 'Must not be empty';
+        errors.email = 'Must not be empty.';
     } else if (!isEmail(data.email)) {
-        errors.email = 'Must be a valid email address';
+        errors.email = 'Must be a valid email address.';
     }
-    if (isEmpty(data.firstName)) errors.firstName = 'Must not be empty';
-    if (isEmpty(data.lastName)) errors.lastName = 'Must not be empty';
-    if (isEmpty(data.password)) errors.password = 'Must not be empty';
-    if (data.password && data.password.length < +process.env.PASSWORD_LEN)
-        errors.passwordLength = 'Must not be greater than 3 characters';
+    if (isEmpty(data.firstName)) errors.firstName = 'Must not be empty.';
+    if (isEmpty(data.lastName)) errors.lastName = 'Must not be empty.';
+    if (isEmpty(data.password)) errors.password = 'Must not be empty.';
+    if (isEmpty(data.confirmPassword))
+        errors.confirmPassword = 'Must not be empty.';
+    if (
+        (data.password && data.password.length < +process.env.PASSWORD_LEN) ||
+        (data.confirmPassword &&
+            data.confirmPassword.length < +process.env.PASSWORD_LEN)
+    ) {
+        errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
+    }
+    if (data.password !== data.confirmPassword)
+        errors.passwords = 'Must be equal.';
 
     return {
         errors,
@@ -34,10 +43,10 @@ const validateSignUpData: type.ValidatorFn = (data) => {
 const validateLoginData: type.ValidatorFn = (data) => {
     const errors: type.ErrorContainer = {};
 
-    if (isEmpty(data.email)) errors.email = 'Must not be empty';
+    if (isEmpty(data.email)) errors.email = 'Must not be empty.';
     else if (!isEmail(data.email))
-        errors.email = 'Must be a valid email address';
-    if (isEmpty(data.password)) errors.password = 'Must not be empty';
+        errors.email = 'Must be a valid email address.';
+    if (isEmpty(data.password)) errors.password = 'Must not be empty.';
 
     return {
         errors,
@@ -50,27 +59,27 @@ const validateUpdateData: type.ValidatorFn = (data) => {
     let count = 0;
 
     if (data.newEmail && isEmpty(data.newEmail)) {
-        errors.lastName = 'Must not be empty';
+        errors.lastName = 'Must not be empty.';
     } else if (data.newEmail && !isEmail(data.newEmail)) {
-        errors.newEmail = 'Must be a valid email address';
+        errors.newEmail = 'Must be a valid email address.';
     }
     if (data.firstName && isEmpty(data.firstName))
-        errors.firstName = 'Must not be empty';
+        errors.firstName = 'Must not be empty.';
     if (data.lastName && isEmpty(data.lastName))
-        errors.lastName = 'Must not be empty';
-    if (isEmpty(data.password)) errors.password = 'Must not be empty';
+        errors.lastName = 'Must not be empty.';
+    if (isEmpty(data.password)) errors.password = 'Must not be empty.';
     if (data.newPassword && isEmpty(data.newPassword))
-        errors.newPassword = 'Must not be empty';
+        errors.newPassword = 'Must not be empty.';
     if (data.confirmNewPassword && isEmpty(data.confirmNewPassword))
-        errors.confNewPassword = 'Must not be empty';
+        errors.confNewPassword = 'Must not be empty.';
     if (data.newPassword !== data.confirmNewPassword)
-        errors.confirmNewPassword = "Doesn't match";
+        errors.passwords = 'Must be equal.';
 
     Object.keys(data).forEach((key) => {
         if (data[key]) count++;
     });
 
-    if (count === 0) errors.unchanged = 'Must modify something';
+    if (count === 0) errors.unchanged = 'Must modify something.';
 
     return {
         errors,
@@ -81,9 +90,9 @@ const validateUpdateData: type.ValidatorFn = (data) => {
 const validatePassword: type.ValidatorFn = (data) => {
     const errors: type.ErrorContainer = {};
 
-    if (isEmpty(data.password)) errors.password = 'Must not be empty';
+    if (isEmpty(data.password)) errors.password = 'Must not be empty.';
     if (data.password && data.password.length < +process.env.PASSWORD_LEN)
-        errors.passwordLength = 'Must not be greater than 3 characters';
+        errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
 
     return {
         errors,
@@ -94,9 +103,9 @@ const validatePassword: type.ValidatorFn = (data) => {
 const validateEmail: type.ValidatorFn = (data) => {
     const errors: type.ErrorContainer = {};
 
-    if (isEmpty(data.email)) errors.email = 'Must not be empty';
+    if (isEmpty(data.email)) errors.email = 'Must not be empty.';
     else if (!isEmail(data.email))
-        errors.email = 'Must be a valid email address';
+        errors.email = 'Must be a valid email address.';
 
     return {
         errors,

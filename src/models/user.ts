@@ -34,7 +34,6 @@ const userSchema = new Schema(
         tempEmail: {
             type: String,
             trim: true,
-            unique: true,
             lowercase: true,
             validate(value: string): any {
                 if (value && !validator.isEmail(value)) {

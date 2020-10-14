@@ -1,9 +1,8 @@
 {
     "compilerOptions": {
         "target": "ES6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
-        "allowJs": true /* Allow javascript files to be compiled. */,
         "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
-        "sourceMap": true /* Generates corresponding '.map' file. */,
+        "allowJs": true /* Allow javascript files to be compiled. */,
         "outDir": "./dist" /* Redirect output structure to the directory. */,
         "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
         "removeComments": true /* Do not emit comments to output. */,
@@ -13,22 +12,23 @@
         "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
         "typeRoots": [
             "./node_modules/@types",
-            "src/@_types"
+            "src/@types"
         ] /* List of folders to include type definitions from. */,
         "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
         "skipLibCheck": true /* Skip type checking of declaration files. */,
         "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
-        "baseUrl": ".",
+        "baseUrl": "./src",
         "paths": {
-            "~/*": ["./src/*"],
-            "@custom_types/*": ["./src/@types/*"],
-            "@config/*": ["./src/config/*"],
-            "@controllers/*": ["./src/controllers/*"],
-            "@middlewares/*": ["./src/middlewares/*"],
-            "@models/*": ["./src/models/*"],
-            "@routes/*": ["./src/routes/*"],
-            "@utils/*": ["./src/utils/*"]
+            "~/*": ["./*"],
+            "@custom_types/*": ["./@types/*"],
+            "@config/*": ["./config/*"],
+            "@controllers/*": ["./controllers/*"],
+            "@middlewares/*": ["./middlewares/*"],
+            "@models/*": ["./models/*"],
+            "@routes/*": ["./routes/*"],
+            "@utils/*": ["./utils/*"]
         }
     },
+    "include": ["src/**/*"],
     "exclude": ["**/node_modules"]
 }

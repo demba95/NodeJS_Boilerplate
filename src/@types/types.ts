@@ -22,7 +22,7 @@ export interface UserI extends Document {
 }
 
 export interface User {
-    _id: string;
+    _id?: string;
     firstName: string;
     lastName: string;
 }
@@ -32,12 +32,15 @@ export interface UserJWT extends User {
     exp: number;
 }
 
-export interface LoginForm extends User {
+export interface LoginForm {
+    _id?: string;
     email: string;
     password: string;
 }
 
-export interface SignUpForm extends LoginForm {
+type ConcatForm = User & LoginForm;
+
+export interface SignUpForm extends ConcatForm {
     confirmPassword: string;
     verifyToken?: string;
 }
@@ -49,7 +52,7 @@ export interface UpdateUserForm extends User {
 }
 
 export interface MSGFn {
-    (user: IUser, host: string): {
+    (user: UserI, host: string): {
         from: string;
         to: string;
         subject: string;
