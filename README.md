@@ -653,6 +653,7 @@
                         user.tempEmail = form.newEmail;
 
                         user.verifyToken = auth.createVerificationToken('email');
+                        await user.save();
 
                         try {
                             const msg = MSG.updateEmail(user, req.headers.host);
@@ -664,9 +665,10 @@
                                     'ERROR: Something went wrong sending you the email verification. Please try again later.',
                             });
                         }
+                    } else {
+                        await user.save();
                     }
 
-                    await user.save();
                     return res.json(user);
                 }
 

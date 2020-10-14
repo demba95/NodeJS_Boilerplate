@@ -7,8 +7,6 @@ import * as validator from '@utils/validator';
 import * as MSG from '@utils/message';
 import * as type from '@custom_types/types';
 
-const JWT_VERIFICATION_EXPIRES_IN = process.env.JWT_VERIFICATION_EXPIRES_IN;
-
 sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 const signUpUser: RequestHandler = async (req, res) => {
@@ -145,6 +143,7 @@ const updateUser: RequestHandler = async (req, res) => {
                     user.tempEmail = form.newEmail;
 
                     user.verifyToken = auth.createVerificationToken('email');
+                    await user.save();
 
                     try {
                         const msg = MSG.updateEmail(user, req.headers.host);
@@ -156,9 +155,10 @@ const updateUser: RequestHandler = async (req, res) => {
                                 'ERROR: Something went wrong sending you the email verification. Please try again later.',
                         });
                     }
+                } else {
+                    await user.save();
                 }
 
-                await user.save();
                 return res.json(user);
             }
 
