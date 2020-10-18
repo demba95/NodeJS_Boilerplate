@@ -25,21 +25,11 @@ const userSchema = new Schema(
             trim: true,
             unique: true,
             lowercase: true,
-            validate(value: string): any {
-                if (!validator.isEmail(value)) {
-                    throw new Error('Email is invalid');
-                }
-            },
         },
         tempEmail: {
             type: String,
             trim: true,
             lowercase: true,
-            validate(value: string): any {
-                if (value && !validator.isEmail(value)) {
-                    throw new Error('Email is invalid');
-                }
-            },
         },
         verifyToken: String,
         isEmailVerified: {
@@ -49,13 +39,8 @@ const userSchema = new Schema(
         password: {
             type: String,
             require: true,
-            minlength: 3,
+            minlength: process.env.PASSWORD_LEN,
             trim: true,
-            validate(value: string): any {
-                if (value.toLowerCase().includes('password')) {
-                    throw new Error('Password cannot contain "password"');
-                }
-            },
         },
         admin: {
             type: Boolean,
@@ -71,9 +56,7 @@ userSchema.pre<type.UserI>('save', async function (next) {
     const user = this;
 
     if (user.isModified('password')) {
-        if (user.password) {
-            user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
-        }
+        user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
     }
 
     next();

@@ -14,7 +14,7 @@
   - [Controllers](#controllers)
     - [Users Controllers](#users-controllers)
   - [Middlewares](#middlewares)
-    - [Authentication](#authentication)
+    - [Authorization](#authorization)
   - [Models](#models)
     - [User's Schema](#users-schema)
       - [Pre Save](#pre-save)
@@ -32,7 +32,9 @@
     - [Init](#init)
     - [Config](#config)
     - [Database Connects](#database-connects)
-    - [Test Cases](#test-cases)
+    - [Jest - Test](#jest---test-1)
+      - [\_\_mocks\_\_](#__mocks__)
+      - [Coverage Test](#coverage-test)
   - [Babel](#babel)
     - [Config](#config-1)
 
@@ -67,7 +69,7 @@
   - Using my custom touch command to create files and folders
 
     ```Bash
-      touch -n @types/types.ts env/dev.env + prod.env + test.env src/config/database.ts src/controllers/users.ts src/middlewares/auth.ts src/models/user.ts src/routes/users.ts src/tests/user.test.js + database/database.js src/utils/message.ts + validator.ts src/app.ts src/index.ts babel.config.js
+      touch -n @types/types.ts env/dev.env + prod.env + test.env src/config/database.ts src/controllers/users.ts src/middlewares/auth.ts src/models/user.ts src/routes/users.ts src/tests/user.test.js + database/database.js + src/tests/__mocks__/@sendgrid/mail.ts src/utils/message.ts + validator.ts src/app.ts src/index.ts babel.config.js
     ```
 
 - Final Structure
@@ -92,6 +94,9 @@
     │   ├── routes
     │   │   └── users.ts
     │   ├── tests
+    │   │   ├── __mocks__
+    │   │   │   └── @sendgrid
+    │   │   │       └── mail.ts
     │   │   ├── database
     │   │   │   └── database.js
     │   │   └── user.test.js
@@ -129,7 +134,7 @@
     npm i morgan
 
     # Dev Dependencies
-    # npm i -D @types/bcrypt @types/cors @types/express @types/jsonwebtoken @types/mongoose @types/morgan @types/node @types/validator @types/jest jest ts-jest supertest ts-node-dev tsconfig-paths typescript @babel/cli @babel/core @babel/node @babel/preset-env @babel/preset-typescript babel-plugin-module-resolver
+    # npm i -D @types/bcrypt @types/cors @types/express @types/jsonwebtoken @types/mongoose @types/morgan @types/node @types/validator @types/jest @types/supertest jest ts-jest supertest ts-node-dev tsconfig-paths typescript @babel/cli @babel/core @babel/node @babel/preset-env @babel/preset-typescript babel-plugin-module-resolver
 
     npm i -D @types/bcrypt
     npm i -D @types/cors
@@ -139,6 +144,7 @@
     npm i -D @types/morgan
     npm i -D @types/node
     npm i -D @types/jest
+    npm i -D @types/supertest
     npm i -D jest
     npm i -D ts-jest
     npm i -D supertest
@@ -215,7 +221,7 @@
         "start": "node dist/index.js",
         "dev": "env-cmd -f ./env/dev.env ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts",
         "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
-        "test": "env-cmd -f ./env/test.env jest --watch --runInBand --detectOpenHandles"
+        "test": "env-cmd -f ./env/test.env jest --watch --coverage --runInBand --detectOpenHandles"
     },
     "jest": {
         "bail": 1,
@@ -245,7 +251,7 @@
             "start": "node dist/index.js",
             "dev": "env-cmd -f ./env/dev.env ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts",
             "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
-            "test": "env-cmd -f ./env/test.env jest --watch --runInBand --detectOpenHandles"
+            "test": "env-cmd -f ./env/test.env jest --watch --coverage --runInBand --detectOpenHandles"
         },
         "jest": {
             "bail": 1,
@@ -371,22 +377,22 @@
         comparePassword(password: string, callback: Callback): void;
     }
 
-    export interface User {
+    export type User = {
         _id?: string;
         firstName: string;
         lastName: string;
-    }
+    };
 
     export interface UserJWT extends User {
         iat: number;
         exp: number;
     }
 
-    export interface LoginForm {
+    export type LoginForm = {
         _id?: string;
         email: string;
         password: string;
-    }
+    };
 
     type ConcatForm = User & LoginForm;
 
@@ -395,45 +401,56 @@
         verifyToken?: string;
     }
 
+    export type DeleteForm = {
+        password: string;
+    };
+
+    export type ValidatePassword = {
+        password: string;
+    };
+
+    export type ResendEmailForm = {
+        email: string;
+    };
+
     export interface UpdateUserForm extends User {
+        password: string;
         newEmail: string;
         newPassword: string;
         confirmNewPassword: string;
     }
 
-    export interface MSGFn {
+    export type MSGFn = {
         (user: UserI, host: string): {
             from: string;
             to: string;
             subject: string;
             html: string;
         };
-    }
+    };
 
-    export interface JWTAccessFn {
+    export type JWTAccessFn = {
         (user: User): string;
-    }
+    };
 
-    export interface JWTVerifyFn {
+    export type JWTVerifyFn = {
         (mode: string): string;
-    }
+    };
 
-    export interface CheckFn {
+    export type CheckFn = {
         (string: string): boolean;
-    }
+    };
 
-    export type FormData = LoginForm & SignUpForm & UpdateUserForm;
-
-    export interface ValidatorFn {
-        (data: FormData): {
+    export type ValidatorFn<T> = {
+        (data: T): {
             errors: ErrorContainer;
             valid: boolean;
         };
-    }
+    };
 
-    export interface ErrorContainer {
+    export type ErrorContainer = {
         [key: string]: string;
-    }
+    };
   ```
 
 ## Database Connection
@@ -515,12 +532,10 @@
     import * as MSG from '@utils/message';
     import * as type from '@custom_types/types';
 
-    const JWT_VERIFICATION_EXPIRES_IN = process.env.JWT_VERIFICATION_EXPIRES_IN;
-
     sgMail.setApiKey(process.env.SENDGRID_KEY);
 
     const signUpUser: RequestHandler = async (req, res) => {
-        const form: type.FormData = req.body;
+        const form: type.SignUpForm = req.body;
 
         const { valid, errors } = validator.validateSignUpData(form);
         if (!valid) {
@@ -538,7 +553,7 @@
 
             delete form.confirmPassword;
             form.verifyToken = auth.createVerificationToken('email');
-            const newUser: any = new User(form);
+            const newUser: type.UserI = new User(form);
             await newUser.save();
 
             try {
@@ -546,7 +561,7 @@
                 await sgMail.send(msg);
             } catch (error) {
                 console.log(error);
-                res.status(500).json({
+                return res.status(500).json({
                     message:
                         'ERROR: Something went wrong sending you the email verification. Please try again later.',
                 });
@@ -566,7 +581,7 @@
     };
 
     const loginUser: RequestHandler = async (req, res) => {
-        const form: type.FormData = req.body;
+        const form: type.LoginForm = req.body;
 
         const { valid, errors } = validator.validateLoginData(form);
         if (!valid) {
@@ -620,7 +635,7 @@
     };
 
     const updateUser: RequestHandler = async (req, res) => {
-        const form: type.FormData = req.body;
+        const form: type.UpdateUserForm = req.body;
 
         const { valid, errors } = validator.validateUpdateData(form);
         if (!valid) return res.status(400).json(errors);
@@ -684,7 +699,7 @@
     };
 
     const deleteUser: RequestHandler = async (req, res) => {
-        const form: type.FormData = req.body;
+        const form: type.DeleteForm = req.body;
 
         const { valid, errors } = validator.validatePassword(form);
         if (!valid) return res.status(400).json(errors);
@@ -754,7 +769,7 @@
     };
 
     const resendVerifyEmail: RequestHandler = async (req, res) => {
-        const form: type.FormData = req.body;
+        const form: type.ResendEmailForm = req.body;
 
         const { valid, errors } = validator.validateEmail(form);
         if (!valid) return res.status(400).json(errors);
@@ -806,7 +821,7 @@
 
 ## Middlewares
 
-### Authentication
+### Authorization
 
 [Go Back to Contents](#contents)
 
@@ -934,21 +949,11 @@
                 trim: true,
                 unique: true,
                 lowercase: true,
-                validate(value: string): any {
-                    if (!validator.isEmail(value)) {
-                        throw new Error('Email is invalid');
-                    }
-                },
             },
             tempEmail: {
                 type: String,
                 trim: true,
                 lowercase: true,
-                validate(value: string): any {
-                    if (value && !validator.isEmail(value)) {
-                        throw new Error('Email is invalid');
-                    }
-                },
             },
             verifyToken: String,
             isEmailVerified: {
@@ -958,13 +963,8 @@
             password: {
                 type: String,
                 require: true,
-                minlength: 3,
+                minlength: process.env.PASSWORD_LEN,
                 trim: true,
-                validate(value: string): any {
-                    if (value.toLowerCase().includes('password')) {
-                        throw new Error('Password cannot contain "password"');
-                    }
-                },
             },
             admin: {
                 type: Boolean,
@@ -980,9 +980,7 @@
         const user = this;
 
         if (user.isModified('password')) {
-            if (user.password) {
-                user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
-            }
+            user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
         }
 
         next();
@@ -1185,7 +1183,7 @@
     import * as type from '@custom_types/types';
 
     const isEmpty: type.CheckFn = (string) => {
-        if (!string || string.trim() === '') return true;
+        if (!string || string.trim() === '' || string === '') return true;
         return false;
     };
 
@@ -1195,7 +1193,7 @@
         return false;
     };
 
-    const validateSignUpData: type.ValidatorFn = (data) => {
+    const validateSignUpData: type.ValidatorFn<type.SignUpForm> = (data) => {
         const errors: type.ErrorContainer = {};
 
         if (isEmpty(data.email)) {
@@ -1224,7 +1222,7 @@
         };
     };
 
-    const validateLoginData: type.ValidatorFn = (data) => {
+    const validateLoginData: type.ValidatorFn<type.LoginForm> = (data) => {
         const errors: type.ErrorContainer = {};
 
         if (isEmpty(data.email)) errors.email = 'Must not be empty.';
@@ -1238,28 +1236,31 @@
         };
     };
 
-    const validateUpdateData: type.ValidatorFn = (data) => {
+    const validateUpdateData: type.ValidatorFn<type.UpdateUserForm> = (data) => {
         const errors: type.ErrorContainer = {};
         let count = 0;
 
-        if (data.newEmail && isEmpty(data.newEmail)) {
-            errors.lastName = 'Must not be empty.';
+        if (data.hasOwnProperty('newEmail') && isEmpty(data.newEmail)) {
+            errors.newEmail = 'Must not be empty.';
         } else if (data.newEmail && !isEmail(data.newEmail)) {
             errors.newEmail = 'Must be a valid email address.';
         }
-        if (data.firstName && isEmpty(data.firstName))
+        if (data.hasOwnProperty('firstName') && isEmpty(data.firstName))
             errors.firstName = 'Must not be empty.';
-        if (data.lastName && isEmpty(data.lastName))
+        if (data.hasOwnProperty('lastName') && isEmpty(data.lastName))
             errors.lastName = 'Must not be empty.';
         if (isEmpty(data.password)) errors.password = 'Must not be empty.';
-        if (data.newPassword && isEmpty(data.newPassword))
+        if (data.hasOwnProperty('newPassword') && isEmpty(data.newPassword))
             errors.newPassword = 'Must not be empty.';
-        if (data.confirmNewPassword && isEmpty(data.confirmNewPassword))
-            errors.confNewPassword = 'Must not be empty.';
         if (
-            (data.newPassword &&
+            data.hasOwnProperty('confirmNewPassword') &&
+            isEmpty(data.confirmNewPassword)
+        )
+            errors.confirmNewPassword = 'Must not be empty.';
+        if (
+            (data.hasOwnProperty('newPassword') &&
                 data.newPassword.length < +process.env.PASSWORD_LEN) ||
-            (data.confirmNewPassword &&
+            (data.hasOwnProperty('confirmNewPassword') &&
                 data.confirmNewPassword.length < +process.env.PASSWORD_LEN)
         ) {
             errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
@@ -1271,7 +1272,7 @@
             if (data[key]) count++;
         });
 
-        if (count === 0) errors.unchanged = 'Must modify something.';
+        if (count === 1) errors.unchanged = 'Must modify something.';
 
         return {
             errors,
@@ -1279,11 +1280,15 @@
         };
     };
 
-    const validatePassword: type.ValidatorFn = (data) => {
+    const validatePassword: type.ValidatorFn<type.ValidatePassword> = (data) => {
         const errors: type.ErrorContainer = {};
 
-        if (isEmpty(data.password)) errors.password = 'Must not be empty.';
-        if (data.password && data.password.length < +process.env.PASSWORD_LEN)
+        if (data.hasOwnProperty('password') && isEmpty(data.password)) {
+            errors.password = 'Must not be empty.';
+        } else if (
+            data.hasOwnProperty('password') &&
+            data.password.length < +process.env.PASSWORD_LEN
+        )
             errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
 
         return {
@@ -1292,12 +1297,14 @@
         };
     };
 
-    const validateEmail: type.ValidatorFn = (data) => {
+    const validateEmail: type.ValidatorFn<type.ResendEmailForm> = (data) => {
         const errors: type.ErrorContainer = {};
 
-        if (isEmpty(data.email)) errors.email = 'Must not be empty.';
-        else if (!isEmail(data.email))
+        if (isEmpty(data.email)) {
+            errors.email = 'Must not be empty.';
+        } else if (!isEmail(data.email)) {
             errors.email = 'Must be a valid email address.';
+        }
 
         return {
             errors,
@@ -1498,7 +1505,7 @@
     export { user1, user2, setupDatabase };
   ```
 
-### Test Cases
+### Jest - Test
 
 [Go Back to Contents](#contents)
 
@@ -1515,26 +1522,27 @@
     import { user1, user2, setupDatabase } from './database/database';
     const URL = '/users';
     const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+    const PASSWORD_LEN = process.env.PASSWORD_LEN;
 
-    interface LoginResponse {
+    type LoginResponse = {
         body: {
             token: string;
         };
-    }
+    };
 
-    interface ResponseMSG {
+    type ResponseMSG = {
         body: {
             message: string;
         };
-    }
+    };
 
-    interface UserProfile {
+    type UserProfile = {
         body: {
             firstName: string;
             lastName: string;
             email: string;
         };
-    }
+    };
 
     beforeEach(setupDatabase);
 
@@ -1578,569 +1586,36 @@
             });
         });
 
-        it('Should not sign up - empty first name', async () => {
-            const form: type.SignUpForm = {
-                email: 'your_email_3@test.com',
-                firstName: '',
-                lastName: 'That 3',
-                password: 'test123',
-                confirmPassword: 'test123',
-            };
+        ...
 
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                firstName: 'Must not be empty.',
-            });
-        });
-
-        it('Should not sign up - empty last name', async () => {
-            const form: type.SignUpForm = {
-                email: 'your_email_3@test.com',
-                firstName: 'Roger 3',
-                lastName: '',
-                password: 'test123',
-                confirmPassword: 'test123',
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                lastName: 'Must not be empty.',
-            });
-        });
-
-        it('Should not sign up - empty email', async () => {
-            const form: type.SignUpForm = {
-                email: '',
-                firstName: 'Roger 3',
-                lastName: 'That 3',
-                password: 'test123',
-                confirmPassword: 'test123',
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                email: 'Must not be empty.',
-            });
-        });
-
-        it('Should not sign up - invalid email', async () => {
-            const form: type.SignUpForm = {
-                email: 'your_email_3@test',
-                firstName: 'Roger 3',
-                lastName: 'That 3',
-                password: 'test123',
-                confirmPassword: 'test123',
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                email: 'Must be a valid email address.',
-            });
-        });
-
-        it('Should not sign up - empty password', async () => {
-            const form: type.SignUpForm = {
-                email: 'your_email_3@test.com',
-                firstName: 'Roger 3',
-                lastName: 'That 3',
-                password: '',
-                confirmPassword: 'test123',
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                password: 'Must not be empty.',
-                passwords: 'Must be equal.',
-            });
-        });
-
-        it('Should not sign up - password length', async () => {
-            const form: type.SignUpForm = {
-                email: 'your_email_3@test.com',
-                firstName: 'Roger 3',
-                lastName: 'That 3',
-                password: '12',
-                confirmPassword: '12',
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                passwordLength: `Must not be greater than ${process.env.PASSWORD_LEN} characters.`,
-            });
-        });
-
-        it('Should not sign up - empty confirm password', async () => {
-            const form: type.SignUpForm = {
-                email: 'your_email_3@test.com',
-                firstName: 'Roger 3',
-                lastName: 'That 3',
-                password: 'test123',
-                confirmPassword: '',
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                confirmPassword: 'Must not be empty.',
-                passwords: 'Must be equal.',
-            });
-        });
-
-        it('Should not sign up - wrong confirm password', async () => {
-            const form: type.SignUpForm = {
-                email: 'your_email_3@test.com',
-                firstName: 'Roger 3',
-                lastName: 'That 3',
-                password: 'test123',
-                confirmPassword: 'test123wrong',
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                passwords: 'Must be equal.',
-            });
-        });
-
-        it('Should not sign up - empty form', async () => {
-            const form: type.SignUpForm = {
-                email: '',
-                firstName: '',
-                lastName: '',
-                password: '',
-                confirmPassword: '',
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                firstName: 'Must not be empty.',
-                lastName: 'Must not be empty.',
-                email: 'Must not be empty.',
-                password: 'Must not be empty.',
-                confirmPassword: 'Must not be empty.',
-            });
-        });
-
-        it('Should verify account', async () => {
-            const form: type.SignUpForm = {
-                email: 'your_email_3@test.com',
-                firstName: 'Roger 3',
-                lastName: 'That 3',
-                password: 'test123',
-                confirmPassword: 'test123',
-            };
-
-            await request(app).post(`${URL}/signup`).send(form).expect(201);
-            const user: type.UserI = await User.findOne({ email: form.email });
-            expect(user).not.toBeNull();
-
-            const response = await request(app)
-                .get(`${URL}/verify-email/${user.verifyToken}`)
-                .expect(200);
-            expect(response.body).toMatchObject({
-                message: 'Thank you! Your email has been verified.',
-            });
-        });
-
-        it('Should not verify account - empty email token', async () => {
-            const form: type.SignUpForm = {
-                email: 'your_email_3@test.com',
-                firstName: 'Roger 3',
-                lastName: 'That 3',
-                password: 'test123',
-                confirmPassword: 'test123',
-            };
-
-            await request(app).post(`${URL}/signup`).send(form).expect(201);
-            const user: type.UserI = await User.findOne({ email: form.email });
-            expect(user).not.toBeNull();
-
-            await request(app).get(`${URL}/verify-email/`).expect(404);
-        });
-
-        it('Should not verify account - invalid email token', async () => {
-            const form: type.SignUpForm = {
-                email: 'your_email_3@test.com',
-                firstName: 'Roger 3',
-                lastName: 'That 3',
-                password: 'test123',
-                confirmPassword: 'test123',
-            };
-
-            await request(app).post(`${URL}/signup`).send(form).expect(201);
-            const user: type.UserI = await User.findOne({ email: form.email });
-            expect(user).not.toBeNull();
-
-            const response = await request(app)
-                .get(
-                    `${URL}/verify-email/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZW1haWwiLCJpYXQiOjE2MDI2ODg3MjEsImV4cCI6MTYwMzI5MzUyMX0.CWhtDg0BYoaL9sld0hwOd7U12agsXSB-7SZ6XYF9hko`
-                )
-                .expect(404);
-            expect(response.body).toMatchObject({
-                message: 'ERROR: Invalid/Expired email token.',
-            });
-        });
-
-        it('Should login - verified email', async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password,
-            };
-
-            const response: LoginResponse = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(200);
-            const userData = <type.UserJWT>(
-                jwt.verify(response.body.token, JWT_SECRET_KEY)
-            );
-            const user: type.UserI = await User.findOne({ email: form.email });
-            expect(user).not.toBeNull();
-            expect(userData).toMatchObject({
-                firstName: user1.firstName,
-                lastName: user1.lastName,
-            });
-        });
-
-        it('Should not login - unverified user', async () => {
-            const form: type.LoginForm = {
-                email: user2.email,
-                password: user2.password,
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(403);
-            expect(response.body).toMatchObject({
-                message: 'ERROR: Please verify your email first.',
-            });
-        });
-
-        it('Should not login - wrong password', async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password + 'wrong_password',
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(403);
-            expect(response.body).toMatchObject({
-                message: 'ERROR: Wrong credentials.',
-            });
-        });
-
-        it('Should not login - empty password', async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: '',
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                password: 'Must not be empty.',
-            });
-        });
-
-        it('Should not login - invalid email', async () => {
-            const form: type.LoginForm = {
-                email: 'your_email_3@test',
-                password: user1.password,
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                email: 'Must be a valid email address.',
-            });
-        });
-
-        it('Should not login - empty email', async () => {
-            const form: type.LoginForm = {
-                email: '',
-                password: user1.password,
-            };
-
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(400);
-            expect(response.body).toMatchObject({
-                email: 'Must not be empty.',
-            });
-        });
-
-        it("Should fetch user's profile", async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password,
-            };
-
-            const response: LoginResponse = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(200);
-            const token: string = response.body.token;
-            const profile: UserProfile = await request(app)
-                .get(`${URL}/profile`)
-                .set('Authorization', `Bearer ${token}`)
-                .expect(200);
-            expect(profile.body).toMatchObject({
-                firstName: user1.firstName,
-                lastName: user1.lastName,
-                email: user1.email,
-            });
-        });
-
-        it("Should not fetch user's profile - invalid token", async () => {
-            const invalidToken =
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
-            const profile: UserProfile = await request(app)
-                .get(`${URL}/profile`)
-                .set('Authorization', `Bearer ${invalidToken}`)
-                .expect(401);
-            expect(profile.body).toMatchObject({
-                message: 'Invalid token.',
-            });
-        });
-
-        it("Should not fetch user's profile - empty token", async () => {
-            const profile: UserProfile = await request(app)
-                .get(`${URL}/profile`)
-                .send()
-                .expect(401);
-            expect(profile.body).toMatchObject({
-                message: 'Invalid token.',
-            });
-        });
-
-        it("Should update user's profile - fistName", async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password,
-            };
-
-            const response: LoginResponse = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(200);
-            const token: string = response.body.token;
-            const updateUser = <type.FormData>{
-                firstName: 'Roger Update',
-                password: user1.password,
-            };
-            await request(app)
-                .put(`${URL}/profile`)
-                .send(updateUser)
-                .set('Authorization', `Bearer ${token}`)
-                .expect(200);
-            const user: type.UserI = await User.findById({ _id: user1._id });
-            expect(user).toMatchObject({
-                firstName: updateUser.firstName,
-            });
-        });
-
-        it("Should update user's profile - lastName", async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password,
-            };
-
-            const response: LoginResponse = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(200);
-            const token: string = response.body.token;
-            const updateUser = <type.FormData>{
-                lastName: 'That Update',
-                password: user1.password,
-            };
-            await request(app)
-                .put(`${URL}/profile`)
-                .send(updateUser)
-                .set('Authorization', `Bearer ${token}`)
-                .expect(200);
-            const user: type.UserI = await User.findById({ _id: user1._id });
-            expect(user).toMatchObject({
-                lastName: updateUser.lastName,
-            });
-        });
-
-        it("Should update user's profile - password", async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password,
-            };
-
-            const response: LoginResponse = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(200);
-            const token: string = response.body.token;
-            const updateUser = <type.FormData>{
-                password: user1.password,
-                newPassword: '12345',
-                confirmNewPassword: '12345',
-            };
-            await request(app)
-                .put(`${URL}/profile`)
-                .send(updateUser)
-                .set('Authorization', `Bearer ${token}`)
-                .expect(200);
-
-            const form2: type.LoginForm = {
-                email: user1.email,
-                password: updateUser.newPassword,
-            };
-            const response2: LoginResponse = await request(app)
-                .post(`${URL}/login`)
-                .send(form2)
-                .expect(200);
-            expect(typeof response2.body.token).toBe('string');
-        });
-
-        it("Should not update user's profile - password length", async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password,
-            };
-
-            const response: LoginResponse = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(200);
-            const token: string = response.body.token;
-            const updateUser = <type.FormData>{
-                password: user1.password,
-                newPassword: '12',
-                confirmNewPassword: '12',
-            };
-            const response2 = await request(app)
-                .put(`${URL}/profile`)
-                .send(updateUser)
-                .set('Authorization', `Bearer ${token}`)
-                .expect(400);
-            expect(response2.body).toMatchObject({
-                passwordLength: `Must not be greater than ${process.env.PASSWORD_LEN} characters.`,
-            });
-        });
-
-        it("Should update user's profile - email", async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password,
-            };
-
-            const response: LoginResponse = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(200);
-            const token: string = response.body.token;
-            const updateUser = <type.FormData>{
-                password: user1.password,
-                newEmail: 'your_email_3_update@test.com',
-            };
-            await request(app)
-                .put(`${URL}/profile`)
-                .send(updateUser)
-                .set('Authorization', `Bearer ${token}`)
-                .expect(200);
-            const user: type.UserI = await User.findById({ _id: user1._id });
-            expect(user).toMatchObject({
-                tempEmail: updateUser.newEmail,
-            });
-        });
-
-        it('Should delete user/profile', async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password,
-            };
-
-            const response: LoginResponse = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(200);
-            const token: string = response.body.token;
-            const response2: UserProfile = await request(app)
-                .delete(`${URL}/profile`)
-                .set('Authorization', `Bearer ${token}`)
-                .send({ password: form.password })
-                .expect(200);
-            expect(response2.body).toMatchObject({
-                message: 'Your account has been deleted.',
-            });
-        });
-
-        it('Should not delete user/profile - invalid token', async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password,
-            };
-
-            const response: UserProfile = await request(app)
-                .delete(`${URL}/profile`)
-                .send({ password: form.password })
-                .expect(401);
-            expect(response.body).toMatchObject({
-                message: 'Invalid token.',
-            });
-        });
-
-        it('Should not delete user/profile - invalid password', async () => {
-            const form: type.LoginForm = {
-                email: user1.email,
-                password: user1.password,
-            };
-
-            const response: LoginResponse = await request(app)
-                .post(`${URL}/login`)
-                .send(form)
-                .expect(200);
-            const token: string = response.body.token;
-            const response2: UserProfile = await request(app)
-                .delete(`${URL}/profile`)
-                .set('Authorization', `Bearer ${token}`)
-                .send({ password: form.password + 'wrong_password' })
-                .expect(403);
-            expect(response2.body).toMatchObject({
-                message: 'ERROR: Wrong password.',
-            });
-        });
     });
   ```
+
+#### \_\_mocks\_\_
+
+[Go Back to Contents](#contents)
+
+- We use `__mocks__` to override the `node_modules/@sendgrind/mail`
+
+  - To override something, we just need to follow the same structure of the package
+  - In `tests/__mocks__/@sendgrid`
+
+    - We are going to override the **setApiKey** and **send** methods
+
+      ```TypeScript
+        module.exports = {
+            setApiKey() {},
+            send() {},
+        };
+      ```
+
+#### Coverage Test
+
+[Go Back to Contents](#contents)
+
+- To display the coverage test
+  - Remove `--watch` from the test script in the `package.json`
+  - Run the command `npm run test -- --coverage`
 
 ## Babel
 

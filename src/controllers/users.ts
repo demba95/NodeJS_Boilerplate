@@ -10,7 +10,7 @@ import * as type from '@custom_types/types';
 sgMail.setApiKey(process.env.SENDGRID_KEY);
 
 const signUpUser: RequestHandler = async (req, res) => {
-    const form: type.FormData = req.body;
+    const form: type.SignUpForm = req.body;
 
     const { valid, errors } = validator.validateSignUpData(form);
     if (!valid) {
@@ -28,7 +28,7 @@ const signUpUser: RequestHandler = async (req, res) => {
 
         delete form.confirmPassword;
         form.verifyToken = auth.createVerificationToken('email');
-        const newUser: any = new User(form);
+        const newUser: type.UserI = new User(form);
         await newUser.save();
 
         try {
@@ -36,7 +36,7 @@ const signUpUser: RequestHandler = async (req, res) => {
             await sgMail.send(msg);
         } catch (error) {
             console.log(error);
-            res.status(500).json({
+            return res.status(500).json({
                 message:
                     'ERROR: Something went wrong sending you the email verification. Please try again later.',
             });
@@ -56,7 +56,7 @@ const signUpUser: RequestHandler = async (req, res) => {
 };
 
 const loginUser: RequestHandler = async (req, res) => {
-    const form: type.FormData = req.body;
+    const form: type.LoginForm = req.body;
 
     const { valid, errors } = validator.validateLoginData(form);
     if (!valid) {
@@ -110,7 +110,7 @@ const getUser: RequestHandler = async (req, res) => {
 };
 
 const updateUser: RequestHandler = async (req, res) => {
-    const form: type.FormData = req.body;
+    const form: type.UpdateUserForm = req.body;
 
     const { valid, errors } = validator.validateUpdateData(form);
     if (!valid) return res.status(400).json(errors);
@@ -174,7 +174,7 @@ const updateUser: RequestHandler = async (req, res) => {
 };
 
 const deleteUser: RequestHandler = async (req, res) => {
-    const form: type.FormData = req.body;
+    const form: type.DeleteForm = req.body;
 
     const { valid, errors } = validator.validatePassword(form);
     if (!valid) return res.status(400).json(errors);
@@ -244,7 +244,7 @@ const verifyEmail: RequestHandler = async (req, res) => {
 };
 
 const resendVerifyEmail: RequestHandler = async (req, res) => {
-    const form: type.FormData = req.body;
+    const form: type.ResendEmailForm = req.body;
 
     const { valid, errors } = validator.validateEmail(form);
     if (!valid) return res.status(400).json(errors);

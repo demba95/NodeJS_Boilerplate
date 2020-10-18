@@ -6,26 +6,27 @@ import * as type from '@custom_types/types';
 import { user1, user2, setupDatabase } from './database/database';
 const URL = '/users';
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const PASSWORD_LEN = process.env.PASSWORD_LEN;
 
-interface LoginResponse {
+type LoginResponse = {
     body: {
         token: string;
     };
-}
+};
 
-interface ResponseMSG {
+type ResponseMSG = {
     body: {
         message: string;
     };
-}
+};
 
-interface UserProfile {
+type UserProfile = {
     body: {
         firstName: string;
         lastName: string;
         email: string;
     };
-}
+};
 
 beforeEach(setupDatabase);
 
@@ -174,7 +175,7 @@ describe("User's API", () => {
             .send(form)
             .expect(400);
         expect(response.body).toMatchObject({
-            passwordLength: `Must not be greater than ${process.env.PASSWORD_LEN} characters.`,
+            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -437,7 +438,7 @@ describe("User's API", () => {
         });
     });
 
-    it("Should update user's profile - fistName", async () => {
+    it("Should update user's fistName", async () => {
         const form: type.LoginForm = {
             email: user1.email,
             password: user1.password,
@@ -448,7 +449,7 @@ describe("User's API", () => {
             .send(form)
             .expect(200);
         const token: string = response.body.token;
-        const updateUser = <type.FormData>{
+        const updateUser = <type.UpdateUserForm>{
             firstName: 'Roger Update',
             password: user1.password,
         };
@@ -463,7 +464,7 @@ describe("User's API", () => {
         });
     });
 
-    it("Should update user's profile - lastName", async () => {
+    it("Should update user's lastName", async () => {
         const form: type.LoginForm = {
             email: user1.email,
             password: user1.password,
@@ -474,7 +475,7 @@ describe("User's API", () => {
             .send(form)
             .expect(200);
         const token: string = response.body.token;
-        const updateUser = <type.FormData>{
+        const updateUser = <type.UpdateUserForm>{
             lastName: 'That Update',
             password: user1.password,
         };
@@ -489,7 +490,7 @@ describe("User's API", () => {
         });
     });
 
-    it("Should update user's profile - password", async () => {
+    it('Should update password', async () => {
         const form: type.LoginForm = {
             email: user1.email,
             password: user1.password,
@@ -500,7 +501,7 @@ describe("User's API", () => {
             .send(form)
             .expect(200);
         const token: string = response.body.token;
-        const updateUser = <type.FormData>{
+        const updateUser = <type.UpdateUserForm>{
             password: user1.password,
             newPassword: '12345',
             confirmNewPassword: '12345',
@@ -522,6 +523,31 @@ describe("User's API", () => {
         expect(typeof response2.body.token).toBe('string');
     });
 
+    it("Should not update user's profile - empty password", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const updateUser = <type.UpdateUserForm>{
+            firstName: 'new name',
+            password: '',
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            password: 'Must not be empty.',
+        });
+    });
+
     it("Should not update user's profile - password length", async () => {
         const form: type.LoginForm = {
             email: user1.email,
@@ -533,7 +559,7 @@ describe("User's API", () => {
             .send(form)
             .expect(200);
         const token: string = response.body.token;
-        const updateUser = <type.FormData>{
+        const updateUser = <type.UpdateUserForm>{
             password: user1.password,
             newPassword: '12',
             confirmNewPassword: '12',
@@ -544,11 +570,11 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            passwordLength: `Must not be greater than ${process.env.PASSWORD_LEN} characters.`,
+            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
-    it("Should update user's profile - email", async () => {
+    it("Should not update user's email - empty new email", async () => {
         const form: type.LoginForm = {
             email: user1.email,
             password: user1.password,
@@ -559,7 +585,210 @@ describe("User's API", () => {
             .send(form)
             .expect(200);
         const token: string = response.body.token;
-        const updateUser = <type.FormData>{
+        const updateUser2 = <type.UpdateUserForm>{
+            password: user1.password,
+            newEmail: '',
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser2)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            newEmail: 'Must not be empty.',
+        });
+    });
+
+    it("Should not update user's first Name - empty first name", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const updateUser2 = <type.UpdateUserForm>{
+            password: user1.password,
+            firstName: '',
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser2)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            firstName: 'Must not be empty.',
+        });
+    });
+
+    it("Should not update user's last Name - empty last name", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const updateUser2 = <type.UpdateUserForm>{
+            password: user1.password,
+            lastName: '',
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser2)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            lastName: 'Must not be empty.',
+        });
+    });
+
+    it("Should not update user's password - empty new password", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const updateUser2 = <type.UpdateUserForm>{
+            password: user1.password,
+            newPassword: '',
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser2)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            newPassword: 'Must not be empty.',
+        });
+    });
+
+    it("Should not update user's password - empty confirm new password", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const updateUser2 = <type.UpdateUserForm>{
+            password: user1.password,
+            confirmNewPassword: '',
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser2)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            confirmNewPassword: 'Must not be empty.',
+            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            passwords: 'Must be equal.',
+            unchanged: 'Must modify something.',
+        });
+    });
+
+    it("Should not update user's email - invalid new email", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const updateUser = <type.UpdateUserForm>{
+            password: user1.password,
+            newEmail: 'roger@',
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            newEmail: 'Must be a valid email address.',
+        });
+    });
+
+    it("Should not update user's email - email already in use", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const updateUser = <type.UpdateUserForm>{
+            password: user1.password,
+            newEmail: user2.email,
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            message: `ERROR: Email (${user2.email}) is already in use.`,
+        });
+    });
+
+    it("Should not update user's profile - wrong credentials", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const updateUser = <type.UpdateUserForm>{
+            password: user1.password + 'wrong_password',
+            newEmail: 'new_email@email.com',
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(403);
+        expect(response2.body).toMatchObject({
+            message: 'ERROR: Wrong credentials.',
+        });
+    });
+
+    it("Should update user's email", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const updateUser = <type.UpdateUserForm>{
             password: user1.password,
             newEmail: 'your_email_3_update@test.com',
         };
@@ -628,6 +857,89 @@ describe("User's API", () => {
             .expect(403);
         expect(response2.body).toMatchObject({
             message: 'ERROR: Wrong password.',
+        });
+    });
+
+    it('Should not delete user/profile - empty password', async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const response2: UserProfile = await request(app)
+            .delete(`${URL}/profile`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ password: '' })
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            password: 'Must not be empty.',
+        });
+    });
+
+    it('Should not delete user/profile - invalid password length', async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const response2: UserProfile = await request(app)
+            .delete(`${URL}/profile`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ password: '123' })
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+        });
+    });
+
+    it('Should not delete user/profile - invalid password', async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body.token;
+        const response2: UserProfile = await request(app)
+            .delete(`${URL}/profile`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ password: form.password + 'wrong_password' })
+            .expect(403);
+        expect(response2.body).toMatchObject({
+            message: 'ERROR: Wrong password.',
+        });
+    });
+
+    it('Should not resend email verification - empty email', async () => {
+        const response: UserProfile = await request(app)
+            .post(`${URL}/verify-email`)
+            .send({ email: '' })
+            .expect(400);
+        expect(response.body).toMatchObject({
+            email: 'Must not be empty.',
+        });
+    });
+
+    it('Should not resend email verification - invalid email', async () => {
+        const response: UserProfile = await request(app)
+            .post(`${URL}/verify-email`)
+            .send({ email: 'invalid_email@email' })
+            .expect(400);
+        expect(response.body).toMatchObject({
+            email: 'Must be a valid email address.',
         });
     });
 });

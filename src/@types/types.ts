@@ -21,22 +21,22 @@ export interface UserI extends Document {
     comparePassword(password: string, callback: Callback): void;
 }
 
-export interface User {
+export type User = {
     _id?: string;
     firstName: string;
     lastName: string;
-}
+};
 
 export interface UserJWT extends User {
     iat: number;
     exp: number;
 }
 
-export interface LoginForm {
+export type LoginForm = {
     _id?: string;
     email: string;
     password: string;
-}
+};
 
 type ConcatForm = User & LoginForm;
 
@@ -45,42 +45,53 @@ export interface SignUpForm extends ConcatForm {
     verifyToken?: string;
 }
 
+export type DeleteForm = {
+    password: string;
+};
+
+export type ValidatePassword = {
+    password: string;
+};
+
+export type ResendEmailForm = {
+    email: string;
+};
+
 export interface UpdateUserForm extends User {
+    password: string;
     newEmail: string;
     newPassword: string;
     confirmNewPassword: string;
 }
 
-export interface MSGFn {
+export type MSGFn = {
     (user: UserI, host: string): {
         from: string;
         to: string;
         subject: string;
         html: string;
     };
-}
+};
 
-export interface JWTAccessFn {
+export type JWTAccessFn = {
     (user: User): string;
-}
+};
 
-export interface JWTVerifyFn {
+export type JWTVerifyFn = {
     (mode: string): string;
-}
+};
 
-export interface CheckFn {
+export type CheckFn = {
     (string: string): boolean;
-}
+};
 
-export type FormData = LoginForm & SignUpForm & UpdateUserForm;
-
-export interface ValidatorFn {
-    (data: FormData): {
+export type ValidatorFn<T> = {
+    (data: T): {
         errors: ErrorContainer;
         valid: boolean;
     };
-}
+};
 
-export interface ErrorContainer {
+export type ErrorContainer = {
     [key: string]: string;
-}
+};
