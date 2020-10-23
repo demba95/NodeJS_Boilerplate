@@ -32,7 +32,7 @@
     - [Init](#init)
     - [Config](#config)
     - [Database Connects](#database-connects)
-    - [Jest - Test](#jest---test-1)
+    - [Test Cases](#test-cases)
       - [\_\_mocks\_\_](#__mocks__)
       - [Coverage Test](#coverage-test)
   - [Babel](#babel)
@@ -560,7 +560,6 @@
                 const msg = MSG.signUp(newUser, req.headers.host);
                 await sgMail.send(msg);
             } catch (error) {
-                console.log(error);
                 return res.status(500).json({
                     message:
                         'ERROR: Something went wrong sending you the email verification. Please try again later.',
@@ -572,7 +571,6 @@
                     'Your account has been created. Please check your email to verify your account.',
             });
         } catch (error) {
-            console.log(error);
             res.status(500).json({
                 message:
                     'ERROR: Something went wrong while trying to sign up. Please try again later or contact our support.',
@@ -609,7 +607,6 @@
                 res.status(403).json({ message: 'ERROR: Wrong credentials.' });
             });
         } catch (error) {
-            console.log(error);
             res.status(500).json({
                 message:
                     'ERROR: Something went wrong while trying to login. Please try again later or contact our support.',
@@ -626,7 +623,6 @@
 
             res.json(user);
         } catch (error) {
-            console.log(error);
             res.status(500).json({
                 message:
                     'ERROR: Something went wrong while trying to get profile. Please try again later or contact our support.',
@@ -674,7 +670,6 @@
                             const msg = MSG.updateEmail(user, req.headers.host);
                             await sgMail.send(msg);
                         } catch (error) {
-                            console.log(error);
                             res.status(500).json({
                                 message:
                                     'ERROR: Something went wrong sending you the email verification. Please try again later.',
@@ -690,7 +685,6 @@
                 res.status(403).json({ message: 'ERROR: Wrong credentials.' });
             });
         } catch (error) {
-            console.log(error);
             res.status(500).json({
                 message:
                     'ERROR: Something went wrong while updating. Please try again later or contact our support.',
@@ -719,7 +713,6 @@
                 res.status(403).json({ message: 'ERROR: Wrong password.' });
             });
         } catch (error) {
-            console.log(error);
             res.status(500).json({
                 message:
                     'ERROR: Something went wrong while deleting. Please try again later or contact our support.',
@@ -741,7 +734,6 @@
             const user: type.UserI = await User.findOne({
                 verifyToken: token,
             });
-
             if (!user) {
                 return res
                     .status(404)
@@ -760,7 +752,6 @@
 
             res.json({ message: 'Thank you! Your email has been verified.' });
         } catch (error) {
-            console.log(error);
             res.status(500).json({
                 message:
                     'ERROR: Something went wrong verifying your account. Please try again later.',
@@ -777,20 +768,21 @@
         try {
             const user: type.UserI = await User.findOne({ email: req.body.email });
             if (!user) {
-                return res.status(404).json({ message: 'ERROR: User not found.' });
+                return res.status(404).json({ message: 'ERROR: Email not found.' });
             }
 
             if (user.isEmailVerified) {
                 return res.json({ message: 'Your account is already verified.' });
             }
+
+            user.verifyToken = auth.createVerificationToken('email');
+            await user.save();
+
             try {
-                user.verifyToken = auth.createVerificationToken('email');
-                await user.save();
                 const msg = MSG.signUp(user, req.headers.host);
                 await sgMail.send(msg);
             } catch (error) {
-                console.log(error);
-                res.status(500).json({
+                return res.status(500).json({
                     message:
                         'ERROR: Something went wrong sending you the email verification. Please try again later.',
                 });
@@ -800,7 +792,6 @@
                 message: 'Please check your email to verify your account.',
             });
         } catch (error) {
-            console.log(error);
             res.status(500).json({
                 message:
                     'ERROR: Something went wrong with the email verification. Please try again later.',
@@ -867,32 +858,31 @@
       const JWT_VERIFICATION_EXPIRES_IN = process.env.JWT_VERIFICATION_EXPIRES_IN;
 
       const auth: RequestHandler = (req, res, next) => {
+          let token: string =
+              req.get('Authorization') || req.query.token || req.body.token;
+
           try {
-              let token: string =
-                  req.get('Authorization') || req.query.token || req.body.token;
-
-              try {
-                  if (token) {
-                      token = token.replace('Bearer ', '');
-                      const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
-                      if (!user) {
-                          return res.status(401).json({ message: 'Not authorized.' });
-                      }
-
-                      req.user = user;
-                      next();
-                  } else {
-                      throw new Error();
+              if (token) {
+                  token = token.replace('Bearer ', '');
+                  const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
+                  if (
+                      !user ||
+                      !user.hasOwnProperty('firstName') ||
+                      !user.hasOwnProperty('lastName') ||
+                      !user.hasOwnProperty('_id')
+                  ) {
+                      return res
+                          .status(401)
+                          .json({ message: 'Not authorized, invalid token.' });
                   }
-              } catch (error) {
-                  return res.status(401).json({ message: 'Invalid token.' });
+
+                  req.user = user;
+                  next();
+              } else {
+                  res.status(401).json({ message: 'Token not found.' });
               }
           } catch (error) {
-              console.log(error);
-              res.status(500).json({
-                  message:
-                      'ERROR: Something went wrong while authorizing request. Please try again later.',
-              });
+              return res.status(401).json({ message: 'Invalid token.' });
           }
       };
 
@@ -1211,7 +1201,7 @@
             (data.confirmPassword &&
                 data.confirmPassword.length < +process.env.PASSWORD_LEN)
         ) {
-            errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
+            errors.passwordLength = `Must be greater than ${process.env.PASSWORD_LEN} characters.`;
         }
         if (data.password !== data.confirmPassword)
             errors.passwords = 'Must be equal.';
@@ -1263,7 +1253,7 @@
             (data.hasOwnProperty('confirmNewPassword') &&
                 data.confirmNewPassword.length < +process.env.PASSWORD_LEN)
         ) {
-            errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
+            errors.passwordLength = `Must be greater than ${process.env.PASSWORD_LEN} characters.`;
         }
         if (data.newPassword !== data.confirmNewPassword)
             errors.passwords = 'Must be equal.';
@@ -1289,7 +1279,7 @@
             data.hasOwnProperty('password') &&
             data.password.length < +process.env.PASSWORD_LEN
         )
-            errors.passwordLength = `Must not be greater than ${process.env.PASSWORD_LEN} characters.`;
+            errors.passwordLength = `Must be greater than ${process.env.PASSWORD_LEN} characters.`;
 
         return {
             errors,
@@ -1300,9 +1290,9 @@
     const validateEmail: type.ValidatorFn<type.ResendEmailForm> = (data) => {
         const errors: type.ErrorContainer = {};
 
-        if (isEmpty(data.email)) {
+        if (data.hasOwnProperty('email') && isEmpty(data.email)) {
             errors.email = 'Must not be empty.';
-        } else if (!isEmail(data.email)) {
+        } else if (data.hasOwnProperty('email') && !isEmail(data.email)) {
             errors.email = 'Must be a valid email address.';
         }
 
@@ -1505,7 +1495,7 @@
     export { user1, user2, setupDatabase };
   ```
 
-### Jest - Test
+### Test Cases
 
 [Go Back to Contents](#contents)
 
@@ -1614,8 +1604,13 @@
 [Go Back to Contents](#contents)
 
 - To display the coverage test
-  - Remove `--watch` from the test script in the `package.json`
-  - Run the command `npm run test -- --coverage`
+
+  - Replace `--watch` with `--coverage` from the test script in the `package.json`
+  - Run the command `npm run test`
+
+  ![](https://i.imgur.com/y30gXeW.png)
+
+  - **NOTE** still needs more tests to handle the `return res.status(500)` in `src/controllers/users.ts` to reach 100% of coverage.
 
 ## Babel
 

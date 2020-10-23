@@ -118,9 +118,9 @@ const validatePassword: type.ValidatorFn<type.ValidatePassword> = (data) => {
 const validateEmail: type.ValidatorFn<type.ResendEmailForm> = (data) => {
     const errors: type.ErrorContainer = {};
 
-    if (isEmpty(data.email)) {
+    if (data.hasOwnProperty('email') && isEmpty(data.email)) {
         errors.email = 'Must not be empty.';
-    } else if (!isEmail(data.email)) {
+    } else if (data.hasOwnProperty('email') && !isEmail(data.email)) {
         errors.email = 'Must be a valid email address.';
     }
 

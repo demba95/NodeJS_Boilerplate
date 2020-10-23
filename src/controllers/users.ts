@@ -35,7 +35,6 @@ const signUpUser: RequestHandler = async (req, res) => {
             const msg = MSG.signUp(newUser, req.headers.host);
             await sgMail.send(msg);
         } catch (error) {
-            console.log(error);
             return res.status(500).json({
                 message:
                     'ERROR: Something went wrong sending you the email verification. Please try again later.',
@@ -47,7 +46,6 @@ const signUpUser: RequestHandler = async (req, res) => {
                 'Your account has been created. Please check your email to verify your account.',
         });
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message:
                 'ERROR: Something went wrong while trying to sign up. Please try again later or contact our support.',
@@ -84,7 +82,6 @@ const loginUser: RequestHandler = async (req, res) => {
             res.status(403).json({ message: 'ERROR: Wrong credentials.' });
         });
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message:
                 'ERROR: Something went wrong while trying to login. Please try again later or contact our support.',
@@ -101,7 +98,6 @@ const getUser: RequestHandler = async (req, res) => {
 
         res.json(user);
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message:
                 'ERROR: Something went wrong while trying to get profile. Please try again later or contact our support.',
@@ -149,7 +145,6 @@ const updateUser: RequestHandler = async (req, res) => {
                         const msg = MSG.updateEmail(user, req.headers.host);
                         await sgMail.send(msg);
                     } catch (error) {
-                        console.log(error);
                         res.status(500).json({
                             message:
                                 'ERROR: Something went wrong sending you the email verification. Please try again later.',
@@ -165,7 +160,6 @@ const updateUser: RequestHandler = async (req, res) => {
             res.status(403).json({ message: 'ERROR: Wrong credentials.' });
         });
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message:
                 'ERROR: Something went wrong while updating. Please try again later or contact our support.',
@@ -194,7 +188,6 @@ const deleteUser: RequestHandler = async (req, res) => {
             res.status(403).json({ message: 'ERROR: Wrong password.' });
         });
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message:
                 'ERROR: Something went wrong while deleting. Please try again later or contact our support.',
@@ -216,7 +209,6 @@ const verifyEmail: RequestHandler = async (req, res) => {
         const user: type.UserI = await User.findOne({
             verifyToken: token,
         });
-
         if (!user) {
             return res
                 .status(404)
@@ -235,7 +227,6 @@ const verifyEmail: RequestHandler = async (req, res) => {
 
         res.json({ message: 'Thank you! Your email has been verified.' });
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message:
                 'ERROR: Something went wrong verifying your account. Please try again later.',
@@ -252,20 +243,21 @@ const resendVerifyEmail: RequestHandler = async (req, res) => {
     try {
         const user: type.UserI = await User.findOne({ email: req.body.email });
         if (!user) {
-            return res.status(404).json({ message: 'ERROR: User not found.' });
+            return res.status(404).json({ message: 'ERROR: Email not found.' });
         }
 
         if (user.isEmailVerified) {
             return res.json({ message: 'Your account is already verified.' });
         }
+
+        user.verifyToken = auth.createVerificationToken('email');
+        await user.save();
+
         try {
-            user.verifyToken = auth.createVerificationToken('email');
-            await user.save();
             const msg = MSG.signUp(user, req.headers.host);
             await sgMail.send(msg);
         } catch (error) {
-            console.log(error);
-            res.status(500).json({
+            return res.status(500).json({
                 message:
                     'ERROR: Something went wrong sending you the email verification. Please try again later.',
             });
@@ -275,7 +267,6 @@ const resendVerifyEmail: RequestHandler = async (req, res) => {
             message: 'Please check your email to verify your account.',
         });
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message:
                 'ERROR: Something went wrong with the email verification. Please try again later.',

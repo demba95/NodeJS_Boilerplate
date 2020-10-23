@@ -7,7 +7,7 @@
         "start": "node dist/index.js",
         "dev": "env-cmd -f ./env/dev.env ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts",
         "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
-        "test": "env-cmd -f ./env/test.env jest --watch --coverage --runInBand --detectOpenHandles"
+        "test": "env-cmd -f ./env/test.env jest --watch --runInBand --detectOpenHandles"
     },
     "jest": {
         "bail": 1,

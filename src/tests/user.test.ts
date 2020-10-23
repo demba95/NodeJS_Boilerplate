@@ -292,9 +292,9 @@ describe("User's API", () => {
             .get(
                 `${URL}/verify-email/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZW1haWwiLCJpYXQiOjE2MDI2ODg3MjEsImV4cCI6MTYwMzI5MzUyMX0.CWhtDg0BYoaL9sld0hwOd7U12agsXSB-7SZ6XYF9hko`
             )
-            .expect(404);
+            .expect(401);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Invalid/Expired email token.',
+            message: 'ERROR: Expired email token.',
         });
     });
 
@@ -394,6 +394,33 @@ describe("User's API", () => {
         });
     });
 
+    it('Should not login - email not found', async () => {
+        const form: type.LoginForm = {
+            email: 'user1@notfound.com',
+            password: user1.password,
+        };
+
+        const response: ResponseMSG = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(404);
+        expect(response.body).toMatchObject({
+            message: 'ERROR: User not found.',
+        });
+    });
+
+    it('Should not authorize - invalid token', async () => {
+        const invalidToken =
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDM0NzQwMDIsImV4cCI6MTYwNDA3ODgwMn0.sDZ06WC2MhtswMgE_4UX7VL_cLD10CMUkjo72ArYfaI';
+        const profile: UserProfile = await request(app)
+            .get(`${URL}/profile`)
+            .set('Authorization', `Bearer ${invalidToken}`)
+            .expect(401);
+        expect(profile.body).toMatchObject({
+            message: 'Not authorized, invalid token.',
+        });
+    });
+
     it("Should fetch user's profile", async () => {
         const form: type.LoginForm = {
             email: user1.email,
@@ -434,7 +461,7 @@ describe("User's API", () => {
             .send()
             .expect(401);
         expect(profile.body).toMatchObject({
-            message: 'Invalid token.',
+            message: 'Token not found.',
         });
     });
 
@@ -835,7 +862,7 @@ describe("User's API", () => {
             .send({ password: form.password })
             .expect(401);
         expect(response.body).toMatchObject({
-            message: 'Invalid token.',
+            message: 'Token not found.',
         });
     });
 
@@ -940,6 +967,26 @@ describe("User's API", () => {
             .expect(400);
         expect(response.body).toMatchObject({
             email: 'Must be a valid email address.',
+        });
+    });
+
+    it('Should not resend email verification - email not found', async () => {
+        const response: UserProfile = await request(app)
+            .post(`${URL}/verify-email`)
+            .send({ email: 'not_found@email.com' })
+            .expect(404);
+        expect(response.body).toMatchObject({
+            message: 'ERROR: Email not found.',
+        });
+    });
+
+    it('Should not resend email verification - email already verified', async () => {
+        const response: UserProfile = await request(app)
+            .post(`${URL}/verify-email`)
+            .send({ email: user1.email })
+            .expect(200);
+        expect(response.body).toMatchObject({
+            message: 'Your account is already verified.',
         });
     });
 });

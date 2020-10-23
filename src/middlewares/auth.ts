@@ -8,32 +8,31 @@ const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
 const JWT_VERIFICATION_EXPIRES_IN = process.env.JWT_VERIFICATION_EXPIRES_IN;
 
 const auth: RequestHandler = (req, res, next) => {
+    let token: string =
+        req.get('Authorization') || req.query.token || req.body.token;
+
     try {
-        let token: string =
-            req.get('Authorization') || req.query.token || req.body.token;
-
-        try {
-            if (token) {
-                token = token.replace('Bearer ', '');
-                const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
-                if (!user) {
-                    return res.status(401).json({ message: 'Not authorized.' });
-                }
-
-                req.user = user;
-                next();
-            } else {
-                throw new Error();
+        if (token) {
+            token = token.replace('Bearer ', '');
+            const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
+            if (
+                !user ||
+                !user.hasOwnProperty('firstName') ||
+                !user.hasOwnProperty('lastName') ||
+                !user.hasOwnProperty('_id')
+            ) {
+                return res
+                    .status(401)
+                    .json({ message: 'Not authorized, invalid token.' });
             }
-        } catch (error) {
-            return res.status(401).json({ message: 'Invalid token.' });
+
+            req.user = user;
+            next();
+        } else {
+            res.status(401).json({ message: 'Token not found.' });
         }
     } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message:
-                'ERROR: Something went wrong while authorizing request. Please try again later.',
-        });
+        return res.status(401).json({ message: 'Invalid token.' });
     }
 };
 
