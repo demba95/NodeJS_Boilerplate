@@ -4,6 +4,7 @@ import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import * as type from '@custom_types/types';
 import { user1, user2, setupDatabase } from './database/database';
+
 const URL = '/users';
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const PASSWORD_LEN = process.env.PASSWORD_LEN;
@@ -252,7 +253,7 @@ describe("User's API", () => {
         expect(user).not.toBeNull();
 
         const response = await request(app)
-            .get(`${URL}/verify-email/${user.verifyToken}`)
+            .get(`${URL}/email/${user.verifyToken}`)
             .expect(200);
         expect(response.body).toMatchObject({
             message: 'Thank you! Your email has been verified.',
@@ -272,7 +273,7 @@ describe("User's API", () => {
         const user: type.UserI = await User.findOne({ email: form.email });
         expect(user).not.toBeNull();
 
-        await request(app).get(`${URL}/verify-email/`).expect(404);
+        await request(app).get(`${URL}/email/`).expect(404);
     });
 
     it('Should not verify account - invalid email token', async () => {
@@ -290,7 +291,7 @@ describe("User's API", () => {
 
         const response = await request(app)
             .get(
-                `${URL}/verify-email/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZW1haWwiLCJpYXQiOjE2MDI2ODg3MjEsImV4cCI6MTYwMzI5MzUyMX0.CWhtDg0BYoaL9sld0hwOd7U12agsXSB-7SZ6XYF9hko`
+                `${URL}/email/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZW1haWwiLCJpYXQiOjE2MDI2ODg3MjEsImV4cCI6MTYwMzI5MzUyMX0.CWhtDg0BYoaL9sld0hwOd7U12agsXSB-7SZ6XYF9hko`
             )
             .expect(401);
         expect(response.body).toMatchObject({
@@ -417,7 +418,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${invalidToken}`)
             .expect(401);
         expect(profile.body).toMatchObject({
-            message: 'Not authorized, invalid token.',
+            message: 'Invalid token.',
         });
     });
 
@@ -925,7 +926,7 @@ describe("User's API", () => {
             .send({ password: '123' })
             .expect(400);
         expect(response2.body).toMatchObject({
-            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            password: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -952,7 +953,7 @@ describe("User's API", () => {
 
     it('Should not resend email verification - empty email', async () => {
         const response: UserProfile = await request(app)
-            .post(`${URL}/verify-email`)
+            .post(`${URL}/email`)
             .send({ email: '' })
             .expect(400);
         expect(response.body).toMatchObject({
@@ -962,7 +963,7 @@ describe("User's API", () => {
 
     it('Should not resend email verification - invalid email', async () => {
         const response: UserProfile = await request(app)
-            .post(`${URL}/verify-email`)
+            .post(`${URL}/email`)
             .send({ email: 'invalid_email@email' })
             .expect(400);
         expect(response.body).toMatchObject({
@@ -972,7 +973,7 @@ describe("User's API", () => {
 
     it('Should not resend email verification - email not found', async () => {
         const response: UserProfile = await request(app)
-            .post(`${URL}/verify-email`)
+            .post(`${URL}/email`)
             .send({ email: 'not_found@email.com' })
             .expect(404);
         expect(response.body).toMatchObject({
@@ -982,11 +983,125 @@ describe("User's API", () => {
 
     it('Should not resend email verification - email already verified', async () => {
         const response: UserProfile = await request(app)
-            .post(`${URL}/verify-email`)
+            .post(`${URL}/email`)
             .send({ email: user1.email })
             .expect(200);
         expect(response.body).toMatchObject({
             message: 'Your account is already verified.',
+        });
+    });
+
+    it('Should reset password', async () => {
+        const form: type.EmailForm = {
+            email: user1.email,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/password`)
+            .send(form)
+            .expect(200);
+        const user: type.UserI = await User.findById(user1._id);
+        expect(user.verifyToken).not.toBeNull();
+        expect(response.body).toMatchObject({
+            message: 'Please check your email to reset your password.',
+        });
+    });
+
+    it('Should not reset password - not found email', async () => {
+        const form: type.EmailForm = {
+            email: 'not_found' + user1.email,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/password`)
+            .send(form)
+            .expect(404);
+        expect(response.body).toMatchObject({
+            message: 'ERROR: Email not found.',
+        });
+    });
+
+    it('Should not reset password - invalid email', async () => {
+        const form: type.EmailForm = {
+            email: 'invalid@email',
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/password`)
+            .send(form)
+            .expect(400);
+        expect(response.body).toMatchObject({
+            email: 'Must be a valid email address.',
+        });
+    });
+
+    it('Should verify new password', async () => {
+        const form: type.EmailForm = {
+            email: user1.email,
+        };
+
+        await request(app).post(`${URL}/password`).send(form).expect(200);
+        const user: type.UserI = await User.findById(user1._id);
+
+        const form2: type.PasswordForm = {
+            password: '12345678',
+            confirmPassword: '12345678',
+        };
+
+        const response2: ResponseMSG = await request(app)
+            .post(`${URL}/password/${user.verifyToken}`)
+            .send(form2)
+            .expect(200);
+        expect(response2.body).toMatchObject({
+            message: 'Password updated successfully.',
+        });
+
+        const userReq2: type.UserI = await User.findById(user1._id);
+        userReq2.comparePassword(form2.password, (_, isMatch) => {
+            if (isMatch) {
+                expect(isMatch).toBeTruthy();
+            }
+        });
+        expect(response2.body).toMatchObject({
+            message: 'Password updated successfully.',
+        });
+    });
+
+    it('Should not verify new password - different passwords', async () => {
+        const form: type.EmailForm = {
+            email: user1.email,
+        };
+
+        await request(app).post(`${URL}/password`).send(form).expect(200);
+        const user: type.UserI = await User.findById(user1._id);
+
+        const form2: type.PasswordForm = {
+            password: '12345678',
+            confirmPassword: '123',
+        };
+
+        const response: ResponseMSG = await request(app)
+            .post(`${URL}/password/${user.verifyToken}`)
+            .send(form2)
+            .expect(400);
+        expect(response.body).toMatchObject({
+            confirmPassword: 'Must be greater than 4 characters.',
+            passwords: 'Must be equal.',
+        });
+    });
+
+    it('Should not verify new password - different passwords', async () => {
+        const form2: type.PasswordForm = {
+            password: '12345678',
+            confirmPassword: '12345678',
+        };
+
+        const response: ResponseMSG = await request(app)
+            .post(`${URL}/password/bad_token`)
+            .send(form2)
+            .expect(404);
+        expect(response.body).toMatchObject({
+            message: 'ERROR: User not found.',
         });
     });
 });

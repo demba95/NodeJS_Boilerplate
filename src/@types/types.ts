@@ -49,12 +49,13 @@ export type DeleteForm = {
     password: string;
 };
 
-export type ValidatePassword = {
-    password: string;
+export type EmailForm = {
+    email: string;
 };
 
-export type ResendEmailForm = {
-    email: string;
+export type PasswordForm = {
+    password: string;
+    confirmPassword?: string;
 };
 
 export interface UpdateUserForm extends User {
@@ -65,7 +66,7 @@ export interface UpdateUserForm extends User {
 }
 
 export type MSGFn = {
-    (user: UserI, host: string): {
+    (user: UserI, host?: string): {
         from: string;
         to: string;
         subject: string;

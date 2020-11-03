@@ -353,105 +353,106 @@
 
   - We store our TypeScript types
 
-  ```TypeScript
-    import { Document } from 'mongoose';
+    ```TypeScript
+      import { Document } from 'mongoose';
 
-    declare module 'express-serve-static-core' {
-        export interface Request {
-            user?: UserJWT | LoginForm | SignUpForm;
-        }
-    }
+      declare module 'express-serve-static-core' {
+          export interface Request {
+              user?: UserJWT | LoginForm | SignUpForm;
+          }
+      }
 
-    type Callback = (error: string, isMatch: boolean) => void;
+      type Callback = (error: string, isMatch: boolean) => void;
 
-    export interface UserI extends Document {
-        _id: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        tempEmail: string;
-        verifyToken: string;
-        isEmailVerified: boolean;
-        password: string;
-        admin: boolean;
-        comparePassword(password: string, callback: Callback): void;
-    }
+      export interface UserI extends Document {
+          _id: string;
+          firstName: string;
+          lastName: string;
+          email: string;
+          tempEmail: string;
+          verifyToken: string;
+          isEmailVerified: boolean;
+          password: string;
+          admin: boolean;
+          comparePassword(password: string, callback: Callback): void;
+      }
 
-    export type User = {
-        _id?: string;
-        firstName: string;
-        lastName: string;
-    };
+      export type User = {
+          _id?: string;
+          firstName: string;
+          lastName: string;
+      };
 
-    export interface UserJWT extends User {
-        iat: number;
-        exp: number;
-    }
+      export interface UserJWT extends User {
+          iat: number;
+          exp: number;
+      }
 
-    export type LoginForm = {
-        _id?: string;
-        email: string;
-        password: string;
-    };
+      export type LoginForm = {
+          _id?: string;
+          email: string;
+          password: string;
+      };
 
-    type ConcatForm = User & LoginForm;
+      type ConcatForm = User & LoginForm;
 
-    export interface SignUpForm extends ConcatForm {
-        confirmPassword: string;
-        verifyToken?: string;
-    }
+      export interface SignUpForm extends ConcatForm {
+          confirmPassword: string;
+          verifyToken?: string;
+      }
 
-    export type DeleteForm = {
-        password: string;
-    };
+      export type DeleteForm = {
+          password: string;
+      };
 
-    export type ValidatePassword = {
-        password: string;
-    };
+      export type EmailForm = {
+          email: string;
+      };
 
-    export type ResendEmailForm = {
-        email: string;
-    };
+      export type PasswordForm = {
+          password: string;
+          confirmPassword?: string;
+      };
 
-    export interface UpdateUserForm extends User {
-        password: string;
-        newEmail: string;
-        newPassword: string;
-        confirmNewPassword: string;
-    }
+      export interface UpdateUserForm extends User {
+          password: string;
+          newEmail: string;
+          newPassword: string;
+          confirmNewPassword: string;
+      }
 
-    export type MSGFn = {
-        (user: UserI, host: string): {
-            from: string;
-            to: string;
-            subject: string;
-            html: string;
-        };
-    };
+      export type MSGFn = {
+          (user: UserI, host?: string): {
+              from: string;
+              to: string;
+              subject: string;
+              html: string;
+          };
+      };
 
-    export type JWTAccessFn = {
-        (user: User): string;
-    };
+      export type JWTAccessFn = {
+          (user: User): string;
+      };
 
-    export type JWTVerifyFn = {
-        (mode: string): string;
-    };
+      export type JWTVerifyFn = {
+          (mode: string): string;
+      };
 
-    export type CheckFn = {
-        (string: string): boolean;
-    };
+      export type CheckFn = {
+          (string: string): boolean;
+      };
 
-    export type ValidatorFn<T> = {
-        (data: T): {
-            errors: ErrorContainer;
-            valid: boolean;
-        };
-    };
+      export type ValidatorFn<T> = {
+          (data: T): {
+              errors: ErrorContainer;
+              valid: boolean;
+          };
+      };
 
-    export type ErrorContainer = {
-        [key: string]: string;
-    };
-  ```
+      export type ErrorContainer = {
+          [key: string]: string;
+      };
+    ```
 
 ## Database Connection
 
@@ -556,15 +557,8 @@
             const newUser: type.UserI = new User(form);
             await newUser.save();
 
-            try {
-                const msg = MSG.signUp(newUser, req.headers.host);
-                await sgMail.send(msg);
-            } catch (error) {
-                return res.status(500).json({
-                    message:
-                        'ERROR: Something went wrong sending you the email verification. Please try again later.',
-                });
-            }
+            const msg = MSG.signUp(newUser, req.headers.host);
+            await sgMail.send(msg);
 
             res.status(201).json({
                 message:
@@ -592,10 +586,10 @@
                 return res.status(404).json({ message: 'ERROR: User not found.' });
             }
 
-            user.comparePassword(form.password, async (_, isMatch) => {
+            user.comparePassword(form.password, (_, isMatch) => {
                 if (isMatch) {
                     if (user.isEmailVerified) {
-                        const token = await auth.createAccessToken(user);
+                        const token = auth.createAccessToken(user);
                         return res.json({ token });
                     }
 
@@ -760,13 +754,13 @@
     };
 
     const resendVerifyEmail: RequestHandler = async (req, res) => {
-        const form: type.ResendEmailForm = req.body;
+        const form: type.EmailForm = req.body;
 
         const { valid, errors } = validator.validateEmail(form);
         if (!valid) return res.status(400).json(errors);
 
         try {
-            const user: type.UserI = await User.findOne({ email: req.body.email });
+            const user: type.UserI = await User.findOne({ email: form.email });
             if (!user) {
                 return res.status(404).json({ message: 'ERROR: Email not found.' });
             }
@@ -778,18 +772,71 @@
             user.verifyToken = auth.createVerificationToken('email');
             await user.save();
 
-            try {
-                const msg = MSG.signUp(user, req.headers.host);
-                await sgMail.send(msg);
-            } catch (error) {
-                return res.status(500).json({
-                    message:
-                        'ERROR: Something went wrong sending you the email verification. Please try again later.',
-                });
-            }
+            const msg = MSG.signUp(user, req.headers.host);
+            await sgMail.send(msg);
 
             res.json({
                 message: 'Please check your email to verify your account.',
+            });
+        } catch (error) {
+            res.status(500).json({
+                message:
+                    'ERROR: Something went wrong with the email verification. Please try again later.',
+            });
+        }
+    };
+
+    const resetPassword: RequestHandler = async (req, res) => {
+        const form: type.EmailForm = req.body;
+
+        const { valid, errors } = validator.validateEmail(form);
+        if (!valid) return res.status(400).json(errors);
+
+        try {
+            const user: type.UserI = await User.findOne({ email: form.email });
+            if (!user) {
+                return res.status(404).json({ message: 'ERROR: Email not found.' });
+            }
+
+            user.verifyToken = auth.createVerificationToken('password');
+            await user.save();
+
+            const msg = MSG.resetPassword(user);
+            await sgMail.send(msg);
+
+            res.json({
+                message: 'Please check your email to reset your password.',
+            });
+        } catch (error) {
+            res.status(500).json({
+                message:
+                    'ERROR: Something went wrong with the email verification. Please try again later.',
+            });
+        }
+    };
+
+    const verifyPassword: RequestHandler = async (req, res) => {
+        const form: type.PasswordForm = req.body;
+
+        const { valid, errors } = validator.validatePassword(form);
+        if (!valid) return res.status(400).json(errors);
+
+        try {
+            const user: type.UserI = await User.findOne({
+                verifyToken: req.params.verifyToken,
+            });
+            if (!user) {
+                return res.status(404).json({ message: 'ERROR: User not found.' });
+            }
+
+            user.verifyToken = '';
+            await user.save();
+
+            const msg = MSG.updatePassword(user);
+            await sgMail.send(msg);
+
+            res.json({
+                message: 'Password updated successfully.',
             });
         } catch (error) {
             res.status(500).json({
@@ -807,6 +854,8 @@
         deleteUser,
         verifyEmail,
         resendVerifyEmail,
+        resetPassword,
+        verifyPassword,
     };
   ```
 
@@ -1097,8 +1146,10 @@
 
     router.post('/signup', userCtrl.signUpUser);
     router.post('/login', userCtrl.loginUser);
-    router.get('/verify-email/:verifyToken', userCtrl.verifyEmail);
-    router.post('/verify-email', userCtrl.resendVerifyEmail);
+    router.get('/email/:verifyToken', userCtrl.verifyEmail);
+    router.post('/email', userCtrl.resendVerifyEmail);
+    router.post('/password', userCtrl.resetPassword);
+    router.post('/password/:verifyToken', userCtrl.verifyPassword);
 
     router.get('/profile', auth, userCtrl.getUser);
     router.put('/profile', auth, userCtrl.updateUser);
@@ -1135,6 +1186,8 @@
   ```TypeScript
     import * as type from '@custom_types/types';
 
+    const CLIENT_URL = process.env.CLIENT_URL;
+
     export const signUp: type.MSGFn = (user, host) => {
         return {
             from: process.env.SENDGRID_EMAIL,
@@ -1159,6 +1212,32 @@
                 `,
         };
     };
+
+    export const resetPassword: type.MSGFn = (user) => {
+        return {
+            from: process.env.SENDGRID_EMAIL,
+            to: user.tempEmail,
+            subject: 'Reset password',
+            html: `
+                    <h1>Hello ${user.firstName}</h1>
+                    We're sending you this email because you requested a password reset. Click on this link to create a new password:
+                    <a href="${CLIENT_URL}/reset-password/${user.verifyToken}">Set a new password</a>
+                    If you didn't request a password reset, you can ignore this email. Your password will not be changed.
+                `,
+        };
+    };
+
+    export const updatePassword: type.MSGFn = (user) => {
+        return {
+            from: process.env.SENDGRID_EMAIL,
+            to: user.tempEmail,
+            subject: 'Update password',
+            html: `
+                    <h1>Hello ${user.firstName}</h1>
+                    Your password has been updated. Please login using your new credentials.
+                `,
+        };
+    };
   ```
 
 ### Validator
@@ -1172,6 +1251,8 @@
   ```TypeScript
     import * as type from '@custom_types/types';
 
+    const PASSWORD_LENGTH = +process.env.PASSWORD_LEN;
+
     const isEmpty: type.CheckFn = (string) => {
         if (!string || string.trim() === '' || string === '') return true;
         return false;
@@ -1184,27 +1265,25 @@
     };
 
     const validateSignUpData: type.ValidatorFn<type.SignUpForm> = (data) => {
+        const { email, firstName, lastName, password, confirmPassword } = data;
         const errors: type.ErrorContainer = {};
 
-        if (isEmpty(data.email)) {
+        if (isEmpty(email)) {
             errors.email = 'Must not be empty.';
-        } else if (!isEmail(data.email)) {
+        } else if (!isEmail(email)) {
             errors.email = 'Must be a valid email address.';
         }
-        if (isEmpty(data.firstName)) errors.firstName = 'Must not be empty.';
-        if (isEmpty(data.lastName)) errors.lastName = 'Must not be empty.';
-        if (isEmpty(data.password)) errors.password = 'Must not be empty.';
-        if (isEmpty(data.confirmPassword))
-            errors.confirmPassword = 'Must not be empty.';
+        if (isEmpty(firstName)) errors.firstName = 'Must not be empty.';
+        if (isEmpty(lastName)) errors.lastName = 'Must not be empty.';
+        if (isEmpty(password)) errors.password = 'Must not be empty.';
+        if (isEmpty(confirmPassword)) errors.confirmPassword = 'Must not be empty.';
         if (
-            (data.password && data.password.length < +process.env.PASSWORD_LEN) ||
-            (data.confirmPassword &&
-                data.confirmPassword.length < +process.env.PASSWORD_LEN)
+            (password && password.length < PASSWORD_LENGTH) ||
+            (confirmPassword && confirmPassword.length < PASSWORD_LENGTH)
         ) {
-            errors.passwordLength = `Must be greater than ${process.env.PASSWORD_LEN} characters.`;
+            errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
         }
-        if (data.password !== data.confirmPassword)
-            errors.passwords = 'Must be equal.';
+        if (password !== confirmPassword) errors.passwords = 'Must be equal.';
 
         return {
             errors,
@@ -1213,12 +1292,12 @@
     };
 
     const validateLoginData: type.ValidatorFn<type.LoginForm> = (data) => {
+        const { email, password } = data;
         const errors: type.ErrorContainer = {};
 
-        if (isEmpty(data.email)) errors.email = 'Must not be empty.';
-        else if (!isEmail(data.email))
-            errors.email = 'Must be a valid email address.';
-        if (isEmpty(data.password)) errors.password = 'Must not be empty.';
+        if (isEmpty(email)) errors.email = 'Must not be empty.';
+        else if (!isEmail(email)) errors.email = 'Must be a valid email address.';
+        if (isEmpty(password)) errors.password = 'Must not be empty.';
 
         return {
             errors,
@@ -1227,36 +1306,43 @@
     };
 
     const validateUpdateData: type.ValidatorFn<type.UpdateUserForm> = (data) => {
+        const {
+            newEmail,
+            firstName,
+            lastName,
+            password,
+            newPassword,
+            confirmNewPassword,
+        } = data;
         const errors: type.ErrorContainer = {};
         let count = 0;
 
-        if (data.hasOwnProperty('newEmail') && isEmpty(data.newEmail)) {
+        if (data.hasOwnProperty('newEmail') && isEmpty(newEmail)) {
             errors.newEmail = 'Must not be empty.';
-        } else if (data.newEmail && !isEmail(data.newEmail)) {
+        } else if (newEmail && !isEmail(newEmail)) {
             errors.newEmail = 'Must be a valid email address.';
         }
-        if (data.hasOwnProperty('firstName') && isEmpty(data.firstName))
+        if (data.hasOwnProperty('firstName') && isEmpty(firstName))
             errors.firstName = 'Must not be empty.';
-        if (data.hasOwnProperty('lastName') && isEmpty(data.lastName))
+        if (data.hasOwnProperty('lastName') && isEmpty(lastName))
             errors.lastName = 'Must not be empty.';
-        if (isEmpty(data.password)) errors.password = 'Must not be empty.';
-        if (data.hasOwnProperty('newPassword') && isEmpty(data.newPassword))
+        if (isEmpty(password)) errors.password = 'Must not be empty.';
+        if (data.hasOwnProperty('newPassword') && isEmpty(newPassword))
             errors.newPassword = 'Must not be empty.';
         if (
             data.hasOwnProperty('confirmNewPassword') &&
-            isEmpty(data.confirmNewPassword)
+            isEmpty(confirmNewPassword)
         )
             errors.confirmNewPassword = 'Must not be empty.';
         if (
             (data.hasOwnProperty('newPassword') &&
-                data.newPassword.length < +process.env.PASSWORD_LEN) ||
+                newPassword.length < PASSWORD_LENGTH) ||
             (data.hasOwnProperty('confirmNewPassword') &&
-                data.confirmNewPassword.length < +process.env.PASSWORD_LEN)
+                confirmNewPassword.length < PASSWORD_LENGTH)
         ) {
-            errors.passwordLength = `Must be greater than ${process.env.PASSWORD_LEN} characters.`;
+            errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
         }
-        if (data.newPassword !== data.confirmNewPassword)
-            errors.passwords = 'Must be equal.';
+        if (newPassword !== confirmNewPassword) errors.passwords = 'Must be equal.';
 
         Object.keys(data).forEach((key) => {
             if (data[key]) count++;
@@ -1270,16 +1356,31 @@
         };
     };
 
-    const validatePassword: type.ValidatorFn<type.ValidatePassword> = (data) => {
+    const validatePassword: type.ValidatorFn<type.PasswordForm> = (data) => {
+        const { password, confirmPassword } = data;
         const errors: type.ErrorContainer = {};
 
-        if (data.hasOwnProperty('password') && isEmpty(data.password)) {
+        if (isEmpty(password)) {
             errors.password = 'Must not be empty.';
+        } else if (password.length < PASSWORD_LENGTH) {
+            errors.password = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        }
+        if (data.hasOwnProperty('confirmPassword') && isEmpty(confirmPassword)) {
+            errors.confirmPassword = 'Must not be empty.';
         } else if (
-            data.hasOwnProperty('password') &&
-            data.password.length < +process.env.PASSWORD_LEN
-        )
-            errors.passwordLength = `Must be greater than ${process.env.PASSWORD_LEN} characters.`;
+            password.length < PASSWORD_LENGTH ||
+            (data.hasOwnProperty('confirmPassword') &&
+                confirmPassword &&
+                confirmPassword.length < PASSWORD_LENGTH)
+        ) {
+            errors.confirmPassword = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        }
+        if (
+            data.hasOwnProperty('confirmPassword') &&
+            password !== confirmPassword
+        ) {
+            errors.passwords = 'Must be equal.';
+        }
 
         return {
             errors,
@@ -1287,12 +1388,13 @@
         };
     };
 
-    const validateEmail: type.ValidatorFn<type.ResendEmailForm> = (data) => {
+    const validateEmail: type.ValidatorFn<type.EmailForm> = (data) => {
+        const { email } = data;
         const errors: type.ErrorContainer = {};
 
-        if (data.hasOwnProperty('email') && isEmpty(data.email)) {
+        if (data.hasOwnProperty('email') && isEmpty(email)) {
             errors.email = 'Must not be empty.';
-        } else if (data.hasOwnProperty('email') && !isEmail(data.email)) {
+        } else if (data.hasOwnProperty('email') && !isEmail(email)) {
             errors.email = 'Must be a valid email address.';
         }
 

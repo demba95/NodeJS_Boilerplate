@@ -1,5 +1,7 @@
 import * as type from '@custom_types/types';
 
+const PASSWORD_LENGTH = +process.env.PASSWORD_LEN;
+
 const isEmpty: type.CheckFn = (string) => {
     if (!string || string.trim() === '' || string === '') return true;
     return false;
@@ -12,27 +14,25 @@ export const isEmail: type.CheckFn = (email) => {
 };
 
 const validateSignUpData: type.ValidatorFn<type.SignUpForm> = (data) => {
+    const { email, firstName, lastName, password, confirmPassword } = data;
     const errors: type.ErrorContainer = {};
 
-    if (isEmpty(data.email)) {
+    if (isEmpty(email)) {
         errors.email = 'Must not be empty.';
-    } else if (!isEmail(data.email)) {
+    } else if (!isEmail(email)) {
         errors.email = 'Must be a valid email address.';
     }
-    if (isEmpty(data.firstName)) errors.firstName = 'Must not be empty.';
-    if (isEmpty(data.lastName)) errors.lastName = 'Must not be empty.';
-    if (isEmpty(data.password)) errors.password = 'Must not be empty.';
-    if (isEmpty(data.confirmPassword))
-        errors.confirmPassword = 'Must not be empty.';
+    if (isEmpty(firstName)) errors.firstName = 'Must not be empty.';
+    if (isEmpty(lastName)) errors.lastName = 'Must not be empty.';
+    if (isEmpty(password)) errors.password = 'Must not be empty.';
+    if (isEmpty(confirmPassword)) errors.confirmPassword = 'Must not be empty.';
     if (
-        (data.password && data.password.length < +process.env.PASSWORD_LEN) ||
-        (data.confirmPassword &&
-            data.confirmPassword.length < +process.env.PASSWORD_LEN)
+        (password && password.length < PASSWORD_LENGTH) ||
+        (confirmPassword && confirmPassword.length < PASSWORD_LENGTH)
     ) {
-        errors.passwordLength = `Must be greater than ${process.env.PASSWORD_LEN} characters.`;
+        errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
     }
-    if (data.password !== data.confirmPassword)
-        errors.passwords = 'Must be equal.';
+    if (password !== confirmPassword) errors.passwords = 'Must be equal.';
 
     return {
         errors,
@@ -41,12 +41,12 @@ const validateSignUpData: type.ValidatorFn<type.SignUpForm> = (data) => {
 };
 
 const validateLoginData: type.ValidatorFn<type.LoginForm> = (data) => {
+    const { email, password } = data;
     const errors: type.ErrorContainer = {};
 
-    if (isEmpty(data.email)) errors.email = 'Must not be empty.';
-    else if (!isEmail(data.email))
-        errors.email = 'Must be a valid email address.';
-    if (isEmpty(data.password)) errors.password = 'Must not be empty.';
+    if (isEmpty(email)) errors.email = 'Must not be empty.';
+    else if (!isEmail(email)) errors.email = 'Must be a valid email address.';
+    if (isEmpty(password)) errors.password = 'Must not be empty.';
 
     return {
         errors,
@@ -55,36 +55,43 @@ const validateLoginData: type.ValidatorFn<type.LoginForm> = (data) => {
 };
 
 const validateUpdateData: type.ValidatorFn<type.UpdateUserForm> = (data) => {
+    const {
+        newEmail,
+        firstName,
+        lastName,
+        password,
+        newPassword,
+        confirmNewPassword,
+    } = data;
     const errors: type.ErrorContainer = {};
     let count = 0;
 
-    if (data.hasOwnProperty('newEmail') && isEmpty(data.newEmail)) {
+    if (data.hasOwnProperty('newEmail') && isEmpty(newEmail)) {
         errors.newEmail = 'Must not be empty.';
-    } else if (data.newEmail && !isEmail(data.newEmail)) {
+    } else if (newEmail && !isEmail(newEmail)) {
         errors.newEmail = 'Must be a valid email address.';
     }
-    if (data.hasOwnProperty('firstName') && isEmpty(data.firstName))
+    if (data.hasOwnProperty('firstName') && isEmpty(firstName))
         errors.firstName = 'Must not be empty.';
-    if (data.hasOwnProperty('lastName') && isEmpty(data.lastName))
+    if (data.hasOwnProperty('lastName') && isEmpty(lastName))
         errors.lastName = 'Must not be empty.';
-    if (isEmpty(data.password)) errors.password = 'Must not be empty.';
-    if (data.hasOwnProperty('newPassword') && isEmpty(data.newPassword))
+    if (isEmpty(password)) errors.password = 'Must not be empty.';
+    if (data.hasOwnProperty('newPassword') && isEmpty(newPassword))
         errors.newPassword = 'Must not be empty.';
     if (
         data.hasOwnProperty('confirmNewPassword') &&
-        isEmpty(data.confirmNewPassword)
+        isEmpty(confirmNewPassword)
     )
         errors.confirmNewPassword = 'Must not be empty.';
     if (
         (data.hasOwnProperty('newPassword') &&
-            data.newPassword.length < +process.env.PASSWORD_LEN) ||
+            newPassword.length < PASSWORD_LENGTH) ||
         (data.hasOwnProperty('confirmNewPassword') &&
-            data.confirmNewPassword.length < +process.env.PASSWORD_LEN)
+            confirmNewPassword.length < PASSWORD_LENGTH)
     ) {
-        errors.passwordLength = `Must be greater than ${process.env.PASSWORD_LEN} characters.`;
+        errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
     }
-    if (data.newPassword !== data.confirmNewPassword)
-        errors.passwords = 'Must be equal.';
+    if (newPassword !== confirmNewPassword) errors.passwords = 'Must be equal.';
 
     Object.keys(data).forEach((key) => {
         if (data[key]) count++;
@@ -98,16 +105,31 @@ const validateUpdateData: type.ValidatorFn<type.UpdateUserForm> = (data) => {
     };
 };
 
-const validatePassword: type.ValidatorFn<type.ValidatePassword> = (data) => {
+const validatePassword: type.ValidatorFn<type.PasswordForm> = (data) => {
+    const { password, confirmPassword } = data;
     const errors: type.ErrorContainer = {};
 
-    if (data.hasOwnProperty('password') && isEmpty(data.password)) {
+    if (isEmpty(password)) {
         errors.password = 'Must not be empty.';
+    } else if (password.length < PASSWORD_LENGTH) {
+        errors.password = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+    }
+    if (data.hasOwnProperty('confirmPassword') && isEmpty(confirmPassword)) {
+        errors.confirmPassword = 'Must not be empty.';
     } else if (
-        data.hasOwnProperty('password') &&
-        data.password.length < +process.env.PASSWORD_LEN
-    )
-        errors.passwordLength = `Must be greater than ${process.env.PASSWORD_LEN} characters.`;
+        password.length < PASSWORD_LENGTH ||
+        (data.hasOwnProperty('confirmPassword') &&
+            confirmPassword &&
+            confirmPassword.length < PASSWORD_LENGTH)
+    ) {
+        errors.confirmPassword = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+    }
+    if (
+        data.hasOwnProperty('confirmPassword') &&
+        password !== confirmPassword
+    ) {
+        errors.passwords = 'Must be equal.';
+    }
 
     return {
         errors,
@@ -115,12 +137,13 @@ const validatePassword: type.ValidatorFn<type.ValidatePassword> = (data) => {
     };
 };
 
-const validateEmail: type.ValidatorFn<type.ResendEmailForm> = (data) => {
+const validateEmail: type.ValidatorFn<type.EmailForm> = (data) => {
+    const { email } = data;
     const errors: type.ErrorContainer = {};
 
-    if (data.hasOwnProperty('email') && isEmpty(data.email)) {
+    if (data.hasOwnProperty('email') && isEmpty(email)) {
         errors.email = 'Must not be empty.';
-    } else if (data.hasOwnProperty('email') && !isEmail(data.email)) {
+    } else if (data.hasOwnProperty('email') && !isEmail(email)) {
         errors.email = 'Must be a valid email address.';
     }
 

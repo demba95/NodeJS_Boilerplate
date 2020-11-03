@@ -1,5 +1,7 @@
 import * as type from '@custom_types/types';
 
+const CLIENT_URL = process.env.CLIENT_URL;
+
 export const signUp: type.MSGFn = (user, host) => {
     return {
         from: process.env.SENDGRID_EMAIL,
@@ -21,6 +23,32 @@ export const updateEmail: type.MSGFn = (user, host) => {
         html: `
                 <h1>Hello ${user.firstName}</h1>
                 <a href="http://${host}/users/verify-email/${user.verifyToken}">Click here to confirm your new email</a>
+            `,
+    };
+};
+
+export const resetPassword: type.MSGFn = (user) => {
+    return {
+        from: process.env.SENDGRID_EMAIL,
+        to: user.tempEmail,
+        subject: 'Reset password',
+        html: `
+                <h1>Hello ${user.firstName}</h1>
+                We're sending you this email because you requested a password reset. Click on this link to create a new password:
+                <a href="${CLIENT_URL}/reset-password/${user.verifyToken}">Set a new password</a>
+                If you didn't request a password reset, you can ignore this email. Your password will not be changed.
+            `,
+    };
+};
+
+export const updatePassword: type.MSGFn = (user) => {
+    return {
+        from: process.env.SENDGRID_EMAIL,
+        to: user.tempEmail,
+        subject: 'Update password',
+        html: `
+                <h1>Hello ${user.firstName}</h1>
+                Your password has been updated. Please login using your new credentials.
             `,
     };
 };

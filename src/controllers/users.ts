@@ -31,15 +31,8 @@ const signUpUser: RequestHandler = async (req, res) => {
         const newUser: type.UserI = new User(form);
         await newUser.save();
 
-        try {
-            const msg = MSG.signUp(newUser, req.headers.host);
-            await sgMail.send(msg);
-        } catch (error) {
-            return res.status(500).json({
-                message:
-                    'ERROR: Something went wrong sending you the email verification. Please try again later.',
-            });
-        }
+        const msg = MSG.signUp(newUser, req.headers.host);
+        await sgMail.send(msg);
 
         res.status(201).json({
             message:
@@ -67,10 +60,10 @@ const loginUser: RequestHandler = async (req, res) => {
             return res.status(404).json({ message: 'ERROR: User not found.' });
         }
 
-        user.comparePassword(form.password, async (_, isMatch) => {
+        user.comparePassword(form.password, (_, isMatch) => {
             if (isMatch) {
                 if (user.isEmailVerified) {
-                    const token = await auth.createAccessToken(user);
+                    const token = auth.createAccessToken(user);
                     return res.json({ token });
                 }
 
@@ -235,13 +228,13 @@ const verifyEmail: RequestHandler = async (req, res) => {
 };
 
 const resendVerifyEmail: RequestHandler = async (req, res) => {
-    const form: type.ResendEmailForm = req.body;
+    const form: type.EmailForm = req.body;
 
     const { valid, errors } = validator.validateEmail(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const user: type.UserI = await User.findOne({ email: req.body.email });
+        const user: type.UserI = await User.findOne({ email: form.email });
         if (!user) {
             return res.status(404).json({ message: 'ERROR: Email not found.' });
         }
@@ -253,18 +246,71 @@ const resendVerifyEmail: RequestHandler = async (req, res) => {
         user.verifyToken = auth.createVerificationToken('email');
         await user.save();
 
-        try {
-            const msg = MSG.signUp(user, req.headers.host);
-            await sgMail.send(msg);
-        } catch (error) {
-            return res.status(500).json({
-                message:
-                    'ERROR: Something went wrong sending you the email verification. Please try again later.',
-            });
-        }
+        const msg = MSG.signUp(user, req.headers.host);
+        await sgMail.send(msg);
 
         res.json({
             message: 'Please check your email to verify your account.',
+        });
+    } catch (error) {
+        res.status(500).json({
+            message:
+                'ERROR: Something went wrong with the email verification. Please try again later.',
+        });
+    }
+};
+
+const resetPassword: RequestHandler = async (req, res) => {
+    const form: type.EmailForm = req.body;
+
+    const { valid, errors } = validator.validateEmail(form);
+    if (!valid) return res.status(400).json(errors);
+
+    try {
+        const user: type.UserI = await User.findOne({ email: form.email });
+        if (!user) {
+            return res.status(404).json({ message: 'ERROR: Email not found.' });
+        }
+
+        user.verifyToken = auth.createVerificationToken('password');
+        await user.save();
+
+        const msg = MSG.resetPassword(user);
+        await sgMail.send(msg);
+
+        res.json({
+            message: 'Please check your email to reset your password.',
+        });
+    } catch (error) {
+        res.status(500).json({
+            message:
+                'ERROR: Something went wrong with the email verification. Please try again later.',
+        });
+    }
+};
+
+const verifyPassword: RequestHandler = async (req, res) => {
+    const form: type.PasswordForm = req.body;
+
+    const { valid, errors } = validator.validatePassword(form);
+    if (!valid) return res.status(400).json(errors);
+
+    try {
+        const user: type.UserI = await User.findOne({
+            verifyToken: req.params.verifyToken,
+        });
+        if (!user) {
+            return res.status(404).json({ message: 'ERROR: User not found.' });
+        }
+
+        user.verifyToken = '';
+        await user.save();
+
+        const msg = MSG.updatePassword(user);
+        await sgMail.send(msg);
+
+        res.json({
+            message: 'Password updated successfully.',
         });
     } catch (error) {
         res.status(500).json({
@@ -282,4 +328,6 @@ export default {
     deleteUser,
     verifyEmail,
     resendVerifyEmail,
+    resetPassword,
+    verifyPassword,
 };
