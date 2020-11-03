@@ -965,7 +965,6 @@
     import mongoose from 'mongoose';
     import bcrypt from 'bcrypt';
     import * as type from '@custom_types/types';
-    import * as validator from '@utils/validator';
 
     const Schema = mongoose.Schema;
     const SALT_ROUNDS: number = 6;
@@ -1710,7 +1709,7 @@
   - Replace `--watch` with `--coverage` from the test script in the `package.json`
   - Run the command `npm run test`
 
-  ![](https://i.imgur.com/y30gXeW.png)
+  ![](https://i.imgur.com/ljZPTl5.png)
 
   - **NOTE** still needs more tests to handle the `return res.status(500)` in `src/controllers/users.ts` to reach 100% of coverage.
 

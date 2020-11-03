@@ -2,7 +2,6 @@ import { NextFunction } from 'express';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import * as type from '@custom_types/types';
-import * as validator from '@utils/validator';
 
 const Schema = mongoose.Schema;
 const SALT_ROUNDS: number = 6;
