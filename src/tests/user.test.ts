@@ -2,32 +2,13 @@ import app from '~/app';
 import User from '@models/user';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
-import * as type from '@custom_types/types';
+import * as type from '@customTypes/types';
 import { user1, user2, setupDatabase } from './database/database';
 
 const URL = '/users';
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
 const PASSWORD_LEN = process.env.PASSWORD_LEN;
-
-type LoginResponse = {
-    body: {
-        token: string;
-    };
-};
-
-type ResponseMSG = {
-    body: {
-        message: string;
-    };
-};
-
-type UserProfile = {
-    body: {
-        firstName: string;
-        lastName: string;
-        email: string;
-    };
-};
 
 beforeEach(setupDatabase);
 
@@ -277,6 +258,8 @@ describe("User's API", () => {
     });
 
     it('Should not verify account - invalid email token', async () => {
+        const expiredVerifyToken =
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZW1haWwiLCJpYXQiOjE2MDI2ODg3MjEsImV4cCI6MTYwMzI5MzUyMX0.CWhtDg0BYoaL9sld0hwOd7U12agsXSB-7SZ6XYF9hko';
         const form: type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
@@ -290,9 +273,7 @@ describe("User's API", () => {
         expect(user).not.toBeNull();
 
         const response = await request(app)
-            .get(
-                `${URL}/email/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZW1haWwiLCJpYXQiOjE2MDI2ODg3MjEsImV4cCI6MTYwMzI5MzUyMX0.CWhtDg0BYoaL9sld0hwOd7U12agsXSB-7SZ6XYF9hko`
-            )
+            .get(`${URL}/email/${expiredVerifyToken}`)
             .expect(401);
         expect(response.body).toMatchObject({
             message: 'ERROR: Expired email token.',
@@ -418,7 +399,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${invalidToken}`)
             .expect(401);
         expect(profile.body).toMatchObject({
-            message: 'Invalid token.',
+            message: 'Not authorized, invalid token.',
         });
     });
 
@@ -452,7 +433,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${invalidToken}`)
             .expect(401);
         expect(profile.body).toMatchObject({
-            message: 'Invalid token.',
+            message: 'Not authorized, invalid token.',
         });
     });
 
@@ -1035,7 +1016,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should verify new password', async () => {
+    it('Should update reset password', async () => {
         const form: type.EmailForm = {
             email: user1.email,
         };
@@ -1067,7 +1048,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should not verify new password - different passwords', async () => {
+    it('Should not update reset password - different passwords', async () => {
         const form: type.EmailForm = {
             email: user1.email,
         };
@@ -1090,15 +1071,64 @@ describe("User's API", () => {
         });
     });
 
-    it('Should not verify new password - different passwords', async () => {
+    it('Should not update reset password - confirm password empty', async () => {
+        const form: type.EmailForm = {
+            email: user1.email,
+        };
+
+        await request(app).post(`${URL}/password`).send(form).expect(200);
+        const user: type.UserI = await User.findById(user1._id);
+
         const form2: type.PasswordForm = {
             password: '12345678',
-            confirmPassword: '12345678',
+            confirmPassword: '',
         };
 
         const response: ResponseMSG = await request(app)
-            .post(`${URL}/password/bad_token`)
+            .post(`${URL}/password/${user.verifyToken}`)
             .send(form2)
+            .expect(400);
+        expect(response.body).toMatchObject({
+            confirmPassword: 'Must not be empty.',
+            passwords: 'Must be equal.',
+        });
+    });
+
+    it('Should not update reset password - expired token', async () => {
+        const verifyToken = jwt.sign(
+            { mode: 'password' },
+            JWT_VERIFICATION_SECRET_KEY,
+            {
+                expiresIn: '0s',
+            }
+        );
+        const user: type.UserI = await User.findById(user1._id);
+        user.verifyToken = verifyToken;
+        await user.save();
+
+        const form: type.PasswordForm = {
+            password: '12345678',
+            confirmPassword: '12345678',
+        };
+        const response: ResponseMSG = await request(app)
+            .post(`${URL}/password/${verifyToken}`)
+            .send(form)
+            .expect(401);
+        expect(response.body).toMatchObject({
+            message: 'ERROR: Expired password token.',
+        });
+    });
+
+    it('Should not update reset password - invalid token', async () => {
+        const verifyToken =
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoicGFzc3dvcmQiLCJpYXQiOjE2MDQ1MDU1MTgsImV4cCI6MTYwNTExMDMxOH0.PzKZh_9JdxSiLFkUa023Cku99iSTCDgbNjSu2rzO8ac';
+        const form: type.PasswordForm = {
+            password: '12345678',
+            confirmPassword: '12345678',
+        };
+        const response: ResponseMSG = await request(app)
+            .post(`${URL}/password/${verifyToken}`)
+            .send(form)
             .expect(404);
         expect(response.body).toMatchObject({
             message: 'ERROR: User not found.',

@@ -20,7 +20,7 @@
         "baseUrl": "./src",
         "paths": {
             "~/*": ["./*"],
-            "@custom_types/*": ["./@types/*"],
+            "@customTypes/*": ["./@types/*"],
             "@config/*": ["./config/*"],
             "@controllers/*": ["./controllers/*"],
             "@middlewares/*": ["./middlewares/*"],

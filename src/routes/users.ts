@@ -9,7 +9,7 @@ router.post('/login', userCtrl.loginUser);
 router.post('/email', userCtrl.resendVerifyEmail);
 router.get('/email/:verifyToken', userCtrl.verifyEmail);
 router.post('/password', userCtrl.resetPassword);
-router.post('/password/:verifyToken', userCtrl.verifyPassword);
+router.post('/password/:verifyToken', userCtrl.updatePassword);
 
 router.get('/profile', auth, userCtrl.getUser);
 router.put('/profile', auth, userCtrl.updateUser);

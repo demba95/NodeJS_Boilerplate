@@ -1,4 +1,4 @@
-import * as type from '@custom_types/types';
+import * as type from '@customTypes/types';
 
 const CLIENT_URL = process.env.CLIENT_URL;
 
@@ -30,7 +30,7 @@ export const updateEmail: type.MSGFn = (user, host) => {
 export const resetPassword: type.MSGFn = (user) => {
     return {
         from: process.env.SENDGRID_EMAIL,
-        to: user.tempEmail,
+        to: user.email,
         subject: 'Reset password',
         html: `
                 <h1>Hello ${user.firstName}</h1>
@@ -44,7 +44,7 @@ export const resetPassword: type.MSGFn = (user) => {
 export const updatePassword: type.MSGFn = (user) => {
     return {
         from: process.env.SENDGRID_EMAIL,
-        to: user.tempEmail,
+        to: user.email,
         subject: 'Update password',
         html: `
                 <h1>Hello ${user.firstName}</h1>

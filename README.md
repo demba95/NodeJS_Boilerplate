@@ -34,6 +34,8 @@
     - [Database Connects](#database-connects)
     - [Test Cases](#test-cases)
       - [\_\_mocks\_\_](#__mocks__)
+        - [@SENDGRID](#sendgrid)
+        - [@TYPES](#types-1)
       - [Coverage Test](#coverage-test)
   - [Babel](#babel)
     - [Config](#config-1)
@@ -69,7 +71,7 @@
   - Using my custom touch command to create files and folders
 
     ```Bash
-      touch -n @types/types.ts env/dev.env + prod.env + test.env src/config/database.ts src/controllers/users.ts src/middlewares/auth.ts src/models/user.ts src/routes/users.ts src/tests/user.test.js + database/database.js + src/tests/__mocks__/@sendgrid/mail.ts src/utils/message.ts + validator.ts src/app.ts src/index.ts babel.config.js
+      touch -n @types/types.ts env/dev.env + prod.env + test.env src/config/database.ts src/controllers/users.ts src/middlewares/auth.ts src/models/user.ts src/routes/users.ts src/tests/user.test.js + database/database.js + src/tests/__mocks__/@sendgrid/mail.ts + src/tests/__mocks__/@types/types.ts src/utils/message.ts + validator.ts src/app.ts src/index.ts babel.config.js
     ```
 
 - Final Structure
@@ -96,7 +98,9 @@
     │   ├── tests
     │   │   ├── __mocks__
     │   │   │   └── @sendgrid
-    │   │   │       └── mail.ts
+    │   │   │   │   └── mail.ts
+    │   │   │   └── @types
+    │   │   │       └── types.ts
     │   │   ├── database
     │   │   │   └── database.js
     │   │   └── user.test.js
@@ -196,7 +200,7 @@
               "baseUrl": "./src",
               "paths": {
                   "~/*": ["./*"],
-                  "@custom_types/*": ["./@types/*"],
+                  "@customTypes/*": ["./@types/*"],
                   "@config/*": ["./config/*"],
                   "@controllers/*": ["./controllers/*"],
                   "@middlewares/*": ["./middlewares/*"],
@@ -531,7 +535,7 @@
     import * as auth from '@middlewares/auth';
     import * as validator from '@utils/validator';
     import * as MSG from '@utils/message';
-    import * as type from '@custom_types/types';
+    import * as type from '@customTypes/types';
 
     sgMail.setApiKey(process.env.SENDGRID_KEY);
 
@@ -715,16 +719,14 @@
     };
 
     const verifyEmail: RequestHandler = async (req, res) => {
+        const token: string = req.params.verifyToken;
         try {
-            const token = req.params.verifyToken;
-            try {
-                jwt.verify(token, process.env.JWT_VERIFICATION_SECRET_KEY);
-            } catch (error) {
-                return res
-                    .status(401)
-                    .json({ message: 'ERROR: Expired email token.' });
-            }
+            jwt.verify(token, process.env.JWT_VERIFICATION_SECRET_KEY);
+        } catch (error) {
+            return res.status(401).json({ message: 'ERROR: Expired email token.' });
+        }
 
+        try {
             const user: type.UserI = await User.findOne({
                 verifyToken: token,
             });
@@ -815,7 +817,16 @@
         }
     };
 
-    const verifyPassword: RequestHandler = async (req, res) => {
+    const updatePassword: RequestHandler = async (req, res) => {
+        const token: string = req.params.verifyToken;
+        try {
+            jwt.verify(token, process.env.JWT_VERIFICATION_SECRET_KEY);
+        } catch (error) {
+            return res
+                .status(401)
+                .json({ message: 'ERROR: Expired password token.' });
+        }
+
         const form: type.PasswordForm = req.body;
 
         const { valid, errors } = validator.validatePassword(form);
@@ -823,13 +834,14 @@
 
         try {
             const user: type.UserI = await User.findOne({
-                verifyToken: req.params.verifyToken,
+                verifyToken: token,
             });
             if (!user) {
                 return res.status(404).json({ message: 'ERROR: User not found.' });
             }
 
             user.verifyToken = '';
+            user.password = form.password;
             await user.save();
 
             const msg = MSG.updatePassword(user);
@@ -855,7 +867,7 @@
         verifyEmail,
         resendVerifyEmail,
         resetPassword,
-        verifyPassword,
+        updatePassword,
     };
   ```
 
@@ -899,7 +911,7 @@
     ```TypeScript
       import { RequestHandler } from 'express';
       import jwt from 'jsonwebtoken';
-      import * as type from '@custom_types/types';
+      import * as type from '@customTypes/types';
 
       const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
       const JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN;
@@ -914,24 +926,15 @@
               if (token) {
                   token = token.replace('Bearer ', '');
                   const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
-                  if (
-                      !user ||
-                      !user.hasOwnProperty('firstName') ||
-                      !user.hasOwnProperty('lastName') ||
-                      !user.hasOwnProperty('_id')
-                  ) {
-                      return res
-                          .status(401)
-                          .json({ message: 'Not authorized, invalid token.' });
-                  }
-
                   req.user = user;
                   next();
               } else {
                   res.status(401).json({ message: 'Token not found.' });
               }
           } catch (error) {
-              return res.status(401).json({ message: 'Invalid token.' });
+              return res
+                  .status(401)
+                  .json({ message: 'Not authorized, invalid token.' });
           }
       };
 
@@ -964,7 +967,7 @@
     import { NextFunction } from 'express';
     import mongoose from 'mongoose';
     import bcrypt from 'bcrypt';
-    import * as type from '@custom_types/types';
+    import * as type from '@customTypes/types';
 
     const Schema = mongoose.Schema;
     const SALT_ROUNDS: number = 6;
@@ -1145,10 +1148,10 @@
 
     router.post('/signup', userCtrl.signUpUser);
     router.post('/login', userCtrl.loginUser);
-    router.get('/email/:verifyToken', userCtrl.verifyEmail);
     router.post('/email', userCtrl.resendVerifyEmail);
+    router.get('/email/:verifyToken', userCtrl.verifyEmail);
     router.post('/password', userCtrl.resetPassword);
-    router.post('/password/:verifyToken', userCtrl.verifyPassword);
+    router.post('/password/:verifyToken', userCtrl.updatePassword);
 
     router.get('/profile', auth, userCtrl.getUser);
     router.put('/profile', auth, userCtrl.updateUser);
@@ -1183,7 +1186,7 @@
   ```
 
   ```TypeScript
-    import * as type from '@custom_types/types';
+    import * as type from '@customTypes/types';
 
     const CLIENT_URL = process.env.CLIENT_URL;
 
@@ -1215,7 +1218,7 @@
     export const resetPassword: type.MSGFn = (user) => {
         return {
             from: process.env.SENDGRID_EMAIL,
-            to: user.tempEmail,
+            to: user.email,
             subject: 'Reset password',
             html: `
                     <h1>Hello ${user.firstName}</h1>
@@ -1229,7 +1232,7 @@
     export const updatePassword: type.MSGFn = (user) => {
         return {
             from: process.env.SENDGRID_EMAIL,
-            to: user.tempEmail,
+            to: user.email,
             subject: 'Update password',
             html: `
                     <h1>Hello ${user.firstName}</h1>
@@ -1248,7 +1251,7 @@
   - Helper file to validate incoming data
 
   ```TypeScript
-    import * as type from '@custom_types/types';
+    import * as type from '@customTypes/types';
 
     const PASSWORD_LENGTH = +process.env.PASSWORD_LEN;
 
@@ -1522,7 +1525,7 @@
           preset: 'ts-jest',
           moduleNameMapper: {
               '~/(.*)': '<rootDir>/src/$1',
-              '@custom_types/(.*)': '<rootDir>/src/@types/$1',
+              '@customTypes/(.*)': '<rootDir>/src/@types/$1',
               '@config/(.*)': '<rootDir>/src/config/$1',
               '@controllers/(.*)': '<rootDir>/src/controllers/$1',
               '@middlewares/(.*)': '<rootDir>/src/middlewares/$1',
@@ -1609,31 +1612,11 @@
     import User from '@models/user';
     import request from 'supertest';
     import jwt from 'jsonwebtoken';
-    import * as type from '@custom_types/types';
+    import * as type from '@customTypes/types';
     import { user1, user2, setupDatabase } from './database/database';
     const URL = '/users';
     const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
     const PASSWORD_LEN = process.env.PASSWORD_LEN;
-
-    type LoginResponse = {
-        body: {
-            token: string;
-        };
-    };
-
-    type ResponseMSG = {
-        body: {
-            message: string;
-        };
-    };
-
-    type UserProfile = {
-        body: {
-            firstName: string;
-            lastName: string;
-            email: string;
-        };
-    };
 
     beforeEach(setupDatabase);
 
@@ -1686,10 +1669,14 @@
 
 [Go Back to Contents](#contents)
 
+##### @SENDGRID
+
+[Go Back to Contents](#contents)
+
 - We use `__mocks__` to override the `node_modules/@sendgrind/mail`
 
   - To override something, we just need to follow the same structure of the package
-  - In `tests/__mocks__/@sendgrid`
+  - In `tests/__mocks__/@sendgrid/mails.ts`
 
     - We are going to override the **setApiKey** and **send** methods
 
@@ -1700,16 +1687,46 @@
         };
       ```
 
+##### @TYPES
+
+[Go Back to Contents](#contents)
+
+- We use `__mocks__` to override the `node_modules/@types` and create our custom types specific for testing.
+
+  - In `tests/__mocks__/@types/types.ts`
+
+    ```TypeScript
+      type LoginResponse = {
+          body: {
+              token: string;
+          };
+      };
+
+      type ResponseMSG = {
+          body: {
+              message: string;
+          };
+      };
+
+      type UserProfile = {
+          body: {
+              firstName: string;
+              lastName: string;
+              email: string;
+          };
+      };
+    ```
+
 #### Coverage Test
 
 [Go Back to Contents](#contents)
 
 - To display the coverage test
 
-  - Replace `--watch` with `--coverage` from the test script in the `package.json`
-  - Run the command `npm run test`
+  - Add `-- --coverage` in the end of the command
+  - Run the command `npm run test -- --coverage`
 
-  ![](https://i.imgur.com/ljZPTl5.png)
+  ![](https://i.imgur.com/3qYpyeA.png)
 
   - **NOTE** still needs more tests to handle the `return res.status(500)` in `src/controllers/users.ts` to reach 100% of coverage.
 
@@ -1747,7 +1764,7 @@
                 {
                     alias: {
                         '~': './src',
-                        '@custom_types': './src/@types',
+                        '@customTypes': './src/@types',
                         '@config': './src/config',
                         '@controllers': './src/controllers',
                         '@middlewares': './src/middlewares',

@@ -10,7 +10,7 @@ module.exports = {
     preset: 'ts-jest',
     moduleNameMapper: {
         '~/(.*)': '<rootDir>/src/$1',
-        '@custom_types/(.*)': '<rootDir>/src/@types/$1',
+        '@customTypes/(.*)': '<rootDir>/src/@types/$1',
         '@config/(.*)': '<rootDir>/src/config/$1',
         '@controllers/(.*)': '<rootDir>/src/controllers/$1',
         '@middlewares/(.*)': '<rootDir>/src/middlewares/$1',

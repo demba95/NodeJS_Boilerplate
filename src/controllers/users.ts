@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import * as auth from '@middlewares/auth';
 import * as validator from '@utils/validator';
 import * as MSG from '@utils/message';
-import * as type from '@custom_types/types';
+import * as type from '@customTypes/types';
 
 sgMail.setApiKey(process.env.SENDGRID_KEY);
 
@@ -189,16 +189,14 @@ const deleteUser: RequestHandler = async (req, res) => {
 };
 
 const verifyEmail: RequestHandler = async (req, res) => {
+    const token: string = req.params.verifyToken;
     try {
-        const token = req.params.verifyToken;
-        try {
-            jwt.verify(token, process.env.JWT_VERIFICATION_SECRET_KEY);
-        } catch (error) {
-            return res
-                .status(401)
-                .json({ message: 'ERROR: Expired email token.' });
-        }
+        jwt.verify(token, process.env.JWT_VERIFICATION_SECRET_KEY);
+    } catch (error) {
+        return res.status(401).json({ message: 'ERROR: Expired email token.' });
+    }
 
+    try {
         const user: type.UserI = await User.findOne({
             verifyToken: token,
         });
@@ -289,7 +287,16 @@ const resetPassword: RequestHandler = async (req, res) => {
     }
 };
 
-const verifyPassword: RequestHandler = async (req, res) => {
+const updatePassword: RequestHandler = async (req, res) => {
+    const token: string = req.params.verifyToken;
+    try {
+        jwt.verify(token, process.env.JWT_VERIFICATION_SECRET_KEY);
+    } catch (error) {
+        return res
+            .status(401)
+            .json({ message: 'ERROR: Expired password token.' });
+    }
+
     const form: type.PasswordForm = req.body;
 
     const { valid, errors } = validator.validatePassword(form);
@@ -297,13 +304,14 @@ const verifyPassword: RequestHandler = async (req, res) => {
 
     try {
         const user: type.UserI = await User.findOne({
-            verifyToken: req.params.verifyToken,
+            verifyToken: token,
         });
         if (!user) {
             return res.status(404).json({ message: 'ERROR: User not found.' });
         }
 
         user.verifyToken = '';
+        user.password = form.password;
         await user.save();
 
         const msg = MSG.updatePassword(user);
@@ -329,5 +337,5 @@ export default {
     verifyEmail,
     resendVerifyEmail,
     resetPassword,
-    verifyPassword,
+    updatePassword,
 };

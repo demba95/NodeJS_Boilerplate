@@ -16,7 +16,7 @@ module.exports = {
             {
                 alias: {
                     '~': './src',
-                    '@custom_types': './src/@types',
+                    '@customTypes': './src/@types',
                     '@config': './src/config',
                     '@controllers': './src/controllers',
                     '@middlewares': './src/middlewares',

@@ -1,4 +1,4 @@
-import * as type from '@custom_types/types';
+import * as type from '@customTypes/types';
 
 const PASSWORD_LENGTH = +process.env.PASSWORD_LEN;
 
