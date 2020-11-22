@@ -12,7 +12,7 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
-app.use('/users', userRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/*', (_: Request, res: Response) => {
     res.status(404).json({ message: "Path doesn't exist." });

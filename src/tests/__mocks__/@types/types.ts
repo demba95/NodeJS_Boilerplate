@@ -1,7 +1,5 @@
 type LoginResponse = {
-    body: {
-        token: string;
-    };
+    body: string;
 };
 
 type ResponseMSG = {

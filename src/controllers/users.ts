@@ -64,7 +64,7 @@ const loginUser: RequestHandler = async (req, res) => {
             if (isMatch) {
                 if (user.isEmailVerified) {
                     const token = auth.createAccessToken(user);
-                    return res.json({ token });
+                    return res.json(token);
                 }
 
                 return res.status(403).json({

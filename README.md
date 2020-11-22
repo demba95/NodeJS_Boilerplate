@@ -594,7 +594,7 @@
                 if (isMatch) {
                     if (user.isEmailVerified) {
                         const token = auth.createAccessToken(user);
-                        return res.json({ token });
+                        return res.json(token);
                     }
 
                     return res.status(403).json({
@@ -1188,7 +1188,7 @@
   ```TypeScript
     import * as type from '@customTypes/types';
 
-    const CLIENT_URL = process.env.CLIENT_URL;
+    const FRONTEND_URL = process.env.FRONTEND_URL;
 
     export const signUp: type.MSGFn = (user, host) => {
         return {
@@ -1198,7 +1198,7 @@
             html: `
                     <h1>Hello ${user.firstName}</h1>
                     <p>Thanks for registering on our website.</p>
-                    <a href="http://${host}/users/verify-email/${user.verifyToken}">Click here to verify your account</a>
+                    <a href="http://${host}/api/users/email/${user.verifyToken}">Click here to verify your account</a>
                 `,
         };
     };
@@ -1210,7 +1210,7 @@
             subject: 'Verify your email',
             html: `
                     <h1>Hello ${user.firstName}</h1>
-                    <a href="http://${host}/users/verify-email/${user.verifyToken}">Click here to confirm your new email</a>
+                    <a href="http://${host}/api/users/email/${user.verifyToken}">Click here to confirm your new email</a>
                 `,
         };
     };
@@ -1223,7 +1223,7 @@
             html: `
                     <h1>Hello ${user.firstName}</h1>
                     We're sending you this email because you requested a password reset. Click on this link to create a new password:
-                    <a href="${CLIENT_URL}/reset-password/${user.verifyToken}">Set a new password</a>
+                    <a href="${FRONTEND_URL}/reset-password/${user.verifyToken}">Set a new password</a>
                     If you didn't request a password reset, you can ignore this email. Your password will not be changed.
                 `,
         };
@@ -1442,7 +1442,7 @@
     app.use(helmet());
     app.use(express.json());
 
-    app.use('/users', userRoutes);
+    app.use('/api/users', userRoutes);
 
     app.get('/*', (_: Request, res: Response) => {
         res.status(404).json({ message: "Path doesn't exist." });
@@ -1614,8 +1614,10 @@
     import jwt from 'jsonwebtoken';
     import * as type from '@customTypes/types';
     import { user1, user2, setupDatabase } from './database/database';
-    const URL = '/users';
+
+    const URL = '/api/users';
     const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+    const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
     const PASSWORD_LEN = process.env.PASSWORD_LEN;
 
     beforeEach(setupDatabase);
@@ -1692,30 +1694,27 @@
 [Go Back to Contents](#contents)
 
 - We use `__mocks__` to override the `node_modules/@types` and create our custom types specific for testing.
+- In `tests/__mocks__/@types/types.ts`
 
-  - In `tests/__mocks__/@types/types.ts`
+  ```TypeScript
+    type LoginResponse = {
+        body: string;
+    };
 
-    ```TypeScript
-      type LoginResponse = {
-          body: {
-              token: string;
-          };
-      };
+    type ResponseMSG = {
+        body: {
+            message: string;
+        };
+    };
 
-      type ResponseMSG = {
-          body: {
-              message: string;
-          };
-      };
-
-      type UserProfile = {
-          body: {
-              firstName: string;
-              lastName: string;
-              email: string;
-          };
-      };
-    ```
+    type UserProfile = {
+        body: {
+            firstName: string;
+            lastName: string;
+            email: string;
+        };
+    };
+  ```
 
 #### Coverage Test
 
