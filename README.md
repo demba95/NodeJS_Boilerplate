@@ -538,7 +538,9 @@
 
     const getUser: RequestHandler = async (req, res) => {
         try {
-            const user: type.UserI = await User.findOne({ _id: req.user._id });
+            const user: type.UserI = await User.findOne({
+                _id: req.user._id,
+            }).select('-tempEmail');
             if (!user) {
                 return res.status(404).json({ message: 'ERROR: User not found.' });
             }
@@ -561,7 +563,7 @@
         try {
             const user: type.UserI = await User.findOne({
                 _id: req.user._id,
-            }).select('-tempEmail');
+            });
             if (!user) {
                 return res.status(404).json({ message: 'ERROR: User not found.' });
             }
@@ -655,9 +657,7 @@
                 verifyToken: token,
             });
             if (!user) {
-                return res
-                    .status(404)
-                    .json({ message: 'ERROR: Invalid/Expired email token.' });
+                return res.status(404).json({ message: 'ERROR: User not found.' });
             }
 
             user.verifyToken = null;
@@ -1364,17 +1364,24 @@
         if (data.hasOwnProperty('lastName') && isEmpty(lastName))
             errors.lastName = 'Must not be empty.';
         if (isEmpty(password)) errors.password = 'Must not be empty.';
-        if (data.hasOwnProperty('newPassword') && isEmpty(newPassword))
+        if (
+            data.hasOwnProperty('newPassword') &&
+            isEmpty(newPassword) &&
+            !isEmpty(confirmNewPassword)
+        )
             errors.newPassword = 'Must not be empty.';
         if (
             data.hasOwnProperty('confirmNewPassword') &&
-            isEmpty(confirmNewPassword)
+            isEmpty(confirmNewPassword) &&
+            !isEmpty(newPassword)
         )
             errors.confirmNewPassword = 'Must not be empty.';
         if (
             (data.hasOwnProperty('newPassword') &&
+                newPassword !== '' &&
                 newPassword.length < PASSWORD_LENGTH) ||
             (data.hasOwnProperty('confirmNewPassword') &&
+                confirmNewPassword !== '' &&
                 confirmNewPassword.length < PASSWORD_LENGTH)
         ) {
             errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
@@ -1761,7 +1768,7 @@
   - Add `-- --coverage` in the end of the command
   - Run the command `npm run test -- --coverage`
 
-  ![](https://i.imgur.com/3qYpyeA.png)
+  ![](https://i.imgur.com/QJXlglX.png)
 
   - **NOTE** still needs more tests to handle the `return res.status(500)` in `src/controllers/users.ts` to reach 100% of coverage.
 

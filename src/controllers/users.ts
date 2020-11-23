@@ -84,7 +84,9 @@ const loginUser: RequestHandler = async (req, res) => {
 
 const getUser: RequestHandler = async (req, res) => {
     try {
-        const user: type.UserI = await User.findOne({ _id: req.user._id });
+        const user: type.UserI = await User.findOne({
+            _id: req.user._id,
+        }).select('-tempEmail');
         if (!user) {
             return res.status(404).json({ message: 'ERROR: User not found.' });
         }
@@ -107,7 +109,7 @@ const updateUser: RequestHandler = async (req, res) => {
     try {
         const user: type.UserI = await User.findOne({
             _id: req.user._id,
-        }).select('-tempEmail');
+        });
         if (!user) {
             return res.status(404).json({ message: 'ERROR: User not found.' });
         }
@@ -201,9 +203,7 @@ const verifyEmail: RequestHandler = async (req, res) => {
             verifyToken: token,
         });
         if (!user) {
-            return res
-                .status(404)
-                .json({ message: 'ERROR: Invalid/Expired email token.' });
+            return res.status(404).json({ message: 'ERROR: User not found.' });
         }
 
         user.verifyToken = null;

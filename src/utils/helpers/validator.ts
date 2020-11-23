@@ -76,17 +76,24 @@ const validateUpdateData: type.ValidatorFn<type.UpdateUserForm> = (data) => {
     if (data.hasOwnProperty('lastName') && isEmpty(lastName))
         errors.lastName = 'Must not be empty.';
     if (isEmpty(password)) errors.password = 'Must not be empty.';
-    if (data.hasOwnProperty('newPassword') && isEmpty(newPassword))
+    if (
+        data.hasOwnProperty('newPassword') &&
+        isEmpty(newPassword) &&
+        !isEmpty(confirmNewPassword)
+    )
         errors.newPassword = 'Must not be empty.';
     if (
         data.hasOwnProperty('confirmNewPassword') &&
-        isEmpty(confirmNewPassword)
+        isEmpty(confirmNewPassword) &&
+        !isEmpty(newPassword)
     )
         errors.confirmNewPassword = 'Must not be empty.';
     if (
         (data.hasOwnProperty('newPassword') &&
+            newPassword !== '' &&
             newPassword.length < PASSWORD_LENGTH) ||
         (data.hasOwnProperty('confirmNewPassword') &&
+            confirmNewPassword !== '' &&
             confirmNewPassword.length < PASSWORD_LENGTH)
     ) {
         errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;

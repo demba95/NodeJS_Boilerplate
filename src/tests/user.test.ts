@@ -4,6 +4,7 @@ import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import * as type from '@customTypes/types';
 import { user1, user2, setupDatabase } from './database/database';
+import { types } from '@babel/core';
 
 const URL = '/api/users';
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -252,6 +253,26 @@ describe("User's API", () => {
 
         await request(app).post(`${URL}/signup`).send(form).expect(201);
         const user: type.UserI = await User.findOne({ email: form.email });
+        await User.findByIdAndDelete(user._id);
+        const response = await request(app)
+            .get(`${URL}/email/${user.verifyToken}`)
+            .expect(404);
+        expect(response.body).toMatchObject({
+            message: 'ERROR: User not found.',
+        });
+    });
+
+    it('Should not verify account - empty email token', async () => {
+        const form: type.SignUpForm = {
+            email: 'your_email_3@test.com',
+            firstName: 'Roger 3',
+            lastName: 'That 3',
+            password: 'test123',
+            confirmPassword: 'test123',
+        };
+
+        await request(app).post(`${URL}/signup`).send(form).expect(201);
+        const user: type.UserI = await User.findOne({ email: form.email });
         expect(user).not.toBeNull();
 
         await request(app).get(`${URL}/email/`).expect(404);
@@ -425,6 +446,27 @@ describe("User's API", () => {
         });
     });
 
+    it("Should not fetch user's profile - user not found", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body;
+        await User.findByIdAndDelete(user1._id);
+        const profile: UserProfile = await request(app)
+            .get(`${URL}/profile`)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(404);
+        expect(profile.body).toMatchObject({
+            message: 'ERROR: User not found.',
+        });
+    });
+
     it("Should not fetch user's profile - invalid token", async () => {
         const invalidToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
@@ -530,6 +572,32 @@ describe("User's API", () => {
             .send(form2)
             .expect(200);
         expect(typeof response2.body).toBe('string');
+    });
+
+    it("Should not update user's profile - user not found", async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body;
+        await User.findByIdAndDelete(user1._id);
+        const updateUser = <type.UpdateUserForm>{
+            firstName: 'new name',
+            password: user1.password,
+        };
+        const profile: UserProfile = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(404);
+        expect(profile.body).toMatchObject({
+            message: 'ERROR: User not found.',
+        });
     });
 
     it("Should not update user's profile - empty password", async () => {
@@ -672,6 +740,7 @@ describe("User's API", () => {
         const updateUser2 = <type.UpdateUserForm>{
             password: user1.password,
             newPassword: '',
+            confirmNewPassword: '12345678',
         };
         const response2 = await request(app)
             .put(`${URL}/profile`)
@@ -680,6 +749,7 @@ describe("User's API", () => {
             .expect(400);
         expect(response2.body).toMatchObject({
             newPassword: 'Must not be empty.',
+            passwords: 'Must be equal.',
         });
     });
 
@@ -696,6 +766,7 @@ describe("User's API", () => {
         const token: string = response.body;
         const updateUser2 = <type.UpdateUserForm>{
             password: user1.password,
+            newPassword: '12345678',
             confirmNewPassword: '',
         };
         const response2 = await request(app)
@@ -705,9 +776,7 @@ describe("User's API", () => {
             .expect(400);
         expect(response2.body).toMatchObject({
             confirmNewPassword: 'Must not be empty.',
-            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
             passwords: 'Must be equal.',
-            unchanged: 'Must modify something.',
         });
     });
 
@@ -830,6 +899,28 @@ describe("User's API", () => {
             .expect(200);
         expect(response2.body).toMatchObject({
             message: 'Your account has been deleted.',
+        });
+    });
+
+    it('Should not delete user/profile - user not found', async () => {
+        const form: type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app)
+            .post(`${URL}/login`)
+            .send(form)
+            .expect(200);
+        const token: string = response.body;
+        await User.findByIdAndDelete(user1._id);
+        const response2: UserProfile = await request(app)
+            .delete(`${URL}/profile`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({ password: form.password })
+            .expect(404);
+        expect(response2.body).toMatchObject({
+            message: 'ERROR: User not found.',
         });
     });
 
@@ -1045,6 +1136,29 @@ describe("User's API", () => {
         });
         expect(response2.body).toMatchObject({
             message: 'Password updated successfully.',
+        });
+    });
+
+    it('Should not update reset password - user not found', async () => {
+        const form: type.EmailForm = {
+            email: user1.email,
+        };
+
+        await request(app).post(`${URL}/password`).send(form).expect(200);
+        const user: type.UserI = await User.findById(user1._id);
+
+        const form2: type.PasswordForm = {
+            password: '12345678',
+            confirmPassword: '12345678',
+        };
+
+        await User.findByIdAndDelete(user1._id);
+        const response2: ResponseMSG = await request(app)
+            .post(`${URL}/password/${user.verifyToken}`)
+            .send(form2)
+            .expect(404);
+        expect(response2.body).toMatchObject({
+            message: 'ERROR: User not found.',
         });
     });
 
