@@ -12,7 +12,7 @@
         "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
         "typeRoots": [
             "./node_modules/@types",
-            "src/@types"
+            "src/utils/@types"
         ] /* List of folders to include type definitions from. */,
         "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
         "skipLibCheck": true /* Skip type checking of declaration files. */,
@@ -20,13 +20,14 @@
         "baseUrl": "./src",
         "paths": {
             "~/*": ["./*"],
-            "@customTypes/*": ["./@types/*"],
             "@config/*": ["./config/*"],
             "@controllers/*": ["./controllers/*"],
             "@middlewares/*": ["./middlewares/*"],
             "@models/*": ["./models/*"],
             "@routes/*": ["./routes/*"],
-            "@utils/*": ["./utils/*"]
+            "@utils/*": ["./utils/*"],
+            "@customTypes/*": ["./utils/@types/*"],
+            "@helpers/*": ["./utils/helpers/*"]
         }
     },
     "include": ["src/**/*"],

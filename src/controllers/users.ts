@@ -3,8 +3,8 @@ import User from '@models/user';
 import sgMail from '@sendgrid/mail';
 import jwt from 'jsonwebtoken';
 import * as auth from '@middlewares/auth';
-import * as validator from '@utils/validator';
-import * as MSG from '@utils/message';
+import * as validator from '@helpers/validator';
+import * as MSG from '@helpers/message';
 import * as type from '@customTypes/types';
 
 sgMail.setApiKey(process.env.SENDGRID_KEY);

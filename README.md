@@ -1,13 +1,17 @@
+<h1>Last Update - 11/23/2020</h1>
+
+---
+
 <h1 id='contents'>Table of Contents</h1>
 
 - [NODE.JS BOILERPLATE](#nodejs-boilerplate)
+  - [Postman](#postman)
   - [Init Node](#init-node)
   - [Create Folder and Files](#create-folder-and-files)
   - [Install Packages](#install-packages)
     - [Init Typescript](#init-typescript)
     - [package.json](#packagejson)
   - [Environment Variables](#environment-variables)
-  - [Types](#types)
   - [Database Connection](#database-connection)
     - [MongoDB](#mongodb)
       - [Warnings](#warnings)
@@ -23,8 +27,10 @@
   - [Routes](#routes)
     - [User's Routes](#users-routes)
   - [Utilities](#utilities)
-    - [Message](#message)
-    - [Validator](#validator)
+    - [Types](#types)
+    - [Helpers](#helpers)
+      - [Message](#message)
+      - [Validator](#validator)
   - [Server](#server)
     - [App.ts](#appts)
     - [Index.ts](#indexts)
@@ -41,6 +47,12 @@
     - [Config](#config-1)
 
 # NODE.JS BOILERPLATE
+
+## Postman
+
+[Go Back to Contents](#contents)
+
+- [Postman - API Calls](https://github.com/Roger-Takeshita/Node.js_Boilerplate/blob/main/Boilerplate%20-%20Backend.postman_collection.json)
 
 ## Init Node
 
@@ -68,10 +80,29 @@
 
 - Mkdir/Touch Files
 
-  - Using my custom touch command to create files and folders
+  - Using my custom [touch command](https://github.com/Roger-Takeshita/Shell-Script/tree/master/Scripts/touch-open) to create files and folders
 
     ```Bash
-      touch -n @types/types.ts env/dev.env + prod.env + test.env src/config/database.ts src/controllers/users.ts src/middlewares/auth.ts src/models/user.ts src/routes/users.ts src/tests/user.test.js + database/database.js + src/tests/__mocks__/@sendgrid/mail.ts + src/tests/__mocks__/@types/types.ts src/utils/message.ts + validator.ts src/app.ts src/index.ts babel.config.js
+      touch -n env/dev.env + prod.env + test.env src/config/database.ts src/controllers/users.ts src/middlewares/auth.ts src/models/user.ts src/routes/users.ts src/tests/user.test.js + database/database.js + src/tests/__mocks__/@sendgrid/mail.ts + src/tests/__mocks__/@types/types.ts src/utils/helpers/message.ts + validator.ts src/app.ts src/utils/@types/types.ts src/index.ts babel.config.js
+
+      # touch env/dev.env
+      # touch env/prod.env
+      # touch env/test.env
+      # touch src/config/database.ts
+      # touch src/controllers/users.ts
+      # touch src/middlewares/auth.ts
+      # touch src/models/user.ts
+      # touch src/routes/users.ts
+      # touch src/tests/user.test.js
+      # touch src/tests/database/database.js
+      # touch src/tests/__mocks__/@sendgrid/mail.ts
+      # touch src/tests/__mocks__/@types/types.ts
+      # touch src/utils/@types/types.ts
+      # touch src/utils/helpers/message.ts
+      # touch src/utils/helpers/validator.ts
+      # touch src/app.ts
+      # touch src/index.ts
+      # touch babel.config.js
     ```
 
 - Final Structure
@@ -83,8 +114,6 @@
     │   ├── prod.env
     │   └── test.env
     ├── src
-    │   ├── @types
-    │   │   └── types.ts
     │   ├── config
     │   │   └── database.ts
     │   ├── controllers
@@ -97,16 +126,19 @@
     │   │   └── users.ts
     │   ├── tests
     │   │   ├── __mocks__
-    │   │   │   └── @sendgrid
+    │   │   │   ├── @sendgrid
     │   │   │   │   └── mail.ts
     │   │   │   └── @types
     │   │   │       └── types.ts
     │   │   ├── database
-    │   │   │   └── database.js
-    │   │   └── user.test.js
+    │   │   │   └── database.ts
+    │   │   └── user.test.ts
     │   ├── utils
-    │   │   ├── message.ts
-    │   │   └── validator.ts
+    │   │   ├── @types
+    │   │   │   └── types.ts
+    │   │   └── helpers
+    │   │       ├── message.ts
+    │   │       └── validator.ts
     │   ├── app.ts
     │   └── index.ts
     ├── .gitignore
@@ -115,7 +147,8 @@
     ├── LICENSE
     ├── package-lock.json
     ├── package.json
-    └── README.md
+    ├── README.md
+    └── tsconfig.json
   ```
 
 ## Install Packages
@@ -349,115 +382,6 @@
     PORT=3001
   ```
 
-## Types
-
-[Go Back to Contents](#contents)
-
-- In `src/@types/types.ts`
-
-  - We store our TypeScript types
-
-    ```TypeScript
-      import { Document } from 'mongoose';
-
-      declare module 'express-serve-static-core' {
-          export interface Request {
-              user?: UserJWT | LoginForm | SignUpForm;
-          }
-      }
-
-      type Callback = (error: string, isMatch: boolean) => void;
-
-      export interface UserI extends Document {
-          _id: string;
-          firstName: string;
-          lastName: string;
-          email: string;
-          tempEmail: string;
-          verifyToken: string;
-          isEmailVerified: boolean;
-          password: string;
-          admin: boolean;
-          comparePassword(password: string, callback: Callback): void;
-      }
-
-      export type User = {
-          _id?: string;
-          firstName: string;
-          lastName: string;
-      };
-
-      export interface UserJWT extends User {
-          iat: number;
-          exp: number;
-      }
-
-      export type LoginForm = {
-          _id?: string;
-          email: string;
-          password: string;
-      };
-
-      type ConcatForm = User & LoginForm;
-
-      export interface SignUpForm extends ConcatForm {
-          confirmPassword: string;
-          verifyToken?: string;
-      }
-
-      export type DeleteForm = {
-          password: string;
-      };
-
-      export type EmailForm = {
-          email: string;
-      };
-
-      export type PasswordForm = {
-          password: string;
-          confirmPassword?: string;
-      };
-
-      export interface UpdateUserForm extends User {
-          password: string;
-          newEmail: string;
-          newPassword: string;
-          confirmNewPassword: string;
-      }
-
-      export type MSGFn = {
-          (user: UserI, host?: string): {
-              from: string;
-              to: string;
-              subject: string;
-              html: string;
-          };
-      };
-
-      export type JWTAccessFn = {
-          (user: User): string;
-      };
-
-      export type JWTVerifyFn = {
-          (mode: string): string;
-      };
-
-      export type CheckFn = {
-          (string: string): boolean;
-      };
-
-      export type ValidatorFn<T> = {
-          (data: T): {
-              errors: ErrorContainer;
-              valid: boolean;
-          };
-      };
-
-      export type ErrorContainer = {
-          [key: string]: string;
-      };
-    ```
-
 ## Database Connection
 
 ### MongoDB
@@ -533,8 +457,8 @@
     import sgMail from '@sendgrid/mail';
     import jwt from 'jsonwebtoken';
     import * as auth from '@middlewares/auth';
-    import * as validator from '@utils/validator';
-    import * as MSG from '@utils/message';
+    import * as validator from '@helpers/validator';
+    import * as MSG from '@helpers/message';
     import * as type from '@customTypes/types';
 
     sgMail.setApiKey(process.env.SENDGRID_KEY);
@@ -1166,11 +1090,122 @@
 
 - In the `utils` folder we are going to save all our utilities files
 
-### Message
+### Types
 
 [Go Back to Contents](#contents)
 
-- In `src/utils/message.ts`
+- In `src/utils/@types/types.ts`
+
+  - We store our TypeScript types
+
+    ```TypeScript
+      import { Document } from 'mongoose';
+
+      declare module 'express-serve-static-core' {
+          export interface Request {
+              user?: UserJWT | LoginForm | SignUpForm;
+          }
+      }
+
+      type Callback = (error: string, isMatch: boolean) => void;
+
+      export interface UserI extends Document {
+          _id: string;
+          firstName: string;
+          lastName: string;
+          email: string;
+          tempEmail: string;
+          verifyToken: string;
+          isEmailVerified: boolean;
+          password: string;
+          admin: boolean;
+          comparePassword(password: string, callback: Callback): void;
+      }
+
+      export type User = {
+          _id?: string;
+          firstName: string;
+          lastName: string;
+      };
+
+      export interface UserJWT extends User {
+          iat: number;
+          exp: number;
+      }
+
+      export type LoginForm = {
+          _id?: string;
+          email: string;
+          password: string;
+      };
+
+      type ConcatForm = User & LoginForm;
+
+      export interface SignUpForm extends ConcatForm {
+          confirmPassword: string;
+          verifyToken?: string;
+      }
+
+      export type DeleteForm = {
+          password: string;
+      };
+
+      export type EmailForm = {
+          email: string;
+      };
+
+      export type PasswordForm = {
+          password: string;
+          confirmPassword?: string;
+      };
+
+      export interface UpdateUserForm extends User {
+          password: string;
+          newEmail: string;
+          newPassword: string;
+          confirmNewPassword: string;
+      }
+
+      export type MSGFn = {
+          (user: UserI, host?: string): {
+              from: string;
+              to: string;
+              subject: string;
+              html: string;
+          };
+      };
+
+      export type JWTAccessFn = {
+          (user: User): string;
+      };
+
+      export type JWTVerifyFn = {
+          (mode: string): string;
+      };
+
+      export type CheckFn = {
+          (string: string): boolean;
+      };
+
+      export type ValidatorFn<T> = {
+          (data: T): {
+              errors: ErrorContainer;
+              valid: boolean;
+          };
+      };
+
+      export type ErrorContainer = {
+          [key: string]: string;
+      };
+    ```
+
+### Helpers
+
+#### Message
+
+[Go Back to Contents](#contents)
+
+- In `src/utils/helpers/message.ts`
 
   - Helper function to create custom messages to send emails using [SendGrid API](https://sendgrid.com/docs/for-developers/sending-email/quickstart-nodejs/#complete-code-block)
   - the **SendGrid** API specifies a template that we need to follow in order to use send an email
@@ -1242,11 +1277,11 @@
     };
   ```
 
-### Validator
+#### Validator
 
 [Go Back to Contents](#contents)
 
-- In `src/utils/validator.ts`
+- In `src/utils/helpers/validator.ts`
 
   - Helper file to validate incoming data
 
@@ -1525,13 +1560,14 @@
           preset: 'ts-jest',
           moduleNameMapper: {
               '~/(.*)': '<rootDir>/src/$1',
-              '@customTypes/(.*)': '<rootDir>/src/@types/$1',
               '@config/(.*)': '<rootDir>/src/config/$1',
               '@controllers/(.*)': '<rootDir>/src/controllers/$1',
               '@middlewares/(.*)': '<rootDir>/src/middlewares/$1',
               '@models/(.*)': '<rootDir>/src/models/$1',
               '@routes/(.*)': '<rootDir>/src/routes/$1',
               '@utils/(.*)': '<rootDir>/src/utils/$1',
+              '@customTypes/(.*)': '<rootDir>/src/utils/@types/$1',
+              '@helpers/(.*)': '<rootDir>/src/utils/helpers/$1',
           },
       };
     ```
@@ -1763,13 +1799,14 @@
                 {
                     alias: {
                         '~': './src',
-                        '@customTypes': './src/@types',
                         '@config': './src/config',
                         '@controllers': './src/controllers',
                         '@middlewares': './src/middlewares',
                         '@models': './src/models',
                         '@routes': './src/routes',
                         '@utils': './src/utils',
+                        '@customTypes': './src/utils/@types',
+                        '@helpers': './src/utils/helpers',
                     },
                 },
             ],

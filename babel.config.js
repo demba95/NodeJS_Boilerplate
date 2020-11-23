@@ -16,13 +16,14 @@ module.exports = {
             {
                 alias: {
                     '~': './src',
-                    '@customTypes': './src/@types',
                     '@config': './src/config',
                     '@controllers': './src/controllers',
                     '@middlewares': './src/middlewares',
                     '@models': './src/models',
                     '@routes': './src/routes',
                     '@utils': './src/utils',
+                    '@customTypes': './src/utils/@types',
+                    '@helpers': './src/utils/helpers',
                 },
             },
         ],
