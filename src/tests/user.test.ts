@@ -4,9 +4,8 @@ import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import * as type from '@customTypes/types';
 import { user1, user2, setupDatabase } from './database/database';
-import { types } from '@babel/core';
 
-const URL = '/api/users';
+const URL = '/api/v1/users';
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
 const PASSWORD_LEN = process.env.PASSWORD_LEN;

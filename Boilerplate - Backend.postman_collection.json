@@ -6,316 +6,330 @@
 	},
 	"item": [
 		{
-			"name": "/api/users/login",
-			"event": [
+			"name": "v1",
+			"item": [
 				{
-					"listen": "test",
-					"script": {
-						"id": "97b79bb6-7cb4-43e5-8076-9883a65823ae",
-						"exec": [
-							"if (pm.response.code === 200) {",
-							"    pm.environment.set('authToken', pm.response.json())",
-							"}"
+					"name": "/api/v1/users/login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "97b79bb6-7cb4-43e5-8076-9883a65823ae",
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    pm.environment.set('authToken', pm.response.json())",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"roger-that@getnada.com\",\n\t\"password\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/users/signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ceb002b9-44d0-4057-9fe9-053f2fd18146",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"Roger\",\n\t\"lastName\": \"Takeshita\",\n\t\"email\": \"roger-that@getnada.com\",\n\t\"password\": \"12345678\",\n    \"confirmPassword\": \"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/signup",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/users/email - Resend Verification",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cff27905-3e8e-4d3d-9073-a342a6386540",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"roger-that@getnada.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/email",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/users/password - Reset Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "682f8ab9-9b17-44b3-af5a-db831a99b955",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"roger-that@getnada.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/users/password/:verifyToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f48e12f4-41ec-49d0-bdda-7e8d9cc68f67",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\": \"newpass123\",\n\t\"confirmPassword\": \"newpass123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoicGFzc3dvcmQiLCJpYXQiOjE2MDQ1MDI0NTQsImV4cCI6MTYwNTEwNzI1NH0.CEmtUKYaI5O4yed5xLhDfIEI4zIdICEO4XsewGvHvGk",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"password",
+								"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoicGFzc3dvcmQiLCJpYXQiOjE2MDQ1MDI0NTQsImV4cCI6MTYwNTEwNzI1NH0.CEmtUKYaI5O4yed5xLhDfIEI4zIdICEO4XsewGvHvGk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/users/profile",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWFmNDg1YWI3YjdiODI5YjIwOGMzMDUiLCJpYXQiOjE1ODg1NDU5OTksImV4cCI6MTU4ODYzMjM5OX0.O8_X-SPhwXlyqR17A91wSbmCtpoh73InK29QYiEK25Q",
+								"type": "text",
+								"disabled": true
+							}
 						],
-						"type": "text/javascript"
-					}
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/users/profile",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"firstName\": \"Roger\",\n    \"lastName\": \"That\",\n    \"newEmail\": \"roger-that1@getnada.com\",\n    \"password\": \"12345678\",\n    \"newPassword\": \"pass123456\",\n    \"confirmNewPassword\": \"pass123456\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/users/profile",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/profile",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
 				}
 			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\": \"roger-that@getnada.com\",\n\t\"password\": \"12345678\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/api/users/login",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"login"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/users/signup",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "ceb002b9-44d0-4057-9fe9-053f2fd18146",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"firstName\": \"Roger\",\n\t\"lastName\": \"Takeshita\",\n\t\"email\": \"roger-that@getnada.com\",\n\t\"password\": \"12345678\",\n    \"confirmPassword\": \"12345678\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/api/users/signup",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"signup"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/users/email - Resend Verification",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "cff27905-3e8e-4d3d-9073-a342a6386540",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\": \"roger-that@getnada.com\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/api/users/email",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"email"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/users/password - Reset Password",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "682f8ab9-9b17-44b3-af5a-db831a99b955",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\": \"roger-that@getnada.com\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/api/users/password",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"password"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/users/password/:verifyToken",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "f48e12f4-41ec-49d0-bdda-7e8d9cc68f67",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"password\": \"newpass123\",\n\t\"confirmPassword\": \"newpass123\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/api/users/password/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoicGFzc3dvcmQiLCJpYXQiOjE2MDQ1MDI0NTQsImV4cCI6MTYwNTEwNzI1NH0.CEmtUKYaI5O4yed5xLhDfIEI4zIdICEO4XsewGvHvGk",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"password",
-						"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoicGFzc3dvcmQiLCJpYXQiOjE2MDQ1MDI0NTQsImV4cCI6MTYwNTEwNzI1NH0.CEmtUKYaI5O4yed5xLhDfIEI4zIdICEO4XsewGvHvGk"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/users/profile",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Authorization",
-						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZWFmNDg1YWI3YjdiODI5YjIwOGMzMDUiLCJpYXQiOjE1ODg1NDU5OTksImV4cCI6MTU4ODYzMjM5OX0.O8_X-SPhwXlyqR17A91wSbmCtpoh73InK29QYiEK25Q",
-						"type": "text",
-						"disabled": true
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/api/users/profile",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"profile"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/users/profile",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"firstName\": \"Roger\",\n    \"lastName\": \"That\",\n    \"newEmail\": \"roger-that1@getnada.com\",\n    \"password\": \"12345678\",\n    \"newPassword\": \"pass123456\",\n    \"confirmNewPassword\": \"pass123456\"\n}\n",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/api/users/profile",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"profile"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "/api/users/profile",
-			"request": {
-				"method": "DELETE",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"password\": \"1234\"\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
-				"url": {
-					"raw": "{{url}}/api/users/profile",
-					"host": [
-						"{{url}}"
-					],
-					"path": [
-						"api",
-						"users",
-						"profile"
-					]
-				}
-			},
-			"response": []
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {

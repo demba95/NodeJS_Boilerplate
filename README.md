@@ -1,4 +1,4 @@
-<h1>Last Update - 11/23/2020</h1>
+<h1>Last Update - 11/28/2020</h1>
 
 ---
 
@@ -439,7 +439,7 @@
       - reconnectInterval
     - When you enable **useUnifiedTopology**, please remove those options from your `mongoose.connect()` or `createConnection()` calls.
   - `useFindAndModify`, if you use `Model.findOneAndUpdate()`, by default you'll see one of the below deprecation warnings.
-    > DeprecationWarning: Mongoose: `findOneAndUpdate()` and `findOneAndDelete()` without the `useFindAndModify` option set to false are deprecated. See: https://mongoosejs.com/docs/deprecations.html#findandmodify
+    > DeprecationWarning: Mongoose: `findOneAndUpdate()` and `findOneAndDelete()` without the `useFindAndModify` option set to false are deprecated. See: <https://mongoosejs.com/docs/deprecations.html#findandmodify>
     > DeprecationWarning: collection.findAndModify is deprecated. Use findOneAndUpdate, findOneAndReplace or findOneAndDelete instead.
     - **findByIdAndUpdate** method bypass mongoose. It performs a direct operation on the database, this means that if we have a middleware, it won't be executed.
 
@@ -1484,7 +1484,7 @@
     app.use(helmet());
     app.use(express.json());
 
-    app.use('/api/users', userRoutes);
+    app.use('/api/v1/users', userRoutes);
 
     app.get('/*', (_: Request, res: Response) => {
         res.status(404).json({ message: "Path doesn't exist." });
@@ -1658,7 +1658,7 @@
     import * as type from '@customTypes/types';
     import { user1, user2, setupDatabase } from './database/database';
 
-    const URL = '/api/users';
+    const URL = '/api/v1/users';
     const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
     const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
     const PASSWORD_LEN = process.env.PASSWORD_LEN;
