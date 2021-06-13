@@ -27,21 +27,9 @@ class UserClass {
     }
 }
 
-const user1 = new UserClass(
-    'Roger',
-    'That',
-    'your_email_1@test.com',
-    'test123',
-    true
-);
+const user1 = new UserClass('Roger', 'That', 'your_email_1@test.com', 'test123', true);
 
-const user2 = new UserClass(
-    'Roger 1',
-    'That 1',
-    'your_email_2@test.com',
-    'test123',
-    false
-);
+const user2 = new UserClass('Roger 1', 'That 1', 'your_email_2@test.com', 'test123', false);
 
 const setupDatabase = async () => {
     await User.deleteMany({});

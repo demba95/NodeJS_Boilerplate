@@ -1,10 +1,10 @@
-import * as type from '@customTypes/types';
+import * as Type from '@cTypes/types';
 
-const FRONTEND_URL = process.env.FRONTEND_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL!;
 
-export const signUp: type.MSGFn = (user, host) => {
+export const signUp = (user: Type.UserI, host: string): Type.Msg => {
     return {
-        from: process.env.SENDGRID_EMAIL,
+        from: process.env.SENDGRID_EMAIL!,
         to: user.email,
         subject: 'Verify your email',
         html: `
@@ -15,9 +15,9 @@ export const signUp: type.MSGFn = (user, host) => {
     };
 };
 
-export const updateEmail: type.MSGFn = (user, host) => {
+export const updateEmail = (user: Type.UserI, host: string): Type.Msg => {
     return {
-        from: process.env.SENDGRID_EMAIL,
+        from: process.env.SENDGRID_EMAIL!,
         to: user.tempEmail,
         subject: 'Verify your email',
         html: `
@@ -27,9 +27,9 @@ export const updateEmail: type.MSGFn = (user, host) => {
     };
 };
 
-export const resetPassword: type.MSGFn = (user) => {
+export const resetPassword = (user: Type.UserI): Type.Msg => {
     return {
-        from: process.env.SENDGRID_EMAIL,
+        from: process.env.SENDGRID_EMAIL!,
         to: user.email,
         subject: 'Reset password',
         html: `
@@ -41,9 +41,9 @@ export const resetPassword: type.MSGFn = (user) => {
     };
 };
 
-export const updatePassword: type.MSGFn = (user) => {
+export const updatePassword = (user: Type.UserI): Type.Msg => {
     return {
-        from: process.env.SENDGRID_EMAIL,
+        from: process.env.SENDGRID_EMAIL!,
         to: user.email,
         subject: 'Update password',
         html: `

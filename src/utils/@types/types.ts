@@ -14,11 +14,13 @@ export interface UserI extends Document {
     lastName: string;
     email: string;
     tempEmail: string;
-    verifyToken: string;
-    isEmailVerified: boolean;
-    password: string;
-    admin: boolean;
+    verifyToken?: string;
+    isEmailVerified?: boolean;
+    password?: string;
+    admin?: boolean;
     comparePassword(password: string, callback: Callback): void;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export type User = {
@@ -41,7 +43,7 @@ export type LoginForm = {
 type ConcatForm = User & LoginForm;
 
 export interface SignUpForm extends ConcatForm {
-    confirmPassword: string;
+    confirmPassword?: string;
     verifyToken?: string;
 }
 
@@ -65,13 +67,11 @@ export interface UpdateUserForm extends User {
     confirmNewPassword: string;
 }
 
-export type MSGFn = {
-    (user: UserI, host?: string): {
-        from: string;
-        to: string;
-        subject: string;
-        html: string;
-    };
+export type Msg = {
+    from: string;
+    to: string;
+    subject: string;
+    html: string;
 };
 
 export type JWTAccessFn = {
@@ -95,4 +95,8 @@ export type ValidatorFn<T> = {
 
 export type ErrorContainer = {
     [key: string]: string;
+};
+
+export type Object = {
+    [index: string]: any;
 };

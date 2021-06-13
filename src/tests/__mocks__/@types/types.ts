@@ -2,7 +2,7 @@ type LoginResponse = {
     body: string;
 };
 
-type ResponseMSG = {
+type ResponseMsg = {
     body: {
         message: string;
     };

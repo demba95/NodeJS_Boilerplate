@@ -1,4 +1,4 @@
-<h1>Last Update - 11/28/2020</h1>
+<h1>Last Update - 06/13/2021</h1>
 
 ---
 
@@ -80,74 +80,67 @@
 
 - Mkdir/Touch Files
 
-  - Using my custom [touch command](https://github.com/Roger-Takeshita/Shell-Script/tree/master/Scripts/touch-open) to create files and folders
-
-    ```Bash
-      touch -n env/dev.env + prod.env + test.env src/config/database.ts src/controllers/users.ts src/middlewares/auth.ts src/models/user.ts src/routes/users.ts src/tests/user.test.js + database/database.js + src/tests/__mocks__/@sendgrid/mail.ts + src/tests/__mocks__/@types/types.ts src/utils/helpers/message.ts + validator.ts src/app.ts src/utils/@types/types.ts src/index.ts babel.config.js
-
-      # touch env/dev.env
-      # touch env/prod.env
-      # touch env/test.env
-      # touch src/config/database.ts
-      # touch src/controllers/users.ts
-      # touch src/middlewares/auth.ts
-      # touch src/models/user.ts
-      # touch src/routes/users.ts
-      # touch src/tests/user.test.js
-      # touch src/tests/database/database.js
-      # touch src/tests/__mocks__/@sendgrid/mail.ts
-      # touch src/tests/__mocks__/@types/types.ts
-      # touch src/utils/@types/types.ts
-      # touch src/utils/helpers/message.ts
-      # touch src/utils/helpers/validator.ts
-      # touch src/app.ts
-      # touch src/index.ts
-      # touch babel.config.js
-    ```
+  ```Bash
+    touch -n env/dev.env
+    touch -n env/prod.env
+    touch -n env/test.env
+    touch -n src/config/database.ts
+    touch -n src/controllers/users.ts
+    touch -n src/middlewares/auth.ts
+    touch -n src/models/user.ts
+    touch -n src/routes/users.ts
+    touch -n src/tests/**mocks**/@sendgrid/mail.ts
+    touch -n src/tests/**mocks**/@types/types.ts
+    touch -n src/tests/database/database.ts
+    touch -n src/tests/user.test.ts
+    touch -n src/utils/@types/types.ts
+    touch -n src/utils/helpers/message.ts
+    touch -n src/utils/helpers/validator.ts
+    touch -n src/app.ts
+    touch -n src/index.ts
+    touch -n babel.config.js
+  ```
 
 - Final Structure
 
   ```Bash
     .
     ├── env
-    │   ├── dev.env
-    │   ├── prod.env
-    │   └── test.env
+    │   ├── dev.env
+    │   ├── prod.env
+    │   └── test.env
     ├── src
-    │   ├── config
-    │   │   └── database.ts
-    │   ├── controllers
-    │   │   └── users.ts
-    │   ├── middlewares
-    │   │   └── auth.ts
-    │   ├── models
-    │   │   └── user.ts
-    │   ├── routes
-    │   │   └── users.ts
-    │   ├── tests
-    │   │   ├── __mocks__
-    │   │   │   ├── @sendgrid
-    │   │   │   │   └── mail.ts
-    │   │   │   └── @types
-    │   │   │       └── types.ts
-    │   │   ├── database
-    │   │   │   └── database.ts
-    │   │   └── user.test.ts
-    │   ├── utils
-    │   │   ├── @types
-    │   │   │   └── types.ts
-    │   │   └── helpers
-    │   │       ├── message.ts
-    │   │       └── validator.ts
-    │   ├── app.ts
-    │   └── index.ts
-    ├── .gitignore
+    │   ├── config
+    │   │   └── database.ts
+    │   ├── controllers
+    │   │   └── users.ts
+    │   ├── middlewares
+    │   │   └── auth.ts
+    │   ├── models
+    │   │   └── user.ts
+    │   ├── routes
+    │   │   └── users.ts
+    │   ├── tests
+    │   │   ├── __mocks__
+    │   │   │   ├── @sendgrid
+    │   │   │   │   └── mail.ts
+    │   │   │   └── @types
+    │   │   │       └── types.ts
+    │   │   ├── database
+    │   │   │   └── database.ts
+    │   │   └── user.test.ts
+    │   ├── utils
+    │   │   ├── @types
+    │   │   │   └── types.ts
+    │   │   └── helpers
+    │   │       ├── message.ts
+    │   │       └── validator.ts
+    │   ├── app.ts
+    │   └── index.ts
     ├── babel.config.js
     ├── jest.config.js
-    ├── LICENSE
     ├── package-lock.json
     ├── package.json
-    ├── README.md
     └── tsconfig.json
   ```
 
@@ -158,7 +151,7 @@
 - Install the following dependencies:
 
   ```Bash
-    # npm i @sendgrid/mail bcrypt cors env-cmd express helmet jsonwebtoken mongoose morgan validator
+    # npm i @sendgrid/mail bcrypt cors env-cmd express helmet jsonwebtoken mongoose morgan
 
     npm i @sendgrid/mail
     npm i bcrypt
@@ -173,27 +166,27 @@
     # Dev Dependencies
     # npm i -D @types/bcrypt @types/cors @types/express @types/jsonwebtoken @types/mongoose @types/morgan @types/node @types/validator @types/jest @types/supertest jest ts-jest supertest ts-node-dev tsconfig-paths typescript @babel/cli @babel/core @babel/node @babel/preset-env @babel/preset-typescript babel-plugin-module-resolver
 
-    npm i -D @types/bcrypt
-    npm i -D @types/cors
-    npm i -D @types/express
-    npm i -D @types/jsonwebtoken
-    npm i -D @types/mongoose
-    npm i -D @types/morgan
-    npm i -D @types/node
-    npm i -D @types/jest
-    npm i -D @types/supertest
-    npm i -D jest
-    npm i -D ts-jest
-    npm i -D supertest
-    npm i -D ts-node-dev
-    npm i -D tsconfig-paths
-    npm i -D typescript
     npm i -D @babel/cli
     npm i -D @babel/core
     npm i -D @babel/node
     npm i -D @babel/preset-env
     npm i -D @babel/preset-typescript
+    npm i -D @types/bcrypt
+    npm i -D @types/cors
+    npm i -D @types/express
+    npm i -D @types/jest
+    npm i -D @types/jsonwebtoken
+    npm i -D @types/mongoose
+    npm i -D @types/morgan
+    npm i -D @types/node
+    npm i -D @types/supertest
     npm i -D babel-plugin-module-resolver
+    npm i -D jest
+    npm i -D supertest
+    npm i -D ts-jest
+    npm i -D ts-node-dev
+    npm i -D tsconfig-paths
+    npm i -D typescript
   ```
 
 ### Init Typescript
@@ -208,44 +201,47 @@
 
 - This command will generate the `tsconfig.json`
 
-  - Add the following options
-
-    ```JSON
-      {
-          "compilerOptions": {
-              "target": "ES6" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019', 'ES2020', or 'ESNEXT'. */,
-              "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', 'es2020', or 'ESNext'. */,
-              "allowJs": true /* Allow javascript files to be compiled. */,
-              "outDir": "./dist" /* Redirect output structure to the directory. */,
-              "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
-              "removeComments": true /* Do not emit comments to output. */,
-              "moduleResolution": "node",
-              "noEmitOnError": true,
-              "resolveJsonModule": true /* Enable import JSON files in the code */,
-              "noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
-              "typeRoots": [
-                  "./node_modules/@types",
-                  "src/@types"
-              ] /* List of folders to include type definitions from. */,
-              "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
-              "skipLibCheck": true /* Skip type checking of declaration files. */,
-              "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
-              "baseUrl": "./src",
-              "paths": {
-                  "~/*": ["./*"],
-                  "@customTypes/*": ["./@types/*"],
-                  "@config/*": ["./config/*"],
-                  "@controllers/*": ["./controllers/*"],
-                  "@middlewares/*": ["./middlewares/*"],
-                  "@models/*": ["./models/*"],
-                  "@routes/*": ["./routes/*"],
-                  "@utils/*": ["./utils/*"]
-              }
-          },
-          "include": ["src/**/*"],
-          "exclude": ["**/node_modules"]
-      }
-    ```
+  ```JSON
+    {
+        "compilerOptions": {
+            "target": "es5",
+            "module": "commonjs",
+            "allowJs": true,
+            "outDir": "./dist",
+            "rootDir": "./src",
+            "removeComments": true,
+            "noEmitOnError": true,
+            "resolveJsonModule": true,
+            "strict": true,
+            "noImplicitAny": true,
+            "noUnusedLocals": true,
+            "noUnusedParameters": true,
+            "noImplicitReturns": false,
+            "noFallthroughCasesInSwitch": true,
+            "noUncheckedIndexedAccess": true,
+            "moduleResolution": "node",
+            "baseUrl": "./src",
+            "paths": {
+                "~/*": ["./*"],
+                "@config/*": ["./config/*"],
+                "@controllers/*": ["./controllers/*"],
+                "@middlewares/*": ["./middlewares/*"],
+                "@models/*": ["./models/*"],
+                "@routes/*": ["./routes/*"],
+                "@utils/*": ["./utils/*"],
+                "@cTypes/*": ["./utils/@types/*"],
+                "@helpers/*": ["./utils/helpers/*"]
+            },
+            "typeRoots": ["./node_modules/@types", "./src/utils/@types"],
+            "esModuleInterop": true,
+            "skipLibCheck": true,
+            "forceConsistentCasingInFileNames": true,
+            "types": ["node", "jest"]
+        },
+        "include": ["./src/**/*"],
+        "exclude": ["**/node_modules"]
+    }
+  ```
 
 ### package.json
 
@@ -258,7 +254,7 @@
         "start": "node dist/index.js",
         "dev": "env-cmd -f ./env/dev.env ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts",
         "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
-        "test": "env-cmd -f ./env/test.env jest --watch --coverage --runInBand --detectOpenHandles"
+        "test": "env-cmd -f ./env/test.env jest --watch --runInBand --detectOpenHandles"
     },
     "jest": {
         "bail": 1,
@@ -288,7 +284,7 @@
             "start": "node dist/index.js",
             "dev": "env-cmd -f ./env/dev.env ts-node-dev -r tsconfig-paths/register --respawn --transpile-only --ignore-watch node_modules --no-notify src/index.ts",
             "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
-            "test": "env-cmd -f ./env/test.env jest --watch --coverage --runInBand --detectOpenHandles"
+            "test": "env-cmd -f ./env/test.env jest --watch --runInBand --detectOpenHandles"
         },
         "jest": {
             "bail": 1,
@@ -352,8 +348,6 @@
 
 - In `env/dev.env`
 
-  - Development variables
-
   ```Bash
     DATABASE_URL=mongodb://127.0.0.1:27017/BackendDB
     JWT_SECRET_KEY=super_secrete_key_1
@@ -367,8 +361,6 @@
   ```
 
 - In `env/test.env`
-
-  - Test variables
 
   ```Bash
     DATABASE_URL=mongodb://127.0.0.1:27017/BackendDB-Test
@@ -394,7 +386,7 @@
     import mongoose from 'mongoose';
     const db = mongoose.connection;
 
-    mongoose.connect(process.env.DATABASE_URL, {
+    mongoose.connect(process.env.DATABASE_URL!, {
         useNewUrlParser: true,
         useCreateIndex: true,
         useUnifiedTopology: true,
@@ -404,7 +396,6 @@
     db.once('connected', () => {
         console.log(`Connected to MongoDB ${db.name} at ${db.host}:${db.port}`);
     });
-
   ```
 
 #### Warnings
@@ -458,39 +449,32 @@
     import jwt from 'jsonwebtoken';
     import * as auth from '@middlewares/auth';
     import * as validator from '@helpers/validator';
-    import * as MSG from '@helpers/message';
-    import * as type from '@customTypes/types';
+    import * as Msg from '@helpers/message';
+    import * as Type from '@cTypes/types';
 
-    sgMail.setApiKey(process.env.SENDGRID_KEY);
+    sgMail.setApiKey(process.env.SENDGRID_KEY!);
+
+    const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY!;
 
     const signUpUser: RequestHandler = async (req, res) => {
-        const form: type.SignUpForm = req.body;
-
+        const form: Type.SignUpForm = req.body;
         const { valid, errors } = validator.validateSignUpData(form);
-        if (!valid) {
-            return res.status(400).json(errors);
-        }
+        if (!valid) return res.status(400).json(errors);
 
         try {
-            const user: type.UserI = await User.findOne({ email: form.email });
-
-            if (user) {
-                return res
-                    .status(400)
-                    .json({ message: 'ERROR: Email already in use.' });
-            }
+            const user: Type.UserI | null = await User.findOne({ email: form.email });
+            if (user) return res.status(400).json({ message: 'ERROR: Email already in use.' });
 
             delete form.confirmPassword;
             form.verifyToken = auth.createVerificationToken('email');
-            const newUser: type.UserI = new User(form);
+            const newUser: Type.UserI = new User(form);
             await newUser.save();
 
-            const msg = MSG.signUp(newUser, req.headers.host);
+            const msg = Msg.signUp(newUser, req.headers.host!);
             await sgMail.send(msg);
 
             res.status(201).json({
-                message:
-                    'Your account has been created. Please check your email to verify your account.',
+                message: 'Your account has been created. Please check your email to verify your account.',
             });
         } catch (error) {
             res.status(500).json({
@@ -501,21 +485,17 @@
     };
 
     const loginUser: RequestHandler = async (req, res) => {
-        const form: type.LoginForm = req.body;
+        const form: Type.LoginForm = req.body;
 
         const { valid, errors } = validator.validateLoginData(form);
-        if (!valid) {
-            return res.status(400).json(errors);
-        }
+        if (!valid) return res.status(400).json(errors);
 
         try {
-            const user: type.UserI = await User.findOne({ email: form.email });
-            if (!user) {
-                return res.status(404).json({ message: 'ERROR: User not found.' });
-            }
+            const user: Type.UserI | null = await User.findOne({ email: form.email });
+            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
 
-            user.comparePassword(form.password, (_, isMatch) => {
-                if (isMatch) {
+            user.comparePassword(form.password, (_: any, matchPassword: boolean) => {
+                if (matchPassword) {
                     if (user.isEmailVerified) {
                         const token = auth.createAccessToken(user);
                         return res.json(token);
@@ -538,12 +518,10 @@
 
     const getUser: RequestHandler = async (req, res) => {
         try {
-            const user: type.UserI = await User.findOne({
-                _id: req.user._id,
+            const user: Type.UserI | null = await User.findOne({
+                _id: req.user!._id,
             }).select('-tempEmail');
-            if (!user) {
-                return res.status(404).json({ message: 'ERROR: User not found.' });
-            }
+            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
 
             res.json(user);
         } catch (error) {
@@ -555,32 +533,28 @@
     };
 
     const updateUser: RequestHandler = async (req, res) => {
-        const form: type.UpdateUserForm = req.body;
-
+        const form: Type.UpdateUserForm = req.body;
         const { valid, errors } = validator.validateUpdateData(form);
         if (!valid) return res.status(400).json(errors);
 
         try {
-            const user: type.UserI = await User.findOne({
-                _id: req.user._id,
+            const user: Type.UserI | null = await User.findOne({
+                _id: req.user!._id,
             });
-            if (!user) {
-                return res.status(404).json({ message: 'ERROR: User not found.' });
-            }
+            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
 
             if (form.newEmail) {
-                const email: type.UserI = await User.findOne({
+                const email: Type.UserI | null = await User.findOne({
                     email: form.newEmail,
                 });
-                if (email) {
+                if (email)
                     return res.status(400).json({
                         message: `ERROR: Email (${form.newEmail}) is already in use.`,
                     });
-                }
             }
 
-            user.comparePassword(form.password, async (_, isMatch) => {
-                if (isMatch) {
+            user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
+                if (matchPassword) {
                     if (form.firstName) user.firstName = form.firstName;
                     if (form.lastName) user.lastName = form.lastName;
                     if (form.newPassword) user.password = form.newPassword;
@@ -591,7 +565,7 @@
                         await user.save();
 
                         try {
-                            const msg = MSG.updateEmail(user, req.headers.host);
+                            const msg = Msg.updateEmail(user, req.headers.host!);
                             await sgMail.send(msg);
                         } catch (error) {
                             res.status(500).json({
@@ -610,26 +584,22 @@
             });
         } catch (error) {
             res.status(500).json({
-                message:
-                    'ERROR: Something went wrong while updating. Please try again later or contact our support.',
+                message: 'ERROR: Something went wrong while updating. Please try again later or contact our support.',
             });
         }
     };
 
     const deleteUser: RequestHandler = async (req, res) => {
-        const form: type.DeleteForm = req.body;
-
+        const form: Type.DeleteForm = req.body;
         const { valid, errors } = validator.validatePassword(form);
         if (!valid) return res.status(400).json(errors);
 
         try {
-            const user: type.UserI = await User.findOne({ _id: req.user._id });
-            if (!user) {
-                return res.status(404).json({ message: 'ERROR: User not found.' });
-            }
+            const user: Type.UserI | null = await User.findOne({ _id: req.user!._id });
+            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
 
-            user.comparePassword(form.password, async (_, isMatch) => {
-                if (isMatch) {
+            user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
+                if (matchPassword) {
                     await user.remove();
                     return res.json({ message: 'Your account has been deleted.' });
                 }
@@ -638,34 +608,32 @@
             });
         } catch (error) {
             res.status(500).json({
-                message:
-                    'ERROR: Something went wrong while deleting. Please try again later or contact our support.',
+                message: 'ERROR: Something went wrong while deleting. Please try again later or contact our support.',
             });
         }
     };
 
     const verifyEmail: RequestHandler = async (req, res) => {
-        const token: string = req.params.verifyToken;
+        const token: string = req.params.verifyToken!;
+
         try {
-            jwt.verify(token, process.env.JWT_VERIFICATION_SECRET_KEY);
+            jwt.verify(token, JWT_VERIFICATION_SECRET_KEY);
         } catch (error) {
             return res.status(401).json({ message: 'ERROR: Expired email token.' });
         }
 
         try {
-            const user: type.UserI = await User.findOne({
+            const user: Type.UserI | null = await User.findOne({
                 verifyToken: token,
             });
-            if (!user) {
-                return res.status(404).json({ message: 'ERROR: User not found.' });
-            }
+            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
 
-            user.verifyToken = null;
+            user.verifyToken = '';
             user.isEmailVerified = true;
 
             if (user.tempEmail) {
                 user.email = user.tempEmail;
-                user.tempEmail = null;
+                user.tempEmail = '';
             }
 
             await user.save();
@@ -673,61 +641,42 @@
             res.json({ message: 'Thank you! Your email has been verified.' });
         } catch (error) {
             res.status(500).json({
-                message:
-                    'ERROR: Something went wrong verifying your account. Please try again later.',
+                message: 'ERROR: Something went wrong verifying your account. Please try again later.',
             });
         }
     };
 
     const resendVerifyEmail: RequestHandler = async (req, res) => {
-        const form: type.EmailForm = req.body;
-
+        const form: Type.EmailForm = req.body;
         const { valid, errors } = validator.validateEmail(form);
         if (!valid) return res.status(400).json(errors);
 
         try {
-            const user: type.UserI = await User.findOne({ email: form.email });
-            if (!user) {
-                return res.status(404).json({ message: 'ERROR: Email not found.' });
-            }
-
-            if (user.isEmailVerified) {
-                return res.json({ message: 'Your account is already verified.' });
-            }
+            const user: Type.UserI | null = await User.findOne({ email: form.email });
+            if (!user) return res.status(404).json({ message: 'ERROR: Email not found.' });
+            if (user.isEmailVerified) return res.json({ message: 'Your account is already verified.' });
 
             user.verifyToken = auth.createVerificationToken('email');
-            await user.save();
-
-            const msg = MSG.signUp(user, req.headers.host);
-            await sgMail.send(msg);
-
-            res.json({
-                message: 'Please check your email to verify your account.',
-            });
         } catch (error) {
             res.status(500).json({
-                message:
-                    'ERROR: Something went wrong with the email verification. Please try again later.',
+                message: 'ERROR: Something went wrong with the email verification. Please try again later.',
             });
         }
     };
 
     const resetPassword: RequestHandler = async (req, res) => {
-        const form: type.EmailForm = req.body;
-
+        const form: Type.EmailForm = req.body;
         const { valid, errors } = validator.validateEmail(form);
         if (!valid) return res.status(400).json(errors);
 
         try {
-            const user: type.UserI = await User.findOne({ email: form.email });
-            if (!user) {
-                return res.status(404).json({ message: 'ERROR: Email not found.' });
-            }
+            const user: Type.UserI | null = await User.findOne({ email: form.email });
+            if (!user) return res.status(404).json({ message: 'ERROR: Email not found.' });
 
             user.verifyToken = auth.createVerificationToken('password');
             await user.save();
 
-            const msg = MSG.resetPassword(user);
+            const msg = Msg.resetPassword(user);
             await sgMail.send(msg);
 
             res.json({
@@ -735,40 +684,35 @@
             });
         } catch (error) {
             res.status(500).json({
-                message:
-                    'ERROR: Something went wrong with the email verification. Please try again later.',
+                message: 'ERROR: Something went wrong with the email verification. Please try again later.',
             });
         }
     };
 
     const updatePassword: RequestHandler = async (req, res) => {
-        const token: string = req.params.verifyToken;
+        const token: string = req.params.verifyToken!;
+
         try {
-            jwt.verify(token, process.env.JWT_VERIFICATION_SECRET_KEY);
+            jwt.verify(token, JWT_VERIFICATION_SECRET_KEY);
         } catch (error) {
-            return res
-                .status(401)
-                .json({ message: 'ERROR: Expired password token.' });
+            return res.status(401).json({ message: 'ERROR: Expired password token.' });
         }
 
-        const form: type.PasswordForm = req.body;
-
+        const form: Type.PasswordForm = req.body;
         const { valid, errors } = validator.validatePassword(form);
         if (!valid) return res.status(400).json(errors);
 
         try {
-            const user: type.UserI = await User.findOne({
+            const user: Type.UserI | null = await User.findOne({
                 verifyToken: token,
             });
-            if (!user) {
-                return res.status(404).json({ message: 'ERROR: User not found.' });
-            }
+            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
 
             user.verifyToken = '';
             user.password = form.password;
             await user.save();
 
-            const msg = MSG.updatePassword(user);
+            const msg = Msg.updatePassword(user);
             await sgMail.send(msg);
 
             res.json({
@@ -776,8 +720,7 @@
             });
         } catch (error) {
             res.status(500).json({
-                message:
-                    'ERROR: Something went wrong with the email verification. Please try again later.',
+                message: 'ERROR: Something went wrong with the email verification. Please try again later.',
             });
         }
     };
@@ -803,81 +746,73 @@
 
 - In `src/middlewares/auth.ts`
 
-  - We have 3 functions
+  - `auth`, responsible for authorizing incoming requests
 
-    - `auth`
+    - Checks if token exists
+    - `jwt.verify()` checks if token is still valid. `jwt.verify()` will deco/validate the token using the secret key.
 
-      - responsible for authorizing incoming requests
+      ```JavaScript
+        {
+          _id: '5f83d0c881912ae1ac70e2dd',
+          firstName: 'Roger',
+          lastName: 'Takeshita',
+          iat: 1602475638,
+          exp: 1603080438
+        }
+      ```
 
-        - Checks if token exists
-        - `jwt.verify()` checks if token is still valid. `jwt.verify()` will deco/validate the token using the secret key.
+    - After that we add an user to the **request** and assign the decoded token
+    - then we call the **next function**
 
-          ```JavaScript
-            {
-              _id: '5f83d0c881912ae1ac70e2dd',
-              firstName: 'Roger',
-              lastName: 'Takeshita',
-              iat: 1602475638,
-              exp: 1603080438
+  - `createAccessToken`
+    - `jwt.sign()`, creates and encode a new jwt token with `_id`, `firstName`, and `lastName` valid for **7 days** (in this case)
+  - `createVerificationToken`
+
+    - Responsible for creating custom tokens used to generate email token.
+      - We could use **crypto** (builtin JS library), but with that we couldn't check if the toke is expired.
+        - `crypto.randomBytes(64).toString('hex');`
+
+  ```TypeScript
+    import { RequestHandler } from 'express';
+    import jwt from 'jsonwebtoken';
+    import * as Type from '@cTypes/types';
+
+    const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
+    const JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN!;
+    const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY!;
+    const JWT_VERIFICATION_EXPIRES_IN = process.env.JWT_VERIFICATION_EXPIRES_IN!;
+
+    const auth: RequestHandler = (req, res, next) => {
+        let token: string = req.get('Authorization') || req.query.token || req.body.token;
+
+        try {
+            if (token) {
+                token = token.replace('Bearer ', '');
+                const user = <Type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
+                req.user = user;
+                next();
+            } else {
+                res.status(401).json({ message: 'Token not found.' });
             }
-          ```
+        } catch (error) {
+            return res.status(401).json({ message: 'Not authorized, invalid token.' });
+        }
+    };
 
-        - After that we add an user to the **request** and assign the decoded token
-        - then we call the **next function**
+    const createAccessToken: Type.JWTAccessFn = (user: Type.User) => {
+        return jwt.sign({ _id: user._id, firstName: user.firstName, lastName: user.lastName }, JWT_SECRET_KEY, {
+            expiresIn: JWT_SECRET_EXPIRES_IN,
+        });
+    };
 
-    - `createAccessToken`
-      - `jwt.sign()`, creates and encode a new jwt token with `_id`, `firstName`, and `lastName` valid for **7 days** (in this case)
-    - `createVerificationToken`
-      - Responsible for creating custom tokens used to generate email token.
-        - We could use **crypto** (builtin JS library), but with that we couldn't check if the toke is expired.
-          - `crypto.randomBytes(64).toString('hex');`
+    const createVerificationToken: Type.JWTVerifyFn = (mode: string) => {
+        return jwt.sign({ mode }, JWT_VERIFICATION_SECRET_KEY, {
+            expiresIn: JWT_VERIFICATION_EXPIRES_IN,
+        });
+    };
 
-    ```TypeScript
-      import { RequestHandler } from 'express';
-      import jwt from 'jsonwebtoken';
-      import * as type from '@customTypes/types';
-
-      const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
-      const JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN;
-      const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
-      const JWT_VERIFICATION_EXPIRES_IN = process.env.JWT_VERIFICATION_EXPIRES_IN;
-
-      const auth: RequestHandler = (req, res, next) => {
-          let token: string =
-              req.get('Authorization') || req.query.token || req.body.token;
-
-          try {
-              if (token) {
-                  token = token.replace('Bearer ', '');
-                  const user = <type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
-                  req.user = user;
-                  next();
-              } else {
-                  res.status(401).json({ message: 'Token not found.' });
-              }
-          } catch (error) {
-              return res
-                  .status(401)
-                  .json({ message: 'Not authorized, invalid token.' });
-          }
-      };
-
-      const createAccessToken: type.JWTAccessFn = (user: type.User) => {
-          return jwt.sign(
-              { _id: user._id, firstName: user.firstName, lastName: user.lastName },
-              JWT_SECRET_KEY,
-              { expiresIn: JWT_SECRET_EXPIRES_IN }
-          );
-      };
-
-      const createVerificationToken: type.JWTVerifyFn = (mode) => {
-          return jwt.sign({ mode }, JWT_VERIFICATION_SECRET_KEY, {
-              expiresIn: JWT_VERIFICATION_EXPIRES_IN,
-          });
-      };
-
-      export { auth, createAccessToken, createVerificationToken };
-    ```
+    export { auth, createAccessToken, createVerificationToken };
+  ```
 
 ## Models
 
@@ -891,7 +826,7 @@
     import { NextFunction } from 'express';
     import mongoose from 'mongoose';
     import bcrypt from 'bcrypt';
-    import * as type from '@customTypes/types';
+    import * as Type from '@cTypes/types';
 
     const Schema = mongoose.Schema;
     const SALT_ROUNDS: number = 6;
@@ -941,25 +876,19 @@
         }
     );
 
-    userSchema.pre<type.UserI>('save', async function (next) {
+    userSchema.pre<Type.UserI>('save', async function (next) {
         const user = this;
 
-        if (user.isModified('password')) {
-            user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
-        }
-
+        if (user.isModified('password')) user.password = await bcrypt.hash(this.get('password'), SALT_ROUNDS);
         next();
     });
 
-    userSchema.methods.comparePassword = async function (
-        tryPassword: string,
-        callback: NextFunction
-    ) {
-        await bcrypt.compare(tryPassword, this.password, callback);
+    userSchema.methods.comparePassword = function (tryPassword: string, callback: NextFunction) {
+        bcrypt.compare(tryPassword, this.get('password'), callback);
     };
 
     userSchema.set('toJSON', {
-        transform: function (_, ret) {
+        transform: function (_: any, ret: Type.UserI) {
             delete ret.password;
             delete ret.createdAt;
             delete ret.updatedAt;
@@ -971,7 +900,7 @@
         },
     });
 
-    export default mongoose.model<type.UserI>('User', userSchema);
+    export default mongoose.model<Type.UserI>('User', userSchema);
   ```
 
 #### Pre Save
@@ -985,15 +914,10 @@
     - `SALT_ROUNDS`, is used to **encrypt** the password.
 
   ```TypeScript
-    userSchema.pre<type.UserI>('save', async function (next) {
+    userSchema.pre<Type.UserI>('save', async function (next) {
         const user = this;
 
-        if (user.isModified('password')) {
-            if (user.password) {
-                user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
-            }
-        }
-
+        if (user.isModified('password')) user.password = await bcrypt.hash(this.get('password'), SALT_ROUNDS);
         next();
     });
   ```
@@ -1012,11 +936,8 @@
       - We use them to check the password is valid
 
   ```TypeScript
-    userSchema.methods.comparePassword = async function (
-        tryPassword: string,
-        callback: NextFunction
-    ) {
-        await bcrypt.compare(tryPassword, this.password, callback);
+    userSchema.methods.comparePassword = function (tryPassword: string, callback: NextFunction) {
+        bcrypt.compare(tryPassword, this.get('password'), callback);
     };
   ```
 
@@ -1038,7 +959,7 @@
 
   ```TypeScript
     userSchema.set('toJSON', {
-        transform: function (_, ret) {
+        transform: function (_: any, ret: Type.UserI) {
             delete ret.password;
             delete ret.createdAt;
             delete ret.updatedAt;
@@ -1086,118 +1007,116 @@
 
 ## Utilities
 
-[Go Back to Contents](#contents)
-
-- In the `utils` folder we are going to save all our utilities files
-
 ### Types
 
 [Go Back to Contents](#contents)
 
 - In `src/utils/@types/types.ts`
 
-  - We store our TypeScript types
+  ```TypeScript
+    import { Document } from 'mongoose';
 
-    ```TypeScript
-      import { Document } from 'mongoose';
+    declare module 'express-serve-static-core' {
+        export interface Request {
+            user?: UserJWT | LoginForm | SignUpForm;
+        }
+    }
 
-      declare module 'express-serve-static-core' {
-          export interface Request {
-              user?: UserJWT | LoginForm | SignUpForm;
-          }
-      }
+    type Callback = (error: string, isMatch: boolean) => void;
 
-      type Callback = (error: string, isMatch: boolean) => void;
+    export interface UserI extends Document {
+        _id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        tempEmail: string;
+        verifyToken?: string;
+        isEmailVerified?: boolean;
+        password?: string;
+        admin?: boolean;
+        comparePassword(password: string, callback: Callback): void;
+        createdAt?: string;
+        updatedAt?: string;
+    }
 
-      export interface UserI extends Document {
-          _id: string;
-          firstName: string;
-          lastName: string;
-          email: string;
-          tempEmail: string;
-          verifyToken: string;
-          isEmailVerified: boolean;
-          password: string;
-          admin: boolean;
-          comparePassword(password: string, callback: Callback): void;
-      }
+    export type User = {
+        _id?: string;
+        firstName: string;
+        lastName: string;
+    };
 
-      export type User = {
-          _id?: string;
-          firstName: string;
-          lastName: string;
-      };
+    export interface UserJWT extends User {
+        iat: number;
+        exp: number;
+    }
 
-      export interface UserJWT extends User {
-          iat: number;
-          exp: number;
-      }
+    export type LoginForm = {
+        _id?: string;
+        email: string;
+        password: string;
+    };
 
-      export type LoginForm = {
-          _id?: string;
-          email: string;
-          password: string;
-      };
+    type ConcatForm = User & LoginForm;
 
-      type ConcatForm = User & LoginForm;
+    export interface SignUpForm extends ConcatForm {
+        confirmPassword?: string;
+        verifyToken?: string;
+    }
 
-      export interface SignUpForm extends ConcatForm {
-          confirmPassword: string;
-          verifyToken?: string;
-      }
+    export type DeleteForm = {
+        password: string;
+    };
 
-      export type DeleteForm = {
-          password: string;
-      };
+    export type EmailForm = {
+        email: string;
+    };
 
-      export type EmailForm = {
-          email: string;
-      };
+    export type PasswordForm = {
+        password: string;
+        confirmPassword?: string;
+    };
 
-      export type PasswordForm = {
-          password: string;
-          confirmPassword?: string;
-      };
+    export interface UpdateUserForm extends User {
+        password: string;
+        newEmail: string;
+        newPassword: string;
+        confirmNewPassword: string;
+    }
 
-      export interface UpdateUserForm extends User {
-          password: string;
-          newEmail: string;
-          newPassword: string;
-          confirmNewPassword: string;
-      }
+    export type Msg = {
+        from: string;
+        to: string;
+        subject: string;
+        html: string;
+    };
 
-      export type MSGFn = {
-          (user: UserI, host?: string): {
-              from: string;
-              to: string;
-              subject: string;
-              html: string;
-          };
-      };
+    export type JWTAccessFn = {
+        (user: User): string;
+    };
 
-      export type JWTAccessFn = {
-          (user: User): string;
-      };
+    export type JWTVerifyFn = {
+        (mode: string): string;
+    };
 
-      export type JWTVerifyFn = {
-          (mode: string): string;
-      };
+    export type CheckFn = {
+        (string: string): boolean;
+    };
 
-      export type CheckFn = {
-          (string: string): boolean;
-      };
+    export type ValidatorFn<T> = {
+        (data: T): {
+            errors: ErrorContainer;
+            valid: boolean;
+        };
+    };
 
-      export type ValidatorFn<T> = {
-          (data: T): {
-              errors: ErrorContainer;
-              valid: boolean;
-          };
-      };
+    export type ErrorContainer = {
+        [key: string]: string;
+    };
 
-      export type ErrorContainer = {
-          [key: string]: string;
-      };
-    ```
+    export type Object = {
+        [index: string]: any;
+    };
+  ```
 
 ### Helpers
 
@@ -1210,24 +1129,24 @@
   - Helper function to create custom messages to send emails using [SendGrid API](https://sendgrid.com/docs/for-developers/sending-email/quickstart-nodejs/#complete-code-block)
   - the **SendGrid** API specifies a template that we need to follow in order to use send an email
 
-  ```JavaScript
-    const msg = {
-      to: 'test@example.com', // Change to your recipient
-      from: 'test@example.com', // Change to your verified sender
-      subject: 'Sending with SendGrid is Fun',
-      text: 'and easy to do anywhere, even with Node.js',
-      html: '<strong>and easy to do anywhere, even with Node.js</strong>',
-    }
-  ```
+    ```JavaScript
+      const msg = {
+        to: 'test@example.com', // Change to your recipient
+        from: 'test@example.com', // Change to your verified sender
+        subject: 'Sending with SendGrid is Fun',
+        text: 'and easy to do anywhere, even with Node.js',
+        html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+      }
+    ```
 
   ```TypeScript
-    import * as type from '@customTypes/types';
+    import * as Type from '@cTypes/types';
 
-    const FRONTEND_URL = process.env.FRONTEND_URL;
+    const FRONTEND_URL = process.env.FRONTEND_URL!;
 
-    export const signUp: type.MSGFn = (user, host) => {
+    export const signUp = (user: Type.UserI, host: string): Type.Msg => {
         return {
-            from: process.env.SENDGRID_EMAIL,
+            from: process.env.SENDGRID_EMAIL!,
             to: user.email,
             subject: 'Verify your email',
             html: `
@@ -1238,9 +1157,9 @@
         };
     };
 
-    export const updateEmail: type.MSGFn = (user, host) => {
+    export const updateEmail = (user: Type.UserI, host: string): Type.Msg => {
         return {
-            from: process.env.SENDGRID_EMAIL,
+            from: process.env.SENDGRID_EMAIL!,
             to: user.tempEmail,
             subject: 'Verify your email',
             html: `
@@ -1250,9 +1169,9 @@
         };
     };
 
-    export const resetPassword: type.MSGFn = (user) => {
+    export const resetPassword = (user: Type.UserI): Type.Msg => {
         return {
-            from: process.env.SENDGRID_EMAIL,
+            from: process.env.SENDGRID_EMAIL!,
             to: user.email,
             subject: 'Reset password',
             html: `
@@ -1264,9 +1183,9 @@
         };
     };
 
-    export const updatePassword: type.MSGFn = (user) => {
+    export const updatePassword = (user: Type.UserI): Type.Msg => {
         return {
-            from: process.env.SENDGRID_EMAIL,
+            from: process.env.SENDGRID_EMAIL!,
             to: user.email,
             subject: 'Update password',
             html: `
@@ -1283,44 +1202,52 @@
 
 - In `src/utils/helpers/validator.ts`
 
-  - Helper file to validate incoming data
-
   ```TypeScript
-    import * as type from '@customTypes/types';
+    import * as Type from '@cTypes/types';
 
-    const PASSWORD_LENGTH = +process.env.PASSWORD_LEN;
+    const PASSWORD_LENGTH = +process.env.PASSWORD_LEN!;
 
-    const isEmpty: type.CheckFn = (string) => {
-        if (!string || string.trim() === '' || string === '') return true;
+    const isEmpty: Type.CheckFn = (str: string) => {
+        if (str !== undefined && str.trim() === '') return true;
         return false;
     };
 
-    export const isEmail: type.CheckFn = (email) => {
-        const emailRegEx = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    export const isEmail: Type.CheckFn = (email: string) => {
+        const emailRegEx =
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         if (email && email.match(emailRegEx)) return true;
         return false;
     };
 
-    const validateSignUpData: type.ValidatorFn<type.SignUpForm> = (data) => {
-        const { email, firstName, lastName, password, confirmPassword } = data;
-        const errors: type.ErrorContainer = {};
+    const check = (propertyName: string, data: Type.Object, length: number | undefined = undefined) => {
+        if (!data.hasOwnProperty(propertyName)) return false;
+        if (isEmpty(data[propertyName])) return false;
+        if (length && data[propertyName].length < length) return false;
+        return true;
+    };
 
-        if (isEmpty(email)) {
-            errors.email = 'Must not be empty.';
-        } else if (!isEmail(email)) {
-            errors.email = 'Must be a valid email address.';
-        }
-        if (isEmpty(firstName)) errors.firstName = 'Must not be empty.';
-        if (isEmpty(lastName)) errors.lastName = 'Must not be empty.';
-        if (isEmpty(password)) errors.password = 'Must not be empty.';
-        if (isEmpty(confirmPassword)) errors.confirmPassword = 'Must not be empty.';
-        if (
-            (password && password.length < PASSWORD_LENGTH) ||
-            (confirmPassword && confirmPassword.length < PASSWORD_LENGTH)
-        ) {
+    const validateSignUpData: Type.ValidatorFn<Type.SignUpForm> = (data: Type.Object) => {
+        const { email, password, confirmPassword } = data;
+        const errors: Type.ErrorContainer = {};
+
+        if (!check('email', data)) errors.email = 'Must not be empty.';
+        else if (check('email', data) && !isEmail(email)) errors.email = 'Must be a valid email address.';
+        if (!check('firstName', data)) errors.firstName = 'Must not be empty.';
+        if (!check('lastName', data)) errors.lastName = 'Must not be empty.';
+        if (!check('password', data)) errors.password = 'Must not be empty.';
+        if (!check('confirmPassword', data)) errors.confirmPassword = 'Must not be empty.';
+        if (!check('password', data, PASSWORD_LENGTH))
             errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
-        }
-        if (password !== confirmPassword) errors.passwords = 'Must be equal.';
+        if (!check('confirmPassword', data, PASSWORD_LENGTH))
+            errors.confirmPasswordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        if (
+            data.hasOwnProperty('password') &&
+            check('password', data, PASSWORD_LENGTH) &&
+            data.hasOwnProperty('confirmPassword') &&
+            check('confirmPassword', data, PASSWORD_LENGTH) &&
+            password !== confirmPassword
+        )
+            errors.passwords = 'Must be equal.';
 
         return {
             errors,
@@ -1328,13 +1255,13 @@
         };
     };
 
-    const validateLoginData: type.ValidatorFn<type.LoginForm> = (data) => {
-        const { email, password } = data;
-        const errors: type.ErrorContainer = {};
+    const validateLoginData: Type.ValidatorFn<Type.LoginForm> = (data: Type.Object) => {
+        const { email } = data;
+        const errors: Type.ErrorContainer = {};
 
-        if (isEmpty(email)) errors.email = 'Must not be empty.';
-        else if (!isEmail(email)) errors.email = 'Must be a valid email address.';
-        if (isEmpty(password)) errors.password = 'Must not be empty.';
+        if (!check('email', data)) errors.email = 'Must not be empty.';
+        else if (check('email', data) && !isEmail(email)) errors.email = 'Must be a valid email address.';
+        if (!check('password', data)) errors.password = 'Must not be empty.';
 
         return {
             errors,
@@ -1342,55 +1269,36 @@
         };
     };
 
-    const validateUpdateData: type.ValidatorFn<type.UpdateUserForm> = (data) => {
-        const {
-            newEmail,
-            firstName,
-            lastName,
-            password,
-            newPassword,
-            confirmNewPassword,
-        } = data;
-        const errors: type.ErrorContainer = {};
+    const validateUpdateData: Type.ValidatorFn<Type.UpdateUserForm> = (data: Type.Object) => {
+        const { newEmail, newPassword, confirmNewPassword } = data;
+        const errors: Type.ErrorContainer = {};
         let count = 0;
 
-        if (data.hasOwnProperty('newEmail') && isEmpty(newEmail)) {
-            errors.newEmail = 'Must not be empty.';
-        } else if (newEmail && !isEmail(newEmail)) {
+        if (data.hasOwnProperty('newEmail') && !check('newEmail', data)) errors.newEmail = 'Must not be empty.';
+        else if (data.hasOwnProperty('newEmail') && check('newEmail', data) && !isEmail(newEmail))
             errors.newEmail = 'Must be a valid email address.';
-        }
-        if (data.hasOwnProperty('firstName') && isEmpty(firstName))
-            errors.firstName = 'Must not be empty.';
-        if (data.hasOwnProperty('lastName') && isEmpty(lastName))
-            errors.lastName = 'Must not be empty.';
-        if (isEmpty(password)) errors.password = 'Must not be empty.';
+        if (data.hasOwnProperty('firstName') && !check('firstName', data)) errors.firstName = 'Must not be empty.';
+        if (data.hasOwnProperty('lastName') && !check('lastName', data)) errors.lastName = 'Must not be empty.';
+        if (data.hasOwnProperty('password') && !check('password', data)) errors.password = 'Must not be empty.';
+        if (data.hasOwnProperty('password') && !check('password', data, PASSWORD_LENGTH))
+            errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        if (data.hasOwnProperty('newPassword') && !check('newPassword', data)) errors.newPassword = 'Must not be empty.';
+        if (data.hasOwnProperty('newPassword') && !check('newPassword', data, PASSWORD_LENGTH))
+            errors.newPasswordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        if (data.hasOwnProperty('confirmNewPassword') && !check('confirmNewPassword', data))
+            errors.confirmNewPassword = 'Must not be empty.';
+        if (data.hasOwnProperty('confirmNewPassword') && !check('confirmNewPassword', data, PASSWORD_LENGTH))
+            errors.confirmNewPasswordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
         if (
             data.hasOwnProperty('newPassword') &&
-            isEmpty(newPassword) &&
-            !isEmpty(confirmNewPassword)
-        )
-            errors.newPassword = 'Must not be empty.';
-        if (
+            check('newPassword', data, PASSWORD_LENGTH) &&
             data.hasOwnProperty('confirmNewPassword') &&
-            isEmpty(confirmNewPassword) &&
-            !isEmpty(newPassword)
+            check('confirmNewPassword', data, PASSWORD_LENGTH) &&
+            newPassword !== confirmNewPassword
         )
-            errors.confirmNewPassword = 'Must not be empty.';
-        if (
-            (data.hasOwnProperty('newPassword') &&
-                newPassword !== '' &&
-                newPassword.length < PASSWORD_LENGTH) ||
-            (data.hasOwnProperty('confirmNewPassword') &&
-                confirmNewPassword !== '' &&
-                confirmNewPassword.length < PASSWORD_LENGTH)
-        ) {
-            errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
-        }
-        if (newPassword !== confirmNewPassword) errors.passwords = 'Must be equal.';
+            errors.passwords = 'Must be equal.';
 
-        Object.keys(data).forEach((key) => {
-            if (data[key]) count++;
-        });
+        Object.keys(data).forEach(() => count++);
 
         if (count === 1) errors.unchanged = 'Must modify something.';
 
@@ -1400,31 +1308,19 @@
         };
     };
 
-    const validatePassword: type.ValidatorFn<type.PasswordForm> = (data) => {
+    const validatePassword: Type.ValidatorFn<Type.PasswordForm> = (data: Type.Object) => {
         const { password, confirmPassword } = data;
-        const errors: type.ErrorContainer = {};
+        const errors: Type.ErrorContainer = {};
 
-        if (isEmpty(password)) {
-            errors.password = 'Must not be empty.';
-        } else if (password.length < PASSWORD_LENGTH) {
-            errors.password = `Must be greater than ${PASSWORD_LENGTH} characters.`;
-        }
-        if (data.hasOwnProperty('confirmPassword') && isEmpty(confirmPassword)) {
+        if (!check('password', data)) errors.password = 'Must not be empty.';
+        if (!check('password', data, PASSWORD_LENGTH))
+            errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        if (data.hasOwnProperty('confirmPassword') && !check('confirmPassword', data))
             errors.confirmPassword = 'Must not be empty.';
-        } else if (
-            password.length < PASSWORD_LENGTH ||
-            (data.hasOwnProperty('confirmPassword') &&
-                confirmPassword &&
-                confirmPassword.length < PASSWORD_LENGTH)
-        ) {
-            errors.confirmPassword = `Must be greater than ${PASSWORD_LENGTH} characters.`;
-        }
-        if (
-            data.hasOwnProperty('confirmPassword') &&
-            password !== confirmPassword
-        ) {
+        if (data.hasOwnProperty('confirmPassword') && !check('confirmPassword', data, PASSWORD_LENGTH))
+            errors.confirmPasswordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        if (check('password', data) && check('confirmPassword', data) && password !== confirmPassword)
             errors.passwords = 'Must be equal.';
-        }
 
         return {
             errors,
@@ -1432,15 +1328,12 @@
         };
     };
 
-    const validateEmail: type.ValidatorFn<type.EmailForm> = (data) => {
+    const validateEmail: Type.ValidatorFn<Type.EmailForm> = (data: Type.Object) => {
         const { email } = data;
-        const errors: type.ErrorContainer = {};
+        const errors: Type.ErrorContainer = {};
 
-        if (data.hasOwnProperty('email') && isEmpty(email)) {
-            errors.email = 'Must not be empty.';
-        } else if (data.hasOwnProperty('email') && !isEmail(email)) {
-            errors.email = 'Must be a valid email address.';
-        }
+        if (!check('email', data)) errors.email = 'Must not be empty.';
+        else if (check('email', data) && !isEmail(email)) errors.email = 'Must be a valid email address.';
 
         return {
             errors,
@@ -1448,13 +1341,7 @@
         };
     };
 
-    export {
-        validateSignUpData,
-        validateLoginData,
-        validateUpdateData,
-        validatePassword,
-        validateEmail,
-    };
+    export { validateSignUpData, validateLoginData, validateUpdateData, validatePassword, validateEmail };
   ```
 
 ## Server
@@ -1558,13 +1445,15 @@
       const { resolve } = require('path');
       const root = resolve(__dirname);
 
+      /*
+       * For a detailed explanation regarding each configuration property, visit:
+       * https://jestjs.io/docs/configuration
+       */
+
       module.exports = {
-          rootDir: root,
           displayName: 'TEST',
-          testMatch: ['<rootDir>/src/**/*.test.ts'],
-          testEnvironment: 'node',
           clearMocks: true,
-          preset: 'ts-jest',
+          coveragePathIgnorePatterns: ['/node_modules/'],
           moduleNameMapper: {
               '~/(.*)': '<rootDir>/src/$1',
               '@config/(.*)': '<rootDir>/src/config/$1',
@@ -1573,9 +1462,12 @@
               '@models/(.*)': '<rootDir>/src/models/$1',
               '@routes/(.*)': '<rootDir>/src/routes/$1',
               '@utils/(.*)': '<rootDir>/src/utils/$1',
-              '@customTypes/(.*)': '<rootDir>/src/utils/@types/$1',
+              '@cTypes/(.*)': '<rootDir>/src/utils/@types/$1',
               '@helpers/(.*)': '<rootDir>/src/utils/helpers/$1',
           },
+          preset: 'ts-jest',
+          rootDir: root,
+          testMatch: ['<rootDir>/src/**/*.test.ts'],
       };
     ```
 
@@ -1584,8 +1476,6 @@
 [Go Back to Contents](#contents)
 
 - In `src/tests/database/database.ts`
-
-  - We create our base environment
 
   ```TypeScript
     import User from '@models/user';
@@ -1617,21 +1507,9 @@
         }
     }
 
-    const user1 = new UserClass(
-        'Roger',
-        'That',
-        'your_email_1@test.com',
-        'test123',
-        true
-    );
+    const user1 = new UserClass('Roger', 'That', 'your_email_1@test.com', 'test123', true);
 
-    const user2 = new UserClass(
-        'Roger 1',
-        'That 1',
-        'your_email_2@test.com',
-        'test123',
-        false
-    );
+    const user2 = new UserClass('Roger 1', 'That 1', 'your_email_2@test.com', 'test123', false);
 
     const setupDatabase = async () => {
         await User.deleteMany({});
@@ -1648,26 +1526,24 @@
 
 - In `src/tests/user.test.ts`
 
-  - We have all tests related to the user's endpoints
-
   ```TypeScript
     import app from '~/app';
     import User from '@models/user';
     import request from 'supertest';
     import jwt from 'jsonwebtoken';
-    import * as type from '@customTypes/types';
+    import * as Type from '@cTypes/types';
     import { user1, user2, setupDatabase } from './database/database';
 
     const URL = '/api/v1/users';
-    const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
-    const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
-    const PASSWORD_LEN = process.env.PASSWORD_LEN;
+    const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
+    const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY!;
+    const PASSWORD_LEN = process.env.PASSWORD_LEN!;
 
     beforeEach(setupDatabase);
 
     describe("User's API", () => {
-        it('Should sign up - new user', async () => {
-            const form: type.SignUpForm = {
+        it('Should sign up new user', async () => {
+            const form: Type.SignUpForm = {
                 email: 'your_email_3@test.com',
                 firstName: 'Roger 3',
                 lastName: 'That 3',
@@ -1675,20 +1551,16 @@
                 confirmPassword: 'test123',
             };
 
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(201);
-            const user: type.UserI = await User.findOne({ email: form.email });
+            const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(201);
+            const user: Type.UserI | null = await User.findOne({ email: form.email });
             expect(user).not.toBeNull();
             expect(response.body).toMatchObject({
-                message:
-                    'Your account has been created. Please check your email to verify your account.',
+                message: 'Your account has been created. Please check your email to verify your account.',
             });
         });
 
-        it('Should not sign up - existing user/email', async () => {
-            const form: type.SignUpForm = {
+        it('Should not sign up new user - existing user/email', async () => {
+            const form: Type.SignUpForm = {
                 email: user1.email,
                 firstName: 'Roger 3',
                 lastName: 'That 3',
@@ -1696,10 +1568,7 @@
                 confirmPassword: 'test123',
             };
 
-            const response: ResponseMSG = await request(app)
-                .post(`${URL}/signup`)
-                .send(form)
-                .expect(400);
+            const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
             expect(response.body).toMatchObject({
                 message: 'ERROR: Email already in use.',
             });
@@ -1725,12 +1594,12 @@
 
     - We are going to override the **setApiKey** and **send** methods
 
-      ```TypeScript
-        module.exports = {
-            setApiKey() {},
-            send() {},
-        };
-      ```
+  ```TypeScript
+    module.exports = {
+        setApiKey() {},
+        send() {},
+    };
+  ```
 
 ##### @TYPES
 
@@ -1768,7 +1637,7 @@
   - Add `-- --coverage` in the end of the command
   - Run the command `npm run test -- --coverage`
 
-  ![](https://i.imgur.com/QJXlglX.png)
+  ![](https://i.imgur.com/NGNWeHZ.png)
 
   - **NOTE** still needs more tests to handle the `return res.status(500)` in `src/controllers/users.ts` to reach 100% of coverage.
 
@@ -1812,7 +1681,7 @@
                         '@models': './src/models',
                         '@routes': './src/routes',
                         '@utils': './src/utils',
-                        '@customTypes': './src/utils/@types',
+                        '@cTypes': './src/utils/@types',
                         '@helpers': './src/utils/helpers',
                     },
                 },

@@ -14,7 +14,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "97b79bb6-7cb4-43e5-8076-9883a65823ae",
 								"exec": [
 									"if (pm.response.code === 200) {",
 									"    pm.environment.set('authToken', pm.response.json())",
@@ -60,7 +59,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ceb002b9-44d0-4057-9fe9-053f2fd18146",
 								"exec": [
 									""
 								],
@@ -99,12 +97,55 @@
 					"response": []
 				},
 				{
+					"name": "/api/v1/users/email/:verifyToken",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"password\": \"newpass123\",\n\t\"confirmPassword\": \"newpass123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/v1/users/email/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoicGFzc3dvcmQiLCJpYXQiOjE2MDQ1MDI0NTQsImV4cCI6MTYwNTEwNzI1NH0.CEmtUKYaI5O4yed5xLhDfIEI4zIdICEO4XsewGvHvGk",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"email",
+								"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoicGFzc3dvcmQiLCJpYXQiOjE2MDQ1MDI0NTQsImV4cCI6MTYwNTEwNzI1NH0.CEmtUKYaI5O4yed5xLhDfIEI4zIdICEO4XsewGvHvGk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "/api/v1/users/email - Resend Verification",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "cff27905-3e8e-4d3d-9073-a342a6386540",
 								"exec": [
 									""
 								],
@@ -148,7 +189,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "682f8ab9-9b17-44b3-af5a-db831a99b955",
 								"exec": [
 									""
 								],
@@ -192,7 +232,6 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f48e12f4-41ec-49d0-bdda-7e8d9cc68f67",
 								"exec": [
 									""
 								],
@@ -328,8 +367,7 @@
 					},
 					"response": []
 				}
-			],
-			"protocolProfileBehavior": {}
+			]
 		}
 	],
 	"auth": {
@@ -346,7 +384,6 @@
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "b867b8c6-9c07-4ab9-9f68-8aaabd1d02db",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -356,13 +393,11 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "e3651405-1180-4f02-a012-c1971b14a284",
 				"type": "text/javascript",
 				"exec": [
 					""
 				]
 			}
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

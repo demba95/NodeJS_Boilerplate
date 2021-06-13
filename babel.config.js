@@ -22,7 +22,7 @@ module.exports = {
                     '@models': './src/models',
                     '@routes': './src/routes',
                     '@utils': './src/utils',
-                    '@customTypes': './src/utils/@types',
+                    '@cTypes': './src/utils/@types',
                     '@helpers': './src/utils/helpers',
                 },
             },

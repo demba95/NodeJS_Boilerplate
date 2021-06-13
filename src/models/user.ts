@@ -1,7 +1,7 @@
 import { NextFunction } from 'express';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import * as type from '@customTypes/types';
+import * as Type from '@cTypes/types';
 
 const Schema = mongoose.Schema;
 const SALT_ROUNDS: number = 6;
@@ -51,25 +51,19 @@ const userSchema = new Schema(
     }
 );
 
-userSchema.pre<type.UserI>('save', async function (next) {
+userSchema.pre<Type.UserI>('save', async function (next) {
     const user = this;
 
-    if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, SALT_ROUNDS);
-    }
-
+    if (user.isModified('password')) user.password = await bcrypt.hash(this.get('password'), SALT_ROUNDS);
     next();
 });
 
-userSchema.methods.comparePassword = async function (
-    tryPassword: string,
-    callback: NextFunction
-) {
-    await bcrypt.compare(tryPassword, this.password, callback);
+userSchema.methods.comparePassword = function (tryPassword: string, callback: NextFunction) {
+    bcrypt.compare(tryPassword, this.get('password'), callback);
 };
 
 userSchema.set('toJSON', {
-    transform: function (_, ret) {
+    transform: function (_: any, ret: Type.UserI) {
         delete ret.password;
         delete ret.createdAt;
         delete ret.updatedAt;
@@ -81,4 +75,4 @@ userSchema.set('toJSON', {
     },
 });
 
-export default mongoose.model<type.UserI>('User', userSchema);
+export default mongoose.model<Type.UserI>('User', userSchema);

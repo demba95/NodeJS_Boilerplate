@@ -2,19 +2,19 @@ import app from '~/app';
 import User from '@models/user';
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
-import * as type from '@customTypes/types';
+import * as Type from '@cTypes/types';
 import { user1, user2, setupDatabase } from './database/database';
 
 const URL = '/api/v1/users';
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
-const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY;
-const PASSWORD_LEN = process.env.PASSWORD_LEN;
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
+const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY!;
+const PASSWORD_LEN = process.env.PASSWORD_LEN!;
 
 beforeEach(setupDatabase);
 
 describe("User's API", () => {
-    it('Should sign up - new user', async () => {
-        const form: type.SignUpForm = {
+    it('Should sign up new user', async () => {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -22,20 +22,16 @@ describe("User's API", () => {
             confirmPassword: 'test123',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(201);
-        const user: type.UserI = await User.findOne({ email: form.email });
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(201);
+        const user: Type.UserI | null = await User.findOne({ email: form.email });
         expect(user).not.toBeNull();
         expect(response.body).toMatchObject({
-            message:
-                'Your account has been created. Please check your email to verify your account.',
+            message: 'Your account has been created. Please check your email to verify your account.',
         });
     });
 
-    it('Should not sign up - existing user/email', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT sign up new user - existing user/email', async () => {
+        const form: Type.SignUpForm = {
             email: user1.email,
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -43,17 +39,14 @@ describe("User's API", () => {
             confirmPassword: 'test123',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
             message: 'ERROR: Email already in use.',
         });
     });
 
-    it('Should not sign up - empty first name', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT sign up new user - empty first name', async () => {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: '',
             lastName: 'That 3',
@@ -61,17 +54,14 @@ describe("User's API", () => {
             confirmPassword: 'test123',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
             firstName: 'Must not be empty.',
         });
     });
 
-    it('Should not sign up - empty last name', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT sign up new user - empty last name', async () => {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
             lastName: '',
@@ -79,17 +69,14 @@ describe("User's API", () => {
             confirmPassword: 'test123',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
             lastName: 'Must not be empty.',
         });
     });
 
-    it('Should not sign up - empty email', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT sign up new user - empty email', async () => {
+        const form: Type.SignUpForm = {
             email: '',
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -97,17 +84,14 @@ describe("User's API", () => {
             confirmPassword: 'test123',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
             email: 'Must not be empty.',
         });
     });
 
-    it('Should not sign up - invalid email', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT sign up new user - invalid email', async () => {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test',
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -115,17 +99,14 @@ describe("User's API", () => {
             confirmPassword: 'test123',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
             email: 'Must be a valid email address.',
         });
     });
 
-    it('Should not sign up - empty password', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT sign up new user - empty password', async () => {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -133,36 +114,30 @@ describe("User's API", () => {
             confirmPassword: 'test123',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
             password: 'Must not be empty.',
-            passwords: 'Must be equal.',
+            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
-    it('Should not sign up - password length', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT sign up new user - password length', async () => {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
             lastName: 'That 3',
             password: '12',
-            confirmPassword: '12',
+            confirmPassword: '12345678',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
             passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
-    it('Should not sign up - empty confirm password', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT sign up new user - empty confirm password', async () => {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -170,18 +145,15 @@ describe("User's API", () => {
             confirmPassword: '',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
             confirmPassword: 'Must not be empty.',
-            passwords: 'Must be equal.',
+            confirmPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
-    it('Should not sign up - wrong confirm password', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT sign up new user - wrong confirm password', async () => {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -189,17 +161,14 @@ describe("User's API", () => {
             confirmPassword: 'test123wrong',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
             passwords: 'Must be equal.',
         });
     });
 
-    it('Should not sign up - empty form', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT sign up new user - empty form', async () => {
+        const form: Type.SignUpForm = {
             email: '',
             firstName: '',
             lastName: '',
@@ -207,10 +176,7 @@ describe("User's API", () => {
             confirmPassword: '',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/signup`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
             firstName: 'Must not be empty.',
             lastName: 'Must not be empty.',
@@ -221,7 +187,7 @@ describe("User's API", () => {
     });
 
     it('Should verify account', async () => {
-        const form: type.SignUpForm = {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -230,19 +196,17 @@ describe("User's API", () => {
         };
 
         await request(app).post(`${URL}/signup`).send(form).expect(201);
-        const user: type.UserI = await User.findOne({ email: form.email });
+        const user: Type.UserI | null = await User.findOne({ email: form.email });
         expect(user).not.toBeNull();
 
-        const response = await request(app)
-            .get(`${URL}/email/${user.verifyToken}`)
-            .expect(200);
+        const response = await request(app).get(`${URL}/email/${user!.verifyToken}`).expect(200);
         expect(response.body).toMatchObject({
             message: 'Thank you! Your email has been verified.',
         });
     });
 
-    it('Should not verify account - empty email token', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT verify account - empty email token', async () => {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -251,18 +215,16 @@ describe("User's API", () => {
         };
 
         await request(app).post(`${URL}/signup`).send(form).expect(201);
-        const user: type.UserI = await User.findOne({ email: form.email });
-        await User.findByIdAndDelete(user._id);
-        const response = await request(app)
-            .get(`${URL}/email/${user.verifyToken}`)
-            .expect(404);
+        const user: Type.UserI | null = await User.findOne({ email: form.email });
+        await User.findByIdAndDelete(user!._id);
+        const response = await request(app).get(`${URL}/email/${user!.verifyToken}`).expect(404);
         expect(response.body).toMatchObject({
-            message: 'ERROR: User not found.',
+            message: 'ERROR: Wrong credentials.',
         });
     });
 
-    it('Should not verify account - empty email token', async () => {
-        const form: type.SignUpForm = {
+    it('Should NOT verify account - empty email token', async () => {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -271,16 +233,16 @@ describe("User's API", () => {
         };
 
         await request(app).post(`${URL}/signup`).send(form).expect(201);
-        const user: type.UserI = await User.findOne({ email: form.email });
+        const user: Type.UserI | null = await User.findOne({ email: form.email });
         expect(user).not.toBeNull();
 
         await request(app).get(`${URL}/email/`).expect(404);
     });
 
-    it('Should not verify account - invalid email token', async () => {
+    it('Should NOT verify account - invalid email token', async () => {
         const expiredVerifyToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZW1haWwiLCJpYXQiOjE2MDI2ODg3MjEsImV4cCI6MTYwMzI5MzUyMX0.CWhtDg0BYoaL9sld0hwOd7U12agsXSB-7SZ6XYF9hko';
-        const form: type.SignUpForm = {
+        const form: Type.SignUpForm = {
             email: 'your_email_3@test.com',
             firstName: 'Roger 3',
             lastName: 'That 3',
@@ -289,31 +251,24 @@ describe("User's API", () => {
         };
 
         await request(app).post(`${URL}/signup`).send(form).expect(201);
-        const user: type.UserI = await User.findOne({ email: form.email });
+        const user: Type.UserI | null = await User.findOne({ email: form.email });
         expect(user).not.toBeNull();
 
-        const response = await request(app)
-            .get(`${URL}/email/${expiredVerifyToken}`)
-            .expect(401);
+        const response = await request(app).get(`${URL}/email/${expiredVerifyToken}`).expect(401);
         expect(response.body).toMatchObject({
             message: 'ERROR: Expired email token.',
         });
     });
 
-    it('Should login - verified email', async () => {
-        const form: type.LoginForm = {
+    it('Should login existing user', async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
-        const userData = <type.UserJWT>(
-            jwt.verify(response.body, JWT_SECRET_KEY)
-        );
-        const user: type.UserI = await User.findOne({ email: form.email });
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
+        const userData = <Type.UserJWT>jwt.verify(response.body, JWT_SECRET_KEY);
+        const user: Type.UserI | null = await User.findOne({ email: form.email });
         expect(user).not.toBeNull();
         expect(userData).toMatchObject({
             firstName: user1.firstName,
@@ -321,97 +276,79 @@ describe("User's API", () => {
         });
     });
 
-    it('Should not login - unverified user', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT login existing user - unverified user', async () => {
+        const form: Type.LoginForm = {
             email: user2.email,
             password: user2.password,
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(403);
+        const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(403);
         expect(response.body).toMatchObject({
             message: 'ERROR: Please verify your email first.',
         });
     });
 
-    it('Should not login - wrong password', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT login existing user - wrong password', async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password + 'wrong_password',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(403);
+        const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(403);
         expect(response.body).toMatchObject({
             message: 'ERROR: Wrong credentials.',
         });
     });
 
-    it('Should not login - empty password', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT login existing user - empty password', async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: '',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(400);
         expect(response.body).toMatchObject({
             password: 'Must not be empty.',
         });
     });
 
-    it('Should not login - invalid email', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT login existing user - invalid email', async () => {
+        const form: Type.LoginForm = {
             email: 'your_email_3@test',
             password: user1.password,
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(400);
         expect(response.body).toMatchObject({
             email: 'Must be a valid email address.',
         });
     });
 
-    it('Should not login - empty email', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT login existing user - empty email', async () => {
+        const form: Type.LoginForm = {
             email: '',
             password: user1.password,
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(400);
+        const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(400);
         expect(response.body).toMatchObject({
             email: 'Must not be empty.',
         });
     });
 
-    it('Should not login - email not found', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT login existing user - email not found', async () => {
+        const form: Type.LoginForm = {
             email: 'user1@notfound.com',
             password: user1.password,
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(404);
+        const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(404);
         expect(response.body).toMatchObject({
-            message: 'ERROR: User not found.',
+            message: 'ERROR: Wrong credentials.',
         });
     });
 
-    it('Should not authorize - invalid token', async () => {
+    it('Should NOT login existing user - invalid token', async () => {
         const invalidToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDM0NzQwMDIsImV4cCI6MTYwNDA3ODgwMn0.sDZ06WC2MhtswMgE_4UX7VL_cLD10CMUkjo72ArYfaI';
         const profile: UserProfile = await request(app)
@@ -424,15 +361,12 @@ describe("User's API", () => {
     });
 
     it("Should fetch user's profile", async () => {
-        const form: type.LoginForm = {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
         const profile: UserProfile = await request(app)
             .get(`${URL}/profile`)
@@ -445,16 +379,13 @@ describe("User's API", () => {
         });
     });
 
-    it("Should not fetch user's profile - user not found", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT fetch user's profile - user not found", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
         await User.findByIdAndDelete(user1._id);
         const profile: UserProfile = await request(app)
@@ -462,11 +393,11 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(404);
         expect(profile.body).toMatchObject({
-            message: 'ERROR: User not found.',
+            message: 'ERROR: Wrong credentials.',
         });
     });
 
-    it("Should not fetch user's profile - invalid token", async () => {
+    it("Should NOT fetch user's profile - invalid token", async () => {
         const invalidToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
         const profile: UserProfile = await request(app)
@@ -478,114 +409,103 @@ describe("User's API", () => {
         });
     });
 
-    it("Should not fetch user's profile - empty token", async () => {
-        const profile: UserProfile = await request(app)
-            .get(`${URL}/profile`)
-            .send()
-            .expect(401);
+    it("Should NOT fetch user's profile - empty token", async () => {
+        const profile: UserProfile = await request(app).get(`${URL}/profile`).send().expect(401);
         expect(profile.body).toMatchObject({
             message: 'Token not found.',
         });
     });
 
-    it("Should update user's fistName", async () => {
-        const form: type.LoginForm = {
+    it("Should update user's profiles - first name", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <type.UpdateUserForm>{
+        const updateUser = <Type.UpdateUserForm>{
             firstName: 'Roger Update',
             password: user1.password,
         };
-        await request(app)
-            .put(`${URL}/profile`)
-            .send(updateUser)
-            .set('Authorization', `Bearer ${token}`)
-            .expect(200);
-        const user: type.UserI = await User.findById({ _id: user1._id });
+        await request(app).put(`${URL}/profile`).send(updateUser).set('Authorization', `Bearer ${token}`).expect(200);
+        const user: Type.UserI | null = await User.findById({ _id: user1._id });
         expect(user).toMatchObject({
             firstName: updateUser.firstName,
         });
     });
 
-    it("Should update user's lastName", async () => {
-        const form: type.LoginForm = {
+    it("Should update user's profile - last name", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <type.UpdateUserForm>{
+        const updateUser = <Type.UpdateUserForm>{
             lastName: 'That Update',
             password: user1.password,
         };
-        await request(app)
-            .put(`${URL}/profile`)
-            .send(updateUser)
-            .set('Authorization', `Bearer ${token}`)
-            .expect(200);
-        const user: type.UserI = await User.findById({ _id: user1._id });
+        await request(app).put(`${URL}/profile`).send(updateUser).set('Authorization', `Bearer ${token}`).expect(200);
+        const user: Type.UserI | null = await User.findById({ _id: user1._id });
         expect(user).toMatchObject({
             lastName: updateUser.lastName,
         });
     });
 
-    it('Should update password', async () => {
-        const form: type.LoginForm = {
+    it("Should update user's profile - password", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <type.UpdateUserForm>{
+        const updateUser = <Type.UpdateUserForm>{
             password: user1.password,
             newPassword: '12345',
             confirmNewPassword: '12345',
         };
-        await request(app)
-            .put(`${URL}/profile`)
-            .send(updateUser)
-            .set('Authorization', `Bearer ${token}`)
-            .expect(200);
+        await request(app).put(`${URL}/profile`).send(updateUser).set('Authorization', `Bearer ${token}`).expect(200);
 
-        const form2: type.LoginForm = {
+        const form2: Type.LoginForm = {
             email: user1.email,
             password: updateUser.newPassword,
         };
-        const response2: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form2)
-            .expect(200);
+        const response2: LoginResponse = await request(app).post(`${URL}/login`).send(form2).expect(200);
         expect(typeof response2.body).toBe('string');
     });
 
-    it("Should not update user's profile - user not found", async () => {
-        const form: type.LoginForm = {
+    it("Should update user's profile - email", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
+        const token: string = response.body;
+        const updateUser = <Type.UpdateUserForm>{
+            password: user1.password,
+            newEmail: 'your_email_3_update@test.com',
+        };
+        await request(app).put(`${URL}/profile`).send(updateUser).set('Authorization', `Bearer ${token}`).expect(200);
+        const user: Type.UserI | null = await User.findById({ _id: user1._id });
+        expect(user).toMatchObject({
+            tempEmail: updateUser.newEmail,
+        });
+    });
+
+    it("Should NOT update user's profile - user not found", async () => {
+        const form: Type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
         await User.findByIdAndDelete(user1._id);
-        const updateUser = <type.UpdateUserForm>{
+        const updateUser = <Type.UpdateUserForm>{
             firstName: 'new name',
             password: user1.password,
         };
@@ -595,22 +515,19 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(404);
         expect(profile.body).toMatchObject({
-            message: 'ERROR: User not found.',
+            message: 'ERROR: Wrong credentials.',
         });
     });
 
-    it("Should not update user's profile - empty password", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT update user's profile - empty password", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <type.UpdateUserForm>{
+        const updateUser = <Type.UpdateUserForm>{
             firstName: 'new name',
             password: '',
         };
@@ -624,18 +541,15 @@ describe("User's API", () => {
         });
     });
 
-    it("Should not update user's profile - password length", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT update user's profile - passwords length", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <type.UpdateUserForm>{
+        const updateUser = <Type.UpdateUserForm>{
             password: user1.password,
             newPassword: '12',
             confirmNewPassword: '12',
@@ -646,22 +560,20 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            newPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            confirmNewPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
-    it("Should not update user's email - empty new email", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT update user's profile - empty new email", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser2 = <type.UpdateUserForm>{
+        const updateUser2 = <Type.UpdateUserForm>{
             password: user1.password,
             newEmail: '',
         };
@@ -675,18 +587,15 @@ describe("User's API", () => {
         });
     });
 
-    it("Should not update user's first Name - empty first name", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT update user's profile - empty first name", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser2 = <type.UpdateUserForm>{
+        const updateUser2 = <Type.UpdateUserForm>{
             password: user1.password,
             firstName: '',
         };
@@ -700,18 +609,15 @@ describe("User's API", () => {
         });
     });
 
-    it("Should not update user's last Name - empty last name", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT update user's profile - empty last name", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser2 = <type.UpdateUserForm>{
+        const updateUser2 = <Type.UpdateUserForm>{
             password: user1.password,
             lastName: '',
         };
@@ -725,18 +631,15 @@ describe("User's API", () => {
         });
     });
 
-    it("Should not update user's password - empty new password", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT update user's profile - empty new password", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser2 = <type.UpdateUserForm>{
+        const updateUser2 = <Type.UpdateUserForm>{
             password: user1.password,
             newPassword: '',
             confirmNewPassword: '12345678',
@@ -748,22 +651,19 @@ describe("User's API", () => {
             .expect(400);
         expect(response2.body).toMatchObject({
             newPassword: 'Must not be empty.',
-            passwords: 'Must be equal.',
+            newPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
-    it("Should not update user's password - empty confirm new password", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT update user's profile - empty confirm new password", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser2 = <type.UpdateUserForm>{
+        const updateUser2 = <Type.UpdateUserForm>{
             password: user1.password,
             newPassword: '12345678',
             confirmNewPassword: '',
@@ -775,22 +675,63 @@ describe("User's API", () => {
             .expect(400);
         expect(response2.body).toMatchObject({
             confirmNewPassword: 'Must not be empty.',
-            passwords: 'Must be equal.',
+            confirmNewPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
-    it("Should not update user's email - invalid new email", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT update user's profile - passwords not equal", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <type.UpdateUserForm>{
+        const updateUser2 = <Type.UpdateUserForm>{
+            password: user1.password,
+            newPassword: '12345678',
+            confirmNewPassword: '123456789',
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser2)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            passwords: 'Must be equal.',
+        });
+    });
+
+    it("Should NOT update user's profile - unchanged fields", async () => {
+        const form: Type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
+        const token: string = response.body;
+        const updateUser2 = <Type.UpdateUserForm>{
+            password: user1.password,
+        };
+        const response2 = await request(app)
+            .put(`${URL}/profile`)
+            .send(updateUser2)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            unchanged: 'Must modify something.',
+        });
+    });
+
+    it("Should NOT update user's email - invalid new email", async () => {
+        const form: Type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
+        const token: string = response.body;
+        const updateUser = <Type.UpdateUserForm>{
             password: user1.password,
             newEmail: 'roger@',
         };
@@ -804,18 +745,15 @@ describe("User's API", () => {
         });
     });
 
-    it("Should not update user's email - email already in use", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT update user's email - email already in use", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <type.UpdateUserForm>{
+        const updateUser = <Type.UpdateUserForm>{
             password: user1.password,
             newEmail: user2.email,
         };
@@ -829,18 +767,15 @@ describe("User's API", () => {
         });
     });
 
-    it("Should not update user's profile - wrong credentials", async () => {
-        const form: type.LoginForm = {
+    it("Should NOT update user's profile - wrong credentials", async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <type.UpdateUserForm>{
+        const updateUser = <Type.UpdateUserForm>{
             password: user1.password + 'wrong_password',
             newEmail: 'new_email@email.com',
         };
@@ -854,42 +789,13 @@ describe("User's API", () => {
         });
     });
 
-    it("Should update user's email", async () => {
-        const form: type.LoginForm = {
-            email: user1.email,
-            password: user1.password,
-        };
-
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
-        const token: string = response.body;
-        const updateUser = <type.UpdateUserForm>{
-            password: user1.password,
-            newEmail: 'your_email_3_update@test.com',
-        };
-        await request(app)
-            .put(`${URL}/profile`)
-            .send(updateUser)
-            .set('Authorization', `Bearer ${token}`)
-            .expect(200);
-        const user: type.UserI = await User.findById({ _id: user1._id });
-        expect(user).toMatchObject({
-            tempEmail: updateUser.newEmail,
-        });
-    });
-
     it('Should delete user/profile', async () => {
-        const form: type.LoginForm = {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
         const response2: UserProfile = await request(app)
             .delete(`${URL}/profile`)
@@ -901,16 +807,13 @@ describe("User's API", () => {
         });
     });
 
-    it('Should not delete user/profile - user not found', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT delete user/profile - user not found', async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
         await User.findByIdAndDelete(user1._id);
         const response2: UserProfile = await request(app)
@@ -919,12 +822,12 @@ describe("User's API", () => {
             .send({ password: form.password })
             .expect(404);
         expect(response2.body).toMatchObject({
-            message: 'ERROR: User not found.',
+            message: 'ERROR: Wrong credentials.',
         });
     });
 
-    it('Should not delete user/profile - invalid token', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT delete user/profile - invalid token', async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -938,16 +841,13 @@ describe("User's API", () => {
         });
     });
 
-    it('Should not delete user/profile - invalid password', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT delete user/profile - invalid password', async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
         const response2: UserProfile = await request(app)
             .delete(`${URL}/profile`)
@@ -959,16 +859,13 @@ describe("User's API", () => {
         });
     });
 
-    it('Should not delete user/profile - empty password', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT delete user/profile - empty password', async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
         const response2: UserProfile = await request(app)
             .delete(`${URL}/profile`)
@@ -977,19 +874,17 @@ describe("User's API", () => {
             .expect(400);
         expect(response2.body).toMatchObject({
             password: 'Must not be empty.',
+            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
-    it('Should not delete user/profile - invalid password length', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT delete user/profile - invalid password length', async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
         const response2: UserProfile = await request(app)
             .delete(`${URL}/profile`)
@@ -997,20 +892,17 @@ describe("User's API", () => {
             .send({ password: '123' })
             .expect(400);
         expect(response2.body).toMatchObject({
-            password: `Must be greater than ${PASSWORD_LEN} characters.`,
+            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
-    it('Should not delete user/profile - invalid password', async () => {
-        const form: type.LoginForm = {
+    it('Should NOT delete user/profile - invalid password', async () => {
+        const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/login`)
-            .send(form)
-            .expect(200);
+        const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
         const response2: UserProfile = await request(app)
             .delete(`${URL}/profile`)
@@ -1022,17 +914,14 @@ describe("User's API", () => {
         });
     });
 
-    it('Should not resend email verification - empty email', async () => {
-        const response: UserProfile = await request(app)
-            .post(`${URL}/email`)
-            .send({ email: '' })
-            .expect(400);
+    it('Should NOT resend email verification - empty email', async () => {
+        const response: UserProfile = await request(app).post(`${URL}/email`).send({ email: '' }).expect(400);
         expect(response.body).toMatchObject({
             email: 'Must not be empty.',
         });
     });
 
-    it('Should not resend email verification - invalid email', async () => {
+    it('Should NOT resend email verification - invalid email', async () => {
         const response: UserProfile = await request(app)
             .post(`${URL}/email`)
             .send({ email: 'invalid_email@email' })
@@ -1042,7 +931,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should not resend email verification - email not found', async () => {
+    it('Should NOT resend email verification - email not found', async () => {
         const response: UserProfile = await request(app)
             .post(`${URL}/email`)
             .send({ email: 'not_found@email.com' })
@@ -1052,85 +941,73 @@ describe("User's API", () => {
         });
     });
 
-    it('Should not resend email verification - email already verified', async () => {
-        const response: UserProfile = await request(app)
-            .post(`${URL}/email`)
-            .send({ email: user1.email })
-            .expect(200);
+    it('Should NOT resend email verification - email already verified', async () => {
+        const response: UserProfile = await request(app).post(`${URL}/email`).send({ email: user1.email }).expect(200);
         expect(response.body).toMatchObject({
             message: 'Your account is already verified.',
         });
     });
 
     it('Should reset password', async () => {
-        const form: type.EmailForm = {
+        const form: Type.EmailForm = {
             email: user1.email,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/password`)
-            .send(form)
-            .expect(200);
-        const user: type.UserI = await User.findById(user1._id);
-        expect(user.verifyToken).not.toBeNull();
+        const response: LoginResponse = await request(app).post(`${URL}/password`).send(form).expect(200);
+        const user: Type.UserI | null = await User.findById(user1._id);
+        expect(user!.verifyToken).not.toBeNull();
         expect(response.body).toMatchObject({
             message: 'Please check your email to reset your password.',
         });
     });
 
-    it('Should not reset password - not found email', async () => {
-        const form: type.EmailForm = {
+    it('Should NOT reset password - not found email', async () => {
+        const form: Type.EmailForm = {
             email: 'not_found' + user1.email,
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/password`)
-            .send(form)
-            .expect(404);
+        const response: LoginResponse = await request(app).post(`${URL}/password`).send(form).expect(404);
         expect(response.body).toMatchObject({
             message: 'ERROR: Email not found.',
         });
     });
 
-    it('Should not reset password - invalid email', async () => {
-        const form: type.EmailForm = {
+    it('Should NOT reset password - invalid email', async () => {
+        const form: Type.EmailForm = {
             email: 'invalid@email',
         };
 
-        const response: LoginResponse = await request(app)
-            .post(`${URL}/password`)
-            .send(form)
-            .expect(400);
+        const response: LoginResponse = await request(app).post(`${URL}/password`).send(form).expect(400);
         expect(response.body).toMatchObject({
             email: 'Must be a valid email address.',
         });
     });
 
     it('Should update reset password', async () => {
-        const form: type.EmailForm = {
+        const form: Type.EmailForm = {
             email: user1.email,
         };
 
         await request(app).post(`${URL}/password`).send(form).expect(200);
-        const user: type.UserI = await User.findById(user1._id);
+        const user: Type.UserI | null = await User.findById(user1._id);
 
-        const form2: type.PasswordForm = {
+        const form2: Type.PasswordForm = {
             password: '12345678',
             confirmPassword: '12345678',
         };
 
-        const response2: ResponseMSG = await request(app)
-            .post(`${URL}/password/${user.verifyToken}`)
+        const response2: ResponseMsg = await request(app)
+            .post(`${URL}/password/${user!.verifyToken}`)
             .send(form2)
             .expect(200);
         expect(response2.body).toMatchObject({
             message: 'Password updated successfully.',
         });
 
-        const userReq2: type.UserI = await User.findById(user1._id);
-        userReq2.comparePassword(form2.password, (_, isMatch) => {
-            if (isMatch) {
-                expect(isMatch).toBeTruthy();
+        const userReq2: Type.UserI | null = await User.findById(user1._id);
+        userReq2!.comparePassword(form2.password, (_: any, matchPassword: boolean) => {
+            if (matchPassword) {
+                expect(matchPassword).toBeTruthy();
             }
         });
         expect(response2.body).toMatchObject({
@@ -1138,111 +1015,145 @@ describe("User's API", () => {
         });
     });
 
-    it('Should not update reset password - user not found', async () => {
-        const form: type.EmailForm = {
+    it('Should NOT update reset password - user not found', async () => {
+        const form: Type.EmailForm = {
             email: user1.email,
         };
 
         await request(app).post(`${URL}/password`).send(form).expect(200);
-        const user: type.UserI = await User.findById(user1._id);
+        const user: Type.UserI | null = await User.findById(user1._id);
 
-        const form2: type.PasswordForm = {
+        const form2: Type.PasswordForm = {
             password: '12345678',
             confirmPassword: '12345678',
         };
 
         await User.findByIdAndDelete(user1._id);
-        const response2: ResponseMSG = await request(app)
-            .post(`${URL}/password/${user.verifyToken}`)
+        const response2: ResponseMsg = await request(app)
+            .post(`${URL}/password/${user!.verifyToken}`)
             .send(form2)
             .expect(404);
         expect(response2.body).toMatchObject({
-            message: 'ERROR: User not found.',
+            message: 'ERROR: Wrong credentials.',
         });
     });
 
-    it('Should not update reset password - different passwords', async () => {
-        const form: type.EmailForm = {
+    it('Should NOT update reset password - password empty', async () => {
+        const form: Type.EmailForm = {
             email: user1.email,
         };
 
         await request(app).post(`${URL}/password`).send(form).expect(200);
-        const user: type.UserI = await User.findById(user1._id);
+        const user: Type.UserI | null = await User.findById(user1._id);
 
-        const form2: type.PasswordForm = {
-            password: '12345678',
-            confirmPassword: '123',
+        const form2: Type.PasswordForm = {
+            password: '',
+            confirmPassword: '12345678',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/password/${user.verifyToken}`)
+        const response: ResponseMsg = await request(app)
+            .post(`${URL}/password/${user!.verifyToken}`)
             .send(form2)
             .expect(400);
         expect(response.body).toMatchObject({
-            confirmPassword: 'Must be greater than 4 characters.',
-            passwords: 'Must be equal.',
+            password: 'Must not be empty.',
+            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
-    it('Should not update reset password - confirm password empty', async () => {
-        const form: type.EmailForm = {
+    it('Should NOT update reset password - confirm password empty', async () => {
+        const form: Type.EmailForm = {
             email: user1.email,
         };
 
         await request(app).post(`${URL}/password`).send(form).expect(200);
-        const user: type.UserI = await User.findById(user1._id);
+        const user: Type.UserI | null = await User.findById(user1._id);
 
-        const form2: type.PasswordForm = {
+        const form2: Type.PasswordForm = {
             password: '12345678',
             confirmPassword: '',
         };
 
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/password/${user.verifyToken}`)
+        const response: ResponseMsg = await request(app)
+            .post(`${URL}/password/${user!.verifyToken}`)
             .send(form2)
             .expect(400);
         expect(response.body).toMatchObject({
             confirmPassword: 'Must not be empty.',
+            confirmPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+        });
+    });
+
+    it('Should NOT update reset password - confirm password length', async () => {
+        const form: Type.EmailForm = {
+            email: user1.email,
+        };
+
+        await request(app).post(`${URL}/password`).send(form).expect(200);
+        const user: Type.UserI | null = await User.findById(user1._id);
+
+        const form2: Type.PasswordForm = {
+            password: '12345678',
+            confirmPassword: '123',
+        };
+
+        const response: ResponseMsg = await request(app)
+            .post(`${URL}/password/${user!.verifyToken}`)
+            .send(form2)
+            .expect(400);
+        expect(response.body).toMatchObject({
+            confirmPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+        });
+    });
+
+    it('Should NOT update reset password - different passwords', async () => {
+        const form: Type.EmailForm = {
+            email: user1.email,
+        };
+
+        await request(app).post(`${URL}/password`).send(form).expect(200);
+        const user: Type.UserI | null = await User.findById(user1._id);
+
+        const form2: Type.PasswordForm = {
+            password: '12345678',
+            confirmPassword: '1234',
+        };
+
+        const response: ResponseMsg = await request(app)
+            .post(`${URL}/password/${user!.verifyToken}`)
+            .send(form2)
+            .expect(400);
+        expect(response.body).toMatchObject({
             passwords: 'Must be equal.',
         });
     });
 
-    it('Should not update reset password - expired token', async () => {
-        const verifyToken = jwt.sign(
-            { mode: 'password' },
-            JWT_VERIFICATION_SECRET_KEY,
-            {
-                expiresIn: '0s',
-            }
-        );
-        const user: type.UserI = await User.findById(user1._id);
-        user.verifyToken = verifyToken;
-        await user.save();
+    it('Should NOT update reset password - expired token', async () => {
+        const verifyToken = jwt.sign({ mode: 'password' }, JWT_VERIFICATION_SECRET_KEY, {
+            expiresIn: '0s',
+        });
+        const user: Type.UserI | null = await User.findById(user1._id);
+        user!.verifyToken = verifyToken;
+        await user!.save();
 
-        const form: type.PasswordForm = {
+        const form: Type.PasswordForm = {
             password: '12345678',
             confirmPassword: '12345678',
         };
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/password/${verifyToken}`)
-            .send(form)
-            .expect(401);
+        const response: ResponseMsg = await request(app).post(`${URL}/password/${verifyToken}`).send(form).expect(401);
         expect(response.body).toMatchObject({
             message: 'ERROR: Expired password token.',
         });
     });
 
-    it('Should not update reset password - invalid token', async () => {
+    it('Should NOT update reset password - invalid token', async () => {
         const verifyToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoicGFzc3dvcmQiLCJpYXQiOjE2MDQ1MDU1MTgsImV4cCI6MTYwNTExMDMxOH0.PzKZh_9JdxSiLFkUa023Cku99iSTCDgbNjSu2rzO8ac';
-        const form: type.PasswordForm = {
+        const form: Type.PasswordForm = {
             password: '12345678',
             confirmPassword: '12345678',
         };
-        const response: ResponseMSG = await request(app)
-            .post(`${URL}/password/${verifyToken}`)
-            .send(form)
-            .expect(401);
+        const response: ResponseMsg = await request(app).post(`${URL}/password/${verifyToken}`).send(form).expect(401);
         expect(response.body).toMatchObject({
             message: 'ERROR: Expired password token.',
         });
