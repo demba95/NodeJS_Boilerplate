@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 import * as Type from '@cTypes/types';
 import { user1, user2, setupDatabase } from './database/database';
 
-const URL = '/api/v1/users';
+const URL = '/api/users';
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
 const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY!;
 const PASSWORD_LEN = process.env.PASSWORD_LEN!;
