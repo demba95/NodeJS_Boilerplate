@@ -97,6 +97,6 @@ export type ErrorContainer = {
     [key: string]: string;
 };
 
-export type Object = {
+export type Obj = {
     [index: string]: any;
 };

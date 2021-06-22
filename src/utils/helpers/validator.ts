@@ -14,27 +14,27 @@ export const isEmail: Type.CheckFn = (email: string) => {
     return false;
 };
 
-const check = (propertyName: string, data: Type.Object, length: number | undefined = undefined) => {
+const check = (propertyName: string, data: Type.Obj, length: number | undefined = undefined) => {
     if (!data.hasOwnProperty(propertyName)) return false;
     if (isEmpty(data[propertyName])) return false;
     if (length && data[propertyName].length < length) return false;
     return true;
 };
 
-const validateSignUpData: Type.ValidatorFn<Type.SignUpForm> = (data: Type.Object) => {
+const validateSignUpData: Type.ValidatorFn<Type.SignUpForm> = (data: Type.Obj) => {
     const { email, password, confirmPassword } = data;
     const errors: Type.ErrorContainer = {};
 
-    if (!check('email', data)) errors.email = 'Must not be empty.';
-    else if (check('email', data) && !isEmail(email)) errors.email = 'Must be a valid email address.';
-    if (!check('firstName', data)) errors.firstName = 'Must not be empty.';
-    if (!check('lastName', data)) errors.lastName = 'Must not be empty.';
-    if (!check('password', data)) errors.password = 'Must not be empty.';
-    if (!check('confirmPassword', data)) errors.confirmPassword = 'Must not be empty.';
+    if (!check('email', data)) errors.email = 'Email must not be empty.';
+    else if (check('email', data) && !isEmail(email)) errors.email = 'Email must be a valid email address.';
+    if (!check('firstName', data)) errors.firstName = 'First name must not be empty.';
+    if (!check('lastName', data)) errors.lastName = 'Last name must not be empty.';
+    if (!check('password', data)) errors.password = 'Password must not be empty.';
+    if (!check('confirmPassword', data)) errors.confirmPassword = 'Confirm password must not be empty.';
     if (!check('password', data, PASSWORD_LENGTH))
-        errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        errors.passwordLength = `Password must be greater than ${PASSWORD_LENGTH} characters.`;
     if (!check('confirmPassword', data, PASSWORD_LENGTH))
-        errors.confirmPasswordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        errors.confirmPasswordLength = `Confirm password must be greater than ${PASSWORD_LENGTH} characters.`;
     if (
         data.hasOwnProperty('password') &&
         check('password', data, PASSWORD_LENGTH) &&
@@ -42,7 +42,7 @@ const validateSignUpData: Type.ValidatorFn<Type.SignUpForm> = (data: Type.Object
         check('confirmPassword', data, PASSWORD_LENGTH) &&
         password !== confirmPassword
     )
-        errors.passwords = 'Must be equal.';
+        errors.passwords = 'Passwords must be equal.';
 
     return {
         errors,
@@ -50,13 +50,13 @@ const validateSignUpData: Type.ValidatorFn<Type.SignUpForm> = (data: Type.Object
     };
 };
 
-const validateLoginData: Type.ValidatorFn<Type.LoginForm> = (data: Type.Object) => {
+const validateLoginData: Type.ValidatorFn<Type.LoginForm> = (data: Type.Obj) => {
     const { email } = data;
     const errors: Type.ErrorContainer = {};
 
-    if (!check('email', data)) errors.email = 'Must not be empty.';
-    else if (check('email', data) && !isEmail(email)) errors.email = 'Must be a valid email address.';
-    if (!check('password', data)) errors.password = 'Must not be empty.';
+    if (!check('email', data)) errors.email = 'Email must not be empty.';
+    else if (check('email', data) && !isEmail(email)) errors.email = 'Email must be a valid email address.';
+    if (!check('password', data)) errors.password = 'Password must not be empty.';
 
     return {
         errors,
@@ -64,26 +64,27 @@ const validateLoginData: Type.ValidatorFn<Type.LoginForm> = (data: Type.Object) 
     };
 };
 
-const validateUpdateData: Type.ValidatorFn<Type.UpdateUserForm> = (data: Type.Object) => {
+const validateUpdateData: Type.ValidatorFn<Type.UpdateUserForm> = (data: Type.Obj) => {
     const { newEmail, newPassword, confirmNewPassword } = data;
     const errors: Type.ErrorContainer = {};
     let count = 0;
 
-    if (data.hasOwnProperty('newEmail') && !check('newEmail', data)) errors.newEmail = 'Must not be empty.';
+    if (data.hasOwnProperty('newEmail') && !check('newEmail', data)) errors.newEmail = 'New email must not be empty.';
     else if (data.hasOwnProperty('newEmail') && check('newEmail', data) && !isEmail(newEmail))
-        errors.newEmail = 'Must be a valid email address.';
-    if (data.hasOwnProperty('firstName') && !check('firstName', data)) errors.firstName = 'Must not be empty.';
-    if (data.hasOwnProperty('lastName') && !check('lastName', data)) errors.lastName = 'Must not be empty.';
-    if (data.hasOwnProperty('password') && !check('password', data)) errors.password = 'Must not be empty.';
-    if (data.hasOwnProperty('password') && !check('password', data, PASSWORD_LENGTH))
-        errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
-    if (data.hasOwnProperty('newPassword') && !check('newPassword', data)) errors.newPassword = 'Must not be empty.';
-    if (data.hasOwnProperty('newPassword') && !check('newPassword', data, PASSWORD_LENGTH))
-        errors.newPasswordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
-    if (data.hasOwnProperty('confirmNewPassword') && !check('confirmNewPassword', data))
-        errors.confirmNewPassword = 'Must not be empty.';
-    if (data.hasOwnProperty('confirmNewPassword') && !check('confirmNewPassword', data, PASSWORD_LENGTH))
-        errors.confirmNewPasswordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        errors.newEmail = 'New email must be a valid email address.';
+    if (data.hasOwnProperty('firstName') && !check('firstName', data))
+        errors.firstName = 'First name must not be empty.';
+    if (data.hasOwnProperty('lastName') && !check('lastName', data)) errors.lastName = 'Last name must not be empty.';
+    if (!check('password', data)) errors.password = 'Password must not be empty.';
+    if (!check('password', data, PASSWORD_LENGTH))
+        errors.passwordLength = `Password must be greater than ${PASSWORD_LENGTH} characters.`;
+    if (confirmNewPassword && !check('newPassword', data)) errors.newPassword = 'New password must not be empty.';
+    if (confirmNewPassword && !check('newPassword', data, PASSWORD_LENGTH))
+        errors.newPasswordLength = `New password must be greater than ${PASSWORD_LENGTH} characters.`;
+    if (newPassword && !check('confirmNewPassword', data))
+        errors.confirmNewPassword = 'Confirm new password must not be empty.';
+    if (newPassword && !check('confirmNewPassword', data, PASSWORD_LENGTH))
+        errors.confirmNewPasswordLength = `Confirm new password must be greater than ${PASSWORD_LENGTH} characters.`;
     if (
         data.hasOwnProperty('newPassword') &&
         check('newPassword', data, PASSWORD_LENGTH) &&
@@ -91,7 +92,7 @@ const validateUpdateData: Type.ValidatorFn<Type.UpdateUserForm> = (data: Type.Ob
         check('confirmNewPassword', data, PASSWORD_LENGTH) &&
         newPassword !== confirmNewPassword
     )
-        errors.passwords = 'Must be equal.';
+        errors.passwords = 'New passwords must be equal.';
 
     Object.keys(data).forEach(() => count++);
 
@@ -103,19 +104,19 @@ const validateUpdateData: Type.ValidatorFn<Type.UpdateUserForm> = (data: Type.Ob
     };
 };
 
-const validatePassword: Type.ValidatorFn<Type.PasswordForm> = (data: Type.Object) => {
+const validatePassword: Type.ValidatorFn<Type.PasswordForm> = (data: Type.Obj) => {
     const { password, confirmPassword } = data;
     const errors: Type.ErrorContainer = {};
 
-    if (!check('password', data)) errors.password = 'Must not be empty.';
+    if (!check('password', data)) errors.password = 'Password must not be empty.';
     if (!check('password', data, PASSWORD_LENGTH))
-        errors.passwordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        errors.passwordLength = `Password must be greater than ${PASSWORD_LENGTH} characters.`;
     if (data.hasOwnProperty('confirmPassword') && !check('confirmPassword', data))
-        errors.confirmPassword = 'Must not be empty.';
+        errors.confirmPassword = 'Confirm password must not be empty.';
     if (data.hasOwnProperty('confirmPassword') && !check('confirmPassword', data, PASSWORD_LENGTH))
-        errors.confirmPasswordLength = `Must be greater than ${PASSWORD_LENGTH} characters.`;
+        errors.confirmPasswordLength = `Confirm password must be greater than ${PASSWORD_LENGTH} characters.`;
     if (check('password', data) && check('confirmPassword', data) && password !== confirmPassword)
-        errors.passwords = 'Must be equal.';
+        errors.passwords = 'Passwords must be equal.';
 
     return {
         errors,
@@ -123,12 +124,12 @@ const validatePassword: Type.ValidatorFn<Type.PasswordForm> = (data: Type.Object
     };
 };
 
-const validateEmail: Type.ValidatorFn<Type.EmailForm> = (data: Type.Object) => {
+const validateEmail: Type.ValidatorFn<Type.EmailForm> = (data: Type.Obj) => {
     const { email } = data;
     const errors: Type.ErrorContainer = {};
 
-    if (!check('email', data)) errors.email = 'Must not be empty.';
-    else if (check('email', data) && !isEmail(email)) errors.email = 'Must be a valid email address.';
+    if (!check('email', data)) errors.email = 'Email must not be empty.';
+    else if (check('email', data) && !isEmail(email)) errors.email = 'Email must be a valid email address.';
 
     return {
         errors,

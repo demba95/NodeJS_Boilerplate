@@ -41,7 +41,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Email already in use.',
+            message: 'Email already in use.',
         });
     });
 
@@ -56,7 +56,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            firstName: 'Must not be empty.',
+            firstName: 'First name must not be empty.',
         });
     });
 
@@ -71,7 +71,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            lastName: 'Must not be empty.',
+            lastName: 'Last name must not be empty.',
         });
     });
 
@@ -86,7 +86,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            email: 'Must not be empty.',
+            email: 'Email must not be empty.',
         });
     });
 
@@ -101,7 +101,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            email: 'Must be a valid email address.',
+            email: 'Email must be a valid email address.',
         });
     });
 
@@ -116,8 +116,8 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            password: 'Must not be empty.',
-            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            password: 'Password must not be empty.',
+            passwordLength: `Password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -132,7 +132,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            passwordLength: `Password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -147,8 +147,8 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            confirmPassword: 'Must not be empty.',
-            confirmPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            confirmPassword: 'Confirm password must not be empty.',
+            confirmPasswordLength: `Confirm password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -163,7 +163,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            passwords: 'Must be equal.',
+            passwords: 'Passwords must be equal.',
         });
     });
 
@@ -178,11 +178,11 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/signup`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            firstName: 'Must not be empty.',
-            lastName: 'Must not be empty.',
-            email: 'Must not be empty.',
-            password: 'Must not be empty.',
-            confirmPassword: 'Must not be empty.',
+            firstName: 'First name must not be empty.',
+            lastName: 'Last name must not be empty.',
+            email: 'Email must not be empty.',
+            password: 'Password must not be empty.',
+            confirmPassword: 'Confirm password must not be empty.',
         });
     });
 
@@ -219,7 +219,7 @@ describe("User's API", () => {
         await User.findByIdAndDelete(user!._id);
         const response = await request(app).get(`${URL}/email/${user!.verifyToken}`).expect(404);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Wrong credentials.',
+            message: 'Wrong credentials.',
         });
     });
 
@@ -256,7 +256,7 @@ describe("User's API", () => {
 
         const response = await request(app).get(`${URL}/email/${expiredVerifyToken}`).expect(401);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Expired email token.',
+            message: 'Expired email token.',
         });
     });
 
@@ -284,7 +284,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(403);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Please verify your email first.',
+            message: 'Please verify your email first.',
         });
     });
 
@@ -296,7 +296,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(403);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Wrong credentials.',
+            message: 'Wrong credentials.',
         });
     });
 
@@ -308,7 +308,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            password: 'Must not be empty.',
+            password: 'Password must not be empty.',
         });
     });
 
@@ -320,7 +320,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            email: 'Must be a valid email address.',
+            email: 'Email must be a valid email address.',
         });
     });
 
@@ -332,7 +332,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            email: 'Must not be empty.',
+            email: 'Email must not be empty.',
         });
     });
 
@@ -344,7 +344,7 @@ describe("User's API", () => {
 
         const response: ResponseMsg = await request(app).post(`${URL}/login`).send(form).expect(404);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Wrong credentials.',
+            message: 'Wrong credentials.',
         });
     });
 
@@ -393,7 +393,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(404);
         expect(profile.body).toMatchObject({
-            message: 'ERROR: Wrong credentials.',
+            message: 'Wrong credentials.',
         });
     });
 
@@ -464,8 +464,8 @@ describe("User's API", () => {
         const token: string = response.body;
         const updateUser = <Type.UpdateUserForm>{
             password: user1.password,
-            newPassword: '12345',
-            confirmNewPassword: '12345',
+            newPassword: '12345678',
+            confirmNewPassword: '12345678',
         };
         await request(app).put(`${URL}/profile`).send(updateUser).set('Authorization', `Bearer ${token}`).expect(200);
 
@@ -515,7 +515,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(404);
         expect(profile.body).toMatchObject({
-            message: 'ERROR: Wrong credentials.',
+            message: 'Wrong credentials.',
         });
     });
 
@@ -537,7 +537,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            password: 'Must not be empty.',
+            password: 'Password must not be empty.',
         });
     });
 
@@ -560,8 +560,8 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            newPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
-            confirmNewPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            newPasswordLength: `New password must be greater than ${PASSWORD_LEN} characters.`,
+            confirmNewPasswordLength: `Confirm new password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -583,7 +583,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            newEmail: 'Must not be empty.',
+            newEmail: 'New email must not be empty.',
         });
     });
 
@@ -605,7 +605,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            firstName: 'Must not be empty.',
+            firstName: 'First name must not be empty.',
         });
     });
 
@@ -627,7 +627,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            lastName: 'Must not be empty.',
+            lastName: 'Last name must not be empty.',
         });
     });
 
@@ -650,8 +650,8 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            newPassword: 'Must not be empty.',
-            newPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            newPassword: 'New password must not be empty.',
+            newPasswordLength: `New password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -674,8 +674,8 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            confirmNewPassword: 'Must not be empty.',
-            confirmNewPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            confirmNewPassword: 'Confirm new password must not be empty.',
+            confirmNewPasswordLength: `Confirm new password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -698,7 +698,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            passwords: 'Must be equal.',
+            passwords: 'New passwords must be equal.',
         });
     });
 
@@ -741,7 +741,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            newEmail: 'Must be a valid email address.',
+            newEmail: 'New email must be a valid email address.',
         });
     });
 
@@ -763,7 +763,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            message: `ERROR: Email (${user2.email}) is already in use.`,
+            message: `Email (${user2.email}) is already in use.`,
         });
     });
 
@@ -785,7 +785,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(403);
         expect(response2.body).toMatchObject({
-            message: 'ERROR: Wrong credentials.',
+            message: 'Wrong credentials.',
         });
     });
 
@@ -822,7 +822,7 @@ describe("User's API", () => {
             .send({ password: form.password })
             .expect(404);
         expect(response2.body).toMatchObject({
-            message: 'ERROR: Wrong credentials.',
+            message: 'Wrong credentials.',
         });
     });
 
@@ -855,7 +855,7 @@ describe("User's API", () => {
             .send({ password: form.password + 'wrong_password' })
             .expect(403);
         expect(response2.body).toMatchObject({
-            message: 'ERROR: Wrong password.',
+            message: 'Wrong password.',
         });
     });
 
@@ -873,8 +873,8 @@ describe("User's API", () => {
             .send({ password: '' })
             .expect(400);
         expect(response2.body).toMatchObject({
-            password: 'Must not be empty.',
-            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            password: 'Password must not be empty.',
+            passwordLength: `Password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -892,7 +892,7 @@ describe("User's API", () => {
             .send({ password: '123' })
             .expect(400);
         expect(response2.body).toMatchObject({
-            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            passwordLength: `Password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -910,14 +910,14 @@ describe("User's API", () => {
             .send({ password: form.password + 'wrong_password' })
             .expect(403);
         expect(response2.body).toMatchObject({
-            message: 'ERROR: Wrong password.',
+            message: 'Wrong password.',
         });
     });
 
     it('Should NOT resend email verification - empty email', async () => {
         const response: UserProfile = await request(app).post(`${URL}/email`).send({ email: '' }).expect(400);
         expect(response.body).toMatchObject({
-            email: 'Must not be empty.',
+            email: 'Email must not be empty.',
         });
     });
 
@@ -927,7 +927,7 @@ describe("User's API", () => {
             .send({ email: 'invalid_email@email' })
             .expect(400);
         expect(response.body).toMatchObject({
-            email: 'Must be a valid email address.',
+            email: 'Email must be a valid email address.',
         });
     });
 
@@ -937,7 +937,7 @@ describe("User's API", () => {
             .send({ email: 'not_found@email.com' })
             .expect(404);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Email not found.',
+            message: 'Email not found.',
         });
     });
 
@@ -968,7 +968,7 @@ describe("User's API", () => {
 
         const response: LoginResponse = await request(app).post(`${URL}/password`).send(form).expect(404);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Email not found.',
+            message: 'Email not found.',
         });
     });
 
@@ -979,7 +979,7 @@ describe("User's API", () => {
 
         const response: LoginResponse = await request(app).post(`${URL}/password`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            email: 'Must be a valid email address.',
+            email: 'Email must be a valid email address.',
         });
     });
 
@@ -1034,7 +1034,7 @@ describe("User's API", () => {
             .send(form2)
             .expect(404);
         expect(response2.body).toMatchObject({
-            message: 'ERROR: Wrong credentials.',
+            message: 'Wrong credentials.',
         });
     });
 
@@ -1056,8 +1056,8 @@ describe("User's API", () => {
             .send(form2)
             .expect(400);
         expect(response.body).toMatchObject({
-            password: 'Must not be empty.',
-            passwordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            password: 'Password must not be empty.',
+            passwordLength: `Password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -1079,8 +1079,8 @@ describe("User's API", () => {
             .send(form2)
             .expect(400);
         expect(response.body).toMatchObject({
-            confirmPassword: 'Must not be empty.',
-            confirmPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            confirmPassword: 'Confirm password must not be empty.',
+            confirmPasswordLength: `Confirm password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -1102,7 +1102,7 @@ describe("User's API", () => {
             .send(form2)
             .expect(400);
         expect(response.body).toMatchObject({
-            confirmPasswordLength: `Must be greater than ${PASSWORD_LEN} characters.`,
+            confirmPasswordLength: `Confirm password must be greater than ${PASSWORD_LEN} characters.`,
         });
     });
 
@@ -1124,7 +1124,7 @@ describe("User's API", () => {
             .send(form2)
             .expect(400);
         expect(response.body).toMatchObject({
-            passwords: 'Must be equal.',
+            passwords: 'Passwords must be equal.',
         });
     });
 
@@ -1142,7 +1142,7 @@ describe("User's API", () => {
         };
         const response: ResponseMsg = await request(app).post(`${URL}/password/${verifyToken}`).send(form).expect(401);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Expired password token.',
+            message: 'Expired password token.',
         });
     });
 
@@ -1155,7 +1155,7 @@ describe("User's API", () => {
         };
         const response: ResponseMsg = await request(app).post(`${URL}/password/${verifyToken}`).send(form).expect(401);
         expect(response.body).toMatchObject({
-            message: 'ERROR: Expired password token.',
+            message: 'Expired password token.',
         });
     });
 });
