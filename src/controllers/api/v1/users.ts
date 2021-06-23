@@ -20,6 +20,9 @@ const signUpUser: RequestHandler = async (req, res) => {
     try {
         const user: Type.UserI | null = await User.findOne({ email: form.email });
         if (user) return res.status(400).json({ message: 'Email already in use.' });
+        const response: { message: string; verifyToken?: string } = {
+            message: 'Your account has been created. Please check your email to verify your account.',
+        };
 
         delete form.confirmPassword;
         form.verifyToken = auth.createVerificationToken('email');
@@ -29,16 +32,11 @@ const signUpUser: RequestHandler = async (req, res) => {
         if (ENV === 'production') {
             const msg = Msg.signUp(newUser, req.headers.host!);
             await sgMail.send(msg);
-
-            res.status(201).json({
-                message: 'Your account has been created. Please check your email to verify your account.',
-            });
         } else {
-            res.status(201).json({
-                message: 'Your account has been created. Please check your email to verify your account.',
-                verifyToken: form.verifyToken,
-            });
+            response.verifyToken = form.verifyToken;
         }
+
+        res.status(201).json(response);
     } catch (error) {
         res.status(500).json({
             message: 'Something went wrong while trying to sign up. Please try again later or contact our support.',
@@ -57,15 +55,18 @@ const loginUser: RequestHandler = async (req, res) => {
         if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
 
         user.comparePassword(form.password, (_: any, matchPassword: boolean) => {
+            const response: { message: string; verifyToken?: string } = {
+                message: 'Please verify your email first.',
+            };
             if (matchPassword) {
                 if (user.isEmailVerified) {
                     const token = auth.createAccessToken(user);
                     return res.json(token);
                 }
 
-                return res.status(403).json({
-                    message: 'Please verify your email first.',
-                });
+                if (ENV !== 'production') response.verifyToken = user.verifyToken;
+
+                return res.status(403).json(response);
             }
 
             res.status(403).json({ message: 'Wrong credentials.' });
@@ -115,18 +116,26 @@ const updateUser: RequestHandler = async (req, res) => {
 
         user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
             if (matchPassword) {
+                const response: { message: string; verifyToken?: string } = {
+                    message: 'Your profile has been updated.',
+                };
+
                 if (form.firstName) user.firstName = form.firstName;
                 if (form.lastName) user.lastName = form.lastName;
                 if (form.newPassword) user.password = form.newPassword;
                 if (form.newEmail) {
+                    response.message += ` An email has been sent to ${form.newEmail}. Please verify your new email to update your email address.`;
                     user.tempEmail = form.newEmail;
-
                     user.verifyToken = auth.createVerificationToken('email');
                     await user.save();
 
                     try {
-                        const msg = Msg.updateEmail(user, req.headers.host!);
-                        await sgMail.send(msg);
+                        if (ENV === 'production') {
+                            const msg = Msg.updateEmail(user, req.headers.host!);
+                            await sgMail.send(msg);
+                        } else {
+                            response.verifyToken = user.verifyToken;
+                        }
                     } catch (error) {
                         res.status(500).json({
                             message: 'Something went wrong sending you the email verification. Please try again later.',
@@ -136,7 +145,7 @@ const updateUser: RequestHandler = async (req, res) => {
                     await user.save();
                 }
 
-                return res.json(user);
+                return res.json(response);
             }
 
             res.status(403).json({ message: 'Wrong credentials.' });
@@ -231,16 +240,21 @@ const resetPassword: RequestHandler = async (req, res) => {
     try {
         const user: Type.UserI | null = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Email not found.' });
+        const response: { message: string; verifyToken?: string } = {
+            message: 'Please check your email to reset your password.',
+        };
 
         user.verifyToken = auth.createVerificationToken('password');
         await user.save();
 
-        const msg = Msg.resetPassword(user);
-        await sgMail.send(msg);
+        if (ENV === 'production') {
+            const msg = Msg.resetPassword(user);
+            await sgMail.send(msg);
+        } else {
+            response.verifyToken = user.verifyToken;
+        }
 
-        res.json({
-            message: 'Please check your email to reset your password.',
-        });
+        res.json(response);
     } catch (error) {
         res.status(500).json({
             message: 'Something went wrong with the email verification. Please try again later.',
@@ -266,17 +280,20 @@ const updatePassword: RequestHandler = async (req, res) => {
             verifyToken: token,
         });
         if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
+        const response: { message: string; verifyToken?: string } = {
+            message: 'Password updated successfully.',
+        };
 
         user.verifyToken = '';
         user.password = form.password;
         await user.save();
 
-        const msg = Msg.updatePassword(user);
-        await sgMail.send(msg);
+        if (ENV === 'production') {
+            const msg = Msg.updatePassword(user);
+            await sgMail.send(msg);
+        }
 
-        res.json({
-            message: 'Password updated successfully.',
-        });
+        res.json(response);
     } catch (error) {
         res.status(500).json({
             message: 'Something went wrong with the email verification. Please try again later.',

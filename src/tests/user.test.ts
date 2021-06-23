@@ -416,7 +416,7 @@ describe("User's API", () => {
         });
     });
 
-    it("Should update user's profiles - first name", async () => {
+    it("Should update user's profile - first name", async () => {
         const form: Type.LoginForm = {
             email: user1.email,
             password: user1.password,
