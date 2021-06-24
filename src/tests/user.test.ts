@@ -219,7 +219,7 @@ describe("User's API", () => {
         await User.findByIdAndDelete(user!._id);
         const response = await request(app).get(`${URL}/email/${user!.verifyToken}`).expect(404);
         expect(response.body).toMatchObject({
-            message: 'Wrong credentials.',
+            message: 'Invalid email token, please reset your email and try again.',
         });
     });
 
@@ -426,6 +426,7 @@ describe("User's API", () => {
         const token: string = response.body;
         const updateUser = <Type.UpdateUserForm>{
             firstName: 'Roger Update',
+            email: user1.email,
             password: user1.password,
         };
         await request(app).put(`${URL}/profile`).send(updateUser).set('Authorization', `Bearer ${token}`).expect(200);
@@ -445,6 +446,7 @@ describe("User's API", () => {
         const token: string = response.body;
         const updateUser = <Type.UpdateUserForm>{
             lastName: 'That Update',
+            email: user1.email,
             password: user1.password,
         };
         await request(app).put(`${URL}/profile`).send(updateUser).set('Authorization', `Bearer ${token}`).expect(200);
@@ -463,6 +465,7 @@ describe("User's API", () => {
         const response: LoginResponse = await request(app).post(`${URL}/login`).send(form).expect(200);
         const token: string = response.body;
         const updateUser = <Type.UpdateUserForm>{
+            email: user1.email,
             password: user1.password,
             newPassword: '12345678',
             confirmNewPassword: '12345678',
@@ -487,12 +490,12 @@ describe("User's API", () => {
         const token: string = response.body;
         const updateUser = <Type.UpdateUserForm>{
             password: user1.password,
-            newEmail: 'your_email_3_update@test.com',
+            email: 'your_email_3_update@test.com',
         };
         await request(app).put(`${URL}/profile`).send(updateUser).set('Authorization', `Bearer ${token}`).expect(200);
         const user: Type.UserI | null = await User.findById({ _id: user1._id });
         expect(user).toMatchObject({
-            tempEmail: updateUser.newEmail,
+            tempEmail: updateUser.email,
         });
     });
 
@@ -507,6 +510,7 @@ describe("User's API", () => {
         await User.findByIdAndDelete(user1._id);
         const updateUser = <Type.UpdateUserForm>{
             firstName: 'new name',
+            email: user1.email,
             password: user1.password,
         };
         const profile: UserProfile = await request(app)
@@ -575,7 +579,7 @@ describe("User's API", () => {
         const token: string = response.body;
         const updateUser2 = <Type.UpdateUserForm>{
             password: user1.password,
-            newEmail: '',
+            email: '',
         };
         const response2 = await request(app)
             .put(`${URL}/profile`)
@@ -583,7 +587,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            newEmail: 'New email must not be empty.',
+            email: 'New email must not be empty.',
         });
     });
 
@@ -733,7 +737,7 @@ describe("User's API", () => {
         const token: string = response.body;
         const updateUser = <Type.UpdateUserForm>{
             password: user1.password,
-            newEmail: 'roger@',
+            email: 'roger@',
         };
         const response2 = await request(app)
             .put(`${URL}/profile`)
@@ -741,7 +745,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            newEmail: 'New email must be a valid email address.',
+            email: 'New email must be a valid email address.',
         });
     });
 
@@ -755,7 +759,7 @@ describe("User's API", () => {
         const token: string = response.body;
         const updateUser = <Type.UpdateUserForm>{
             password: user1.password,
-            newEmail: user2.email,
+            email: user2.email,
         };
         const response2 = await request(app)
             .put(`${URL}/profile`)
@@ -777,7 +781,7 @@ describe("User's API", () => {
         const token: string = response.body;
         const updateUser = <Type.UpdateUserForm>{
             password: user1.password + 'wrong_password',
-            newEmail: 'new_email@email.com',
+            email: 'new_email@email.com',
         };
         const response2 = await request(app)
             .put(`${URL}/profile`)

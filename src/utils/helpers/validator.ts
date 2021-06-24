@@ -65,13 +65,12 @@ const validateLoginData: Type.ValidatorFn<Type.LoginForm> = (data: Type.Obj) => 
 };
 
 const validateUpdateData: Type.ValidatorFn<Type.UpdateUserForm> = (data: Type.Obj) => {
-    const { newEmail, newPassword, confirmNewPassword } = data;
+    const { email, newPassword, confirmNewPassword } = data;
     const errors: Type.ErrorContainer = {};
     let count = 0;
 
-    if (data.hasOwnProperty('newEmail') && !check('newEmail', data)) errors.newEmail = 'New email must not be empty.';
-    else if (data.hasOwnProperty('newEmail') && check('newEmail', data) && !isEmail(newEmail))
-        errors.newEmail = 'New email must be a valid email address.';
+    if (!check('email', data)) errors.email = 'New email must not be empty.';
+    else if (check('email', data) && !isEmail(email)) errors.email = 'New email must be a valid email address.';
     if (data.hasOwnProperty('firstName') && !check('firstName', data))
         errors.firstName = 'First name must not be empty.';
     if (data.hasOwnProperty('lastName') && !check('lastName', data)) errors.lastName = 'Last name must not be empty.';

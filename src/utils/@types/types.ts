@@ -62,7 +62,7 @@ export type PasswordForm = {
 
 export interface UpdateUserForm extends User {
     password: string;
-    newEmail: string;
+    email: string;
     newPassword: string;
     confirmNewPassword: string;
 }

@@ -104,13 +104,13 @@ const updateUser: RequestHandler = async (req, res) => {
         });
         if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
 
-        if (form.newEmail) {
+        if (user.email !== form.email) {
             const email: Type.UserI | null = await User.findOne({
-                email: form.newEmail,
+                email: form.email,
             });
             if (email)
                 return res.status(400).json({
-                    message: `Email (${form.newEmail}) is already in use.`,
+                    message: `Email (${form.email}) is already in use.`,
                 });
         }
 
@@ -123,9 +123,9 @@ const updateUser: RequestHandler = async (req, res) => {
                 if (form.firstName) user.firstName = form.firstName;
                 if (form.lastName) user.lastName = form.lastName;
                 if (form.newPassword) user.password = form.newPassword;
-                if (form.newEmail) {
-                    response.message += ` An email has been sent to ${form.newEmail}. Please verify your new email to update your email address.`;
-                    user.tempEmail = form.newEmail;
+                if (user.email !== form.email) {
+                    response.message += ` An email has been sent to ${form.email}. Please verify your new email to update your email address.`;
+                    user.tempEmail = form.email;
                     user.verifyToken = auth.createVerificationToken('email');
                     await user.save();
 
@@ -194,7 +194,8 @@ const verifyEmail: RequestHandler = async (req, res) => {
         const user: Type.UserI | null = await User.findOne({
             verifyToken: token,
         });
-        if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
+        if (!user)
+            return res.status(404).json({ message: 'Invalid email token, please reset your email and try again.' });
 
         user.verifyToken = '';
         user.isEmailVerified = true;
