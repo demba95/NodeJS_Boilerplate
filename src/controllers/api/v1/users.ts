@@ -1,11 +1,11 @@
-import { RequestHandler } from 'express';
+import * as Type from '@cTypes/types';
+import * as Msg from '@helpers/message';
+import * as validator from '@helpers/validator';
+import * as auth from '@middlewares/auth';
 import User from '@models/user';
 import sgMail from '@sendgrid/mail';
+import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
-import * as auth from '@middlewares/auth';
-import * as validator from '@helpers/validator';
-import * as Msg from '@helpers/message';
-import * as Type from '@cTypes/types';
 
 sgMail.setApiKey(process.env.SENDGRID_KEY!);
 
@@ -280,7 +280,10 @@ const updatePassword: RequestHandler = async (req, res) => {
         const user: Type.UserI | null = await User.findOne({
             verifyToken: token,
         });
-        if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
+        if (!user)
+            return res
+                .status(404)
+                .json({ message: 'Your token has expired, please reset your password and try again.' });
         const response: { message: string; verifyToken?: string } = {
             message: 'Password updated successfully.',
         };

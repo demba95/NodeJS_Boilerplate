@@ -1,9 +1,9 @@
-import app from '~/app';
-import User from '@models/user';
-import request from 'supertest';
-import jwt from 'jsonwebtoken';
 import * as Type from '@cTypes/types';
-import { user1, user2, setupDatabase } from './database/database';
+import User from '@models/user';
+import jwt from 'jsonwebtoken';
+import request from 'supertest';
+import app from '~/app';
+import { setupDatabase, user1, user2 } from './database/database';
 
 const URL = '/api/users';
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
@@ -1038,7 +1038,7 @@ describe("User's API", () => {
             .send(form2)
             .expect(404);
         expect(response2.body).toMatchObject({
-            message: 'Wrong credentials.',
+            message: 'Your token has expired, please reset your password and try again.',
         });
     });
 

@@ -1,10 +1,9 @@
-import express, { Application, Request, Response } from 'express';
-import logger from 'morgan';
-import cors from 'cors';
-import helmet from 'helmet';
 import '@config/database';
-
 import userRoutes from '@routes/users';
+import cors from 'cors';
+import express, { Application, Request, Response } from 'express';
+import helmet from 'helmet';
+import logger from 'morgan';
 
 const app: Application = express();
 app.use(logger('dev'));

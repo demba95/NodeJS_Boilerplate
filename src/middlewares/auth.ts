@@ -1,6 +1,6 @@
+import * as Type from '@cTypes/types';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
-import * as Type from '@cTypes/types';
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
 const JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN!;

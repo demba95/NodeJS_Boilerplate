@@ -1,7 +1,7 @@
+import * as Type from '@cTypes/types';
+import bcrypt from 'bcrypt';
 import { NextFunction } from 'express';
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import * as Type from '@cTypes/types';
 
 const Schema = mongoose.Schema;
 const SALT_ROUNDS: number = 6;
