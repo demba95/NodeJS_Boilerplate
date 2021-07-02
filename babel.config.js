@@ -16,6 +16,7 @@ module.exports = {
             {
                 alias: {
                     '~': './src',
+                    '@api': './src/controllers/api',
                     '@config': './src/config',
                     '@controllers': './src/controllers',
                     '@middlewares': './src/middlewares',

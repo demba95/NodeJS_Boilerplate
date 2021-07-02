@@ -19,6 +19,7 @@
         "baseUrl": "./src",
         "paths": {
             "~/*": ["./*"],
+            "@api/*": ["./controllers/api/*"],
             "@config/*": ["./config/*"],
             "@controllers/*": ["./controllers/*"],
             "@middlewares/*": ["./middlewares/*"],

@@ -1,4 +1,4 @@
-import userCtrlV1 from '@controllers/api/v1/users';
+import userCtrlV1 from '@api/v1/users';
 import { auth } from '@middlewares/auth';
 import express from 'express';
 

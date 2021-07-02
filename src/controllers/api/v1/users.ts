@@ -9,8 +9,8 @@ import jwt from 'jsonwebtoken';
 
 sgMail.setApiKey(process.env.SENDGRID_KEY!);
 
-const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY!;
-const ENV = process.env.ENV!;
+const JWT_VERIFICATION_SECRET_KEY: string = process.env.JWT_VERIFICATION_SECRET_KEY!;
+const ENV: string = process.env.ENV!;
 
 const signUpUser: RequestHandler = async (req, res) => {
     const form: Type.SignUpForm = req.body;

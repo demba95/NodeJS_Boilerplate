@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
 declare module 'express-serve-static-core' {
     export interface Request {
@@ -19,6 +19,19 @@ export interface UserI extends Document {
     password?: string;
     admin?: boolean;
     comparePassword(password: string, callback: Callback): void;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface ApiI extends Document {
+    _id: string;
+    name: string;
+    url: string;
+    key?: string;
+    value?: string;
+    userId?: mongoose.Types.ObjectId;
+    active: boolean;
+    getKey(callback: Callback): void;
     createdAt?: string;
     updatedAt?: string;
 }

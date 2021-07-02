@@ -12,6 +12,7 @@ module.exports = {
     coveragePathIgnorePatterns: ['/node_modules/'],
     moduleNameMapper: {
         '~/(.*)': '<rootDir>/src/$1',
+        '@api/(.*)': '<rootDir>/src/controllers/api/$1',
         '@config/(.*)': '<rootDir>/src/config/$1',
         '@controllers/(.*)': '<rootDir>/src/controllers/$1',
         '@middlewares/(.*)': '<rootDir>/src/middlewares/$1',
