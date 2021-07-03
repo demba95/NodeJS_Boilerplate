@@ -45,7 +45,7 @@ export type ApisArray = {
     value: string;
 };
 
-export type NewApiForm = {
+export type ApiForm = {
     name: string;
     key: string;
     value: string;
@@ -137,4 +137,8 @@ export type ErrorContainer = {
 
 export type Obj = {
     [index: string]: any;
+};
+
+export type CheckPropertyFn = {
+    (propertyName: string, data: Obj, length?: number | undefined): boolean;
 };
