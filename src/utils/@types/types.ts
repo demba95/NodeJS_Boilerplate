@@ -46,11 +46,11 @@ export type ApisArray = {
 };
 
 export type ApiForm = {
-    name: string;
-    key: string;
-    value: string;
-    url: string;
-    active: boolean;
+    name?: string;
+    key?: string;
+    value?: string;
+    url?: string;
+    active?: boolean;
 };
 
 export type UpdateApiForm = {
@@ -141,4 +141,8 @@ export type Obj = {
 
 export type CheckPropertyFn = {
     (propertyName: string, data: Obj, length?: number | undefined): boolean;
+};
+
+export type UpdateDocumentFn<D, B> = {
+    (document: D, body: B, permit: string[]): void;
 };

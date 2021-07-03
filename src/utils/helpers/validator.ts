@@ -3,7 +3,7 @@ import * as Type from '@cTypes/types';
 const PASSWORD_LENGTH = +process.env.PASSWORD_LEN!;
 
 const isEmpty: Type.CheckFn = (str: string) => {
-    if (str !== undefined && str.trim() === '') return true;
+    if (str === undefined || (str.length === 0 && str.trim() === '')) return true;
     return false;
 };
 

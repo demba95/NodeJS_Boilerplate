@@ -1,9 +1,11 @@
 import * as Type from '@cTypes/types';
+import { updateDocument } from '@helpers/updateDocument';
 import * as validator from '@helpers/validator';
-import { isEmpty } from '@helpers/validator';
 import Api from '@models/api';
 import { RequestHandler } from 'express';
 import mongoose from 'mongoose';
+
+const permittedFields: string[] = ['name', 'key', 'value', 'url', 'active'];
 
 const newApi: RequestHandler = async (req, res) => {
     const form: Type.ApiForm = req.body;
@@ -81,8 +83,23 @@ const getApi: RequestHandler = async (req, res) => {
 
 const updateApi: RequestHandler = async (req, res) => {
     try {
-        const form: Type.UpdateApiForm = req.body;
+        if (!validator.isEmpty(req.body.name)) {
+            const apiExists: Type.ApiI | null = await Api.findOne({
+                name: req.body.name?.trim(),
+                userId: req.user!._id,
+            });
+            if (apiExists && apiExists._id !== req.params.id)
+                return res.status(400).json({ message: 'API name already in use, please use a different name.' });
+        }
+
+        const api = await Api.findOne({ _id: req.params.id });
+        if (!api) return res.status(404).json({ message: 'API not found.' });
+        updateDocument(api, req.body, permittedFields);
+        await api.save();
+
+        res.json({ message: 'API has been updated successfully.' });
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             message: 'Something went wrong while updating your API. Please try again.',
         });
@@ -91,7 +108,7 @@ const updateApi: RequestHandler = async (req, res) => {
 
 const deleteApi: RequestHandler = async (req, res) => {
     const apiId: string = req.params.id!;
-    if (isEmpty(apiId)) return res.status(400).json({ message: 'API Id must not be empty' });
+    if (validator.isEmpty(apiId)) return res.status(400).json({ message: 'API Id must not be empty' });
 
     try {
         const deletedApi = await Api.findByIdAndDelete({ _id: apiId, userId: req.user!._id });
