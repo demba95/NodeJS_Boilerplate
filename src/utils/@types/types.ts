@@ -36,6 +36,31 @@ export interface ApiI extends Document {
     updatedAt?: string;
 }
 
+export type ApisArray = {
+    _id: string;
+    name: string;
+    active: boolean;
+    url: string;
+    key: string;
+    value: string;
+};
+
+export type NewApiForm = {
+    name: string;
+    key: string;
+    value: string;
+    url: string;
+    active: boolean;
+};
+
+export type UpdateApiForm = {
+    name?: string;
+    url?: string;
+    key?: string;
+    value?: string;
+    active?: boolean;
+};
+
 export type User = {
     _id?: string;
     firstName: string;

@@ -1,6 +1,5 @@
-import CryptoJS from 'crypto-js';
 import * as Type from '@cTypes/types';
-import { NextFunction } from 'express';
+import CryptoJS from 'crypto-js';
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;

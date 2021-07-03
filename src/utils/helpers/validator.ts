@@ -7,7 +7,7 @@ const isEmpty: Type.CheckFn = (str: string) => {
     return false;
 };
 
-export const isEmail: Type.CheckFn = (email: string) => {
+const isEmail: Type.CheckFn = (email: string) => {
     const emailRegEx =
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (email && email.match(emailRegEx)) return true;
@@ -136,4 +136,4 @@ const validateEmail: Type.ValidatorFn<Type.EmailForm> = (data: Type.Obj) => {
     };
 };
 
-export { validateSignUpData, validateLoginData, validateUpdateData, validatePassword, validateEmail };
+export { isEmpty, isEmail, validateSignUpData, validateLoginData, validateUpdateData, validatePassword, validateEmail };
