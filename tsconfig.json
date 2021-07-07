@@ -27,7 +27,10 @@
             "@routes/*": ["./routes/*"],
             "@utils/*": ["./utils/*"],
             "@cTypes/*": ["./utils/@types/*"],
-            "@helpers/*": ["./utils/helpers/*"]
+            "@helpers/*": ["./utils/helpers/*"],
+            "@fn/*": ["./utils/helpers/fn/*"],
+            "@msg/*": ["./utils/helpers/msg/*"],
+            "@validator/*": ["./utils/helpers/validator/*"]
         },
         "typeRoots": ["./node_modules/@types", "./src/utils/@types"],
         "esModuleInterop": true,

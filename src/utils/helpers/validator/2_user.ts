@@ -1,25 +1,7 @@
 import * as Type from '@cTypes/types';
+import { checkProperty, isEmail } from '@validator/1_shared';
 
 const PASSWORD_LENGTH = +process.env.PASSWORD_LEN!;
-
-const isEmpty: Type.CheckFn = (str: string) => {
-    if (str === undefined || (str.length === 0 && str.trim() === '')) return true;
-    return false;
-};
-
-const isEmail: Type.CheckFn = (email: string) => {
-    const emailRegEx =
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (email && email.match(emailRegEx)) return true;
-    return false;
-};
-
-const checkProperty: Type.CheckPropertyFn = (propertyName, data, length) => {
-    if (!data.hasOwnProperty(propertyName)) return false;
-    if (isEmpty(data[propertyName])) return false;
-    if (length && data[propertyName].length < length) return false;
-    return true;
-};
 
 const validateUserSignUp: Type.ValidatorFn<Type.SignUpForm> = (data) => {
     const { email, password, confirmPassword } = data;
@@ -36,9 +18,7 @@ const validateUserSignUp: Type.ValidatorFn<Type.SignUpForm> = (data) => {
     if (!checkProperty('confirmPassword', data, PASSWORD_LENGTH))
         errors.confirmPasswordLength = `Confirm password must be greater than ${PASSWORD_LENGTH} characters.`;
     if (
-        data.hasOwnProperty('password') &&
         checkProperty('password', data, PASSWORD_LENGTH) &&
-        data.hasOwnProperty('confirmPassword') &&
         checkProperty('confirmPassword', data, PASSWORD_LENGTH) &&
         password !== confirmPassword
     )
@@ -138,29 +118,4 @@ const validateUserEmail: Type.ValidatorFn<Type.EmailForm> = (data) => {
     };
 };
 
-const validateApi: Type.ValidatorFn<Type.ApiForm> = (data) => {
-    const { active } = data;
-    const errors: Type.ErrorContainer = {};
-
-    if (!checkProperty('name', data)) errors.name = 'API name must not be empty.';
-    if (!checkProperty('url', data)) errors.url = 'API URL must not be empty.';
-    if (!checkProperty('key', data)) errors.key = 'API key must not be empty.';
-    if (!checkProperty('value', data)) errors.value = 'API value must not be empty.';
-    if (!active || !checkProperty('active', data)) errors.active = 'API active must not be empty.';
-
-    return {
-        errors,
-        valid: Object.keys(errors).length === 0 ? true : false,
-    };
-};
-
-export {
-    isEmpty,
-    isEmail,
-    validateUserSignUp,
-    validateUserLogin,
-    validateUserUpdate,
-    validateUserPassword,
-    validateUserEmail,
-    validateApi,
-};
+export { validateUserSignUp, validateUserLogin, validateUserUpdate, validateUserPassword, validateUserEmail };

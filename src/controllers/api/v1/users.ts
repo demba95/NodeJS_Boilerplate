@@ -1,9 +1,9 @@
 import * as Type from '@cTypes/types';
-import * as Msg from '@helpers/message';
-import * as validator from '@helpers/validator';
 import * as auth from '@middlewares/auth';
 import User from '@models/user';
+import * as email from '@msg/email';
 import sgMail from '@sendgrid/mail';
+import * as validator from '@validator/validator';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -30,7 +30,7 @@ const signUpUser: RequestHandler = async (req, res) => {
         await newUser.save();
 
         if (ENV === 'production') {
-            const msg = Msg.signUp(newUser, req.headers.host!);
+            const msg = email.signUp(newUser, req.headers.host!);
             await sgMail.send(msg);
         } else {
             response.verifyToken = form.verifyToken;
@@ -131,7 +131,7 @@ const updateUser: RequestHandler = async (req, res) => {
 
                     try {
                         if (ENV === 'production') {
-                            const msg = Msg.updateEmail(user, req.headers.host!);
+                            const msg = email.updateEmail(user, req.headers.host!);
                             await sgMail.send(msg);
                         } else {
                             response.verifyToken = user.verifyToken;
@@ -249,7 +249,7 @@ const resetPassword: RequestHandler = async (req, res) => {
         await user.save();
 
         if (ENV === 'production') {
-            const msg = Msg.resetPassword(user);
+            const msg = email.resetPassword(user);
             await sgMail.send(msg);
         } else {
             response.verifyToken = user.verifyToken;
@@ -293,7 +293,7 @@ const updatePassword: RequestHandler = async (req, res) => {
         await user.save();
 
         if (ENV === 'production') {
-            const msg = Msg.updatePassword(user);
+            const msg = email.updatePassword(user);
             await sgMail.send(msg);
         }
 

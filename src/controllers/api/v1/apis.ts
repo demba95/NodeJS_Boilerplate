@@ -1,7 +1,7 @@
 import * as Type from '@cTypes/types';
-import { updateDocument } from '@helpers/updateDocument';
-import * as validator from '@helpers/validator';
+import { updateDocument } from '@fn/fn';
 import Api from '@models/api';
+import * as validator from '@validator/validator';
 import { RequestHandler } from 'express';
 import mongoose from 'mongoose';
 

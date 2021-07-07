@@ -114,8 +114,8 @@ export type JWTVerifyFn = {
     (mode: string): string;
 };
 
-export type CheckFn = {
-    (string: string): boolean;
+export type CheckFn<T> = {
+    (value: T): boolean;
 };
 
 export type ValidatorFn<T> = {
