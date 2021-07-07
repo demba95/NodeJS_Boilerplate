@@ -33,7 +33,7 @@ describe("Api's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(201);
         expect(response2.body).toMatchObject({
-            name: apiForm.name,
+            name: apiForm.name!.toLowerCase(),
             url: apiForm.url,
             active: apiForm.active,
         });
@@ -262,7 +262,7 @@ describe("Api's API", () => {
             .expect(200);
         expect(response2.body).toMatchObject({
             _id: user1api1._id.toString(),
-            name: user1api1.name,
+            name: user1api1.name.toLowerCase(),
             active: user1api1.active,
             url: user1api1.url,
             key: user1api1.key,

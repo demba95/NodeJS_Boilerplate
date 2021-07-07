@@ -8,21 +8,21 @@ class UserClass {
     lastName: string;
     email: string;
     password: string;
-    isEmailVerified: boolean;
+    status: string;
 
     constructor(
         protected readonly _firstName: string,
         _lastName: string,
         _email: string,
         _password: string,
-        _isEmailVerified: boolean
+        _status: string
     ) {
         this._id = new ObjectID();
         this.firstName = _firstName;
         this.lastName = _lastName;
         this.email = _email;
         this.password = _password;
-        this.isEmailVerified = _isEmailVerified;
+        this.status = _status;
     }
 }
 
@@ -53,10 +53,10 @@ class ApiClass {
     }
 }
 
-const user1 = new UserClass('User name 1', 'User last name 1', 'your_email_1@test.com', 'test123', true);
-const user2 = new UserClass('User name 2', 'User last name 2', 'your_email_2@test.com', 'test123', false);
-const user3 = new UserClass('User name 3', 'User last name 3', 'your_email_3@test.com', 'test123', true);
-const user4 = new UserClass('User name 4', 'User last name 4', 'your_email_4@test.com', 'test123', true);
+const user1 = new UserClass('User name 1', 'User last name 1', 'your_email_1@test.com', 'test123', 'activated');
+const user2 = new UserClass('User name 2', 'User last name 2', 'your_email_2@test.com', 'test123', 'incomplete');
+const user3 = new UserClass('User name 3', 'User last name 3', 'your_email_3@test.com', 'test123', 'activated');
+const user4 = new UserClass('User name 4', 'User last name 4', 'your_email_4@test.com', 'test123', 'activated');
 const user1api1 = new ApiClass(
     'First Api',
     'First api key',

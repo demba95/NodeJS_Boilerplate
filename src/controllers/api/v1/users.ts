@@ -59,7 +59,7 @@ const loginUser: RequestHandler = async (req, res) => {
                 message: 'Please verify your email first.',
             };
             if (matchPassword) {
-                if (user.isEmailVerified) {
+                if (user.status === 'activated') {
                     const token = auth.createAccessToken(user);
                     return res.json(token);
                 }
@@ -198,7 +198,7 @@ const verifyEmail: RequestHandler = async (req, res) => {
             return res.status(404).json({ message: 'Invalid email token, please reset your email and try again.' });
 
         user.verifyToken = '';
-        user.isEmailVerified = true;
+        user.status = 'activated';
 
         if (user.tempEmail) {
             user.email = user.tempEmail;
@@ -223,7 +223,7 @@ const resendVerifyEmail: RequestHandler = async (req, res) => {
     try {
         const user: Type.UserI | null = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Email not found.' });
-        if (user.isEmailVerified) return res.json({ message: 'Your account is already verified.' });
+        if (user.status === 'activated') return res.json({ message: 'Your account is already verified.' });
 
         user.verifyToken = auth.createVerificationToken('email');
     } catch (error) {

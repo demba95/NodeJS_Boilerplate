@@ -15,8 +15,8 @@ interface UserI extends Document {
     email: string;
     tempEmail: string;
     verifyToken?: string;
-    isEmailVerified?: boolean;
     password?: string;
+    status?: string;
     admin?: boolean;
     comparePassword(password: string, callback: Callback): void;
     createdAt?: string;

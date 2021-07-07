@@ -19,26 +19,28 @@ const userSchema = new Schema(
         },
         email: {
             type: String,
-            required: true,
-            trim: true,
-            unique: true,
             lowercase: true,
+            required: true,
+            unique: true,
+            trim: true,
         },
         tempEmail: {
             type: String,
-            trim: true,
             lowercase: true,
+            trim: true,
         },
         verifyToken: String,
-        isEmailVerified: {
-            type: Boolean,
-            default: false,
-        },
         password: {
             type: String,
-            require: true,
             minlength: process.env.PASSWORD_LEN,
+            require: true,
             trim: true,
+        },
+        status: {
+            type: String,
+            enum: ['incomplete', 'suspended', 'activated'],
+            default: 'incomplete',
+            required: true,
         },
         admin: {
             type: Boolean,
@@ -64,11 +66,11 @@ userSchema.methods.comparePassword = function (tryPassword, callback) {
 userSchema.set('toJSON', {
     transform: function (_: any, ret: Type.UserI) {
         delete ret.password;
+        delete ret.verifyToken;
+        delete ret.status;
+        delete ret.admin;
         delete ret.createdAt;
         delete ret.updatedAt;
-        delete ret.isEmailVerified;
-        delete ret.admin;
-        delete ret.verifyToken;
         delete ret.__v;
         return ret;
     },
