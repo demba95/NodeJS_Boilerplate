@@ -1,3 +1,5 @@
+type ObjectID = typeof import('mongodb').ObjectID;
+
 type LoginResponse = {
     body: string;
 };

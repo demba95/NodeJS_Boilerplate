@@ -28,6 +28,10 @@ const apiSchema = new Schema(
             required: true,
             trim: true,
         },
+        description: {
+            type: String,
+            trim: true,
+        },
         active: {
             type: Boolean,
             default: false,

@@ -18,7 +18,7 @@ const newApi: RequestHandler = async (req, res) => {
 
         const newApi = new Api(req.body);
         newApi.userId = mongoose.Types.ObjectId(req.user!._id);
-        return res.json(await newApi.save());
+        return res.status(201).json(await newApi.save());
     } catch (error) {
         res.status(500).json({
             message: 'Something went wrong while trying to create a new API. Please try again.',
@@ -36,7 +36,7 @@ const getApis: RequestHandler = async (req, res) => {
             .skip((page - 1) * docs)
             .limit(docs);
 
-        if (!apis) return res.status(404).json({ message: 'APIs not found.' });
+        if (apis.length === 0) return res.status(404).json({ message: "You don't have any APIs" });
 
         apis.forEach((api) => {
             api.getKey((key, value) => {
@@ -82,24 +82,26 @@ const getApi: RequestHandler = async (req, res) => {
 };
 
 const updateApi: RequestHandler = async (req, res) => {
-    try {
-        if (!validator.isEmpty(req.body.name)) {
-            const apiExists: Type.ApiI | null = await Api.findOne({
-                name: req.body.name?.trim(),
-                userId: req.user!._id,
-            });
-            if (apiExists && apiExists._id !== req.params.id)
-                return res.status(400).json({ message: 'API name already in use, please use a different name.' });
-        }
+    const apiId: string = req.params.id!;
+    const form: Type.ApiForm = req.body;
+    const { valid, errors } = validator.validateApi(form);
+    if (!valid) return res.status(400).json(errors);
 
-        const api = await Api.findOne({ _id: req.params.id });
+    try {
+        const apiExists: Type.ApiI | null = await Api.findOne({
+            name: req.body.name?.trim(),
+            userId: req.user!._id,
+        });
+        if (apiExists && apiExists._id !== apiId)
+            return res.status(400).json({ message: 'API name already in use, please use a different name.' });
+
+        const api = await Api.findOne({ _id: apiId });
         if (!api) return res.status(404).json({ message: 'API not found.' });
         updateDocument(api, req.body, permittedFields);
         await api.save();
 
         res.json({ message: 'API has been updated successfully.' });
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             message: 'Something went wrong while updating your API. Please try again.',
         });
@@ -108,10 +110,9 @@ const updateApi: RequestHandler = async (req, res) => {
 
 const deleteApi: RequestHandler = async (req, res) => {
     const apiId: string = req.params.id!;
-    if (validator.isEmpty(apiId)) return res.status(400).json({ message: 'API Id must not be empty' });
 
     try {
-        const deletedApi = await Api.findByIdAndDelete({ _id: apiId, userId: req.user!._id });
+        const deletedApi = await Api.findOneAndDelete({ _id: apiId, userId: req.user!._id });
         if (deletedApi) return res.json({ message: 'API has been deleted successfully.' });
 
         return res

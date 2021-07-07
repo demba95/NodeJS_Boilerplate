@@ -14,7 +14,7 @@ const ENV: string = process.env.ENV!;
 
 const signUpUser: RequestHandler = async (req, res) => {
     const form: Type.SignUpForm = req.body;
-    const { valid, errors } = validator.validateSignUpData(form);
+    const { valid, errors } = validator.validateUserSignUp(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -47,7 +47,7 @@ const signUpUser: RequestHandler = async (req, res) => {
 const loginUser: RequestHandler = async (req, res) => {
     const form: Type.LoginForm = req.body;
 
-    const { valid, errors } = validator.validateLoginData(form);
+    const { valid, errors } = validator.validateUserLogin(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -95,7 +95,7 @@ const getUser: RequestHandler = async (req, res) => {
 
 const updateUser: RequestHandler = async (req, res) => {
     const form: Type.UpdateUserForm = req.body;
-    const { valid, errors } = validator.validateUpdateData(form);
+    const { valid, errors } = validator.validateUserUpdate(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -159,7 +159,7 @@ const updateUser: RequestHandler = async (req, res) => {
 
 const deleteUser: RequestHandler = async (req, res) => {
     const form: Type.DeleteForm = req.body;
-    const { valid, errors } = validator.validatePassword(form);
+    const { valid, errors } = validator.validateUserPassword(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -217,7 +217,7 @@ const verifyEmail: RequestHandler = async (req, res) => {
 
 const resendVerifyEmail: RequestHandler = async (req, res) => {
     const form: Type.EmailForm = req.body;
-    const { valid, errors } = validator.validateEmail(form);
+    const { valid, errors } = validator.validateUserEmail(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -235,7 +235,7 @@ const resendVerifyEmail: RequestHandler = async (req, res) => {
 
 const resetPassword: RequestHandler = async (req, res) => {
     const form: Type.EmailForm = req.body;
-    const { valid, errors } = validator.validateEmail(form);
+    const { valid, errors } = validator.validateUserEmail(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -273,7 +273,7 @@ const updatePassword: RequestHandler = async (req, res) => {
     }
 
     const form: Type.PasswordForm = req.body;
-    const { valid, errors } = validator.validatePassword(form);
+    const { valid, errors } = validator.validateUserPassword(form);
     if (!valid) return res.status(400).json(errors);
 
     try {

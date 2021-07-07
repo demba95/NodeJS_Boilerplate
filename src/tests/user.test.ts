@@ -15,9 +15,9 @@ beforeEach(setupDatabase);
 describe("User's API", () => {
     it('Should sign up new user', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            email: 'your_email_10@test.com',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: 'test123',
         };
@@ -33,8 +33,8 @@ describe("User's API", () => {
     it('Should NOT sign up new user - existing user/email', async () => {
         const form: Type.SignUpForm = {
             email: user1.email,
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: 'test123',
         };
@@ -47,9 +47,9 @@ describe("User's API", () => {
 
     it('Should NOT sign up new user - empty first name', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
+            email: 'your_email_10@test.com',
             firstName: '',
-            lastName: 'That 3',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: 'test123',
         };
@@ -62,8 +62,8 @@ describe("User's API", () => {
 
     it('Should NOT sign up new user - empty last name', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
-            firstName: 'Roger 3',
+            email: 'your_email_10@test.com',
+            firstName: 'Roger 10',
             lastName: '',
             password: 'test123',
             confirmPassword: 'test123',
@@ -78,8 +78,8 @@ describe("User's API", () => {
     it('Should NOT sign up new user - empty email', async () => {
         const form: Type.SignUpForm = {
             email: '',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: 'test123',
         };
@@ -92,9 +92,9 @@ describe("User's API", () => {
 
     it('Should NOT sign up new user - invalid email', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            email: 'your_email_10@test',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: 'test123',
         };
@@ -107,9 +107,9 @@ describe("User's API", () => {
 
     it('Should NOT sign up new user - empty password', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            email: 'your_email_10@test.com',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: '',
             confirmPassword: 'test123',
         };
@@ -123,9 +123,9 @@ describe("User's API", () => {
 
     it('Should NOT sign up new user - password length', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            email: 'your_email_10@test.com',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: '12',
             confirmPassword: '12345678',
         };
@@ -138,9 +138,9 @@ describe("User's API", () => {
 
     it('Should NOT sign up new user - empty confirm password', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            email: 'your_email_10@test.com',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: '',
         };
@@ -154,9 +154,9 @@ describe("User's API", () => {
 
     it('Should NOT sign up new user - wrong confirm password', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            email: 'your_email_10@test.com',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: 'test123wrong',
         };
@@ -188,9 +188,9 @@ describe("User's API", () => {
 
     it('Should verify account', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            email: 'your_email_10@test.com',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: 'test123',
         };
@@ -207,9 +207,9 @@ describe("User's API", () => {
 
     it('Should NOT verify account - empty email token', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            email: 'your_email_10@test.com',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: 'test123',
         };
@@ -225,9 +225,9 @@ describe("User's API", () => {
 
     it('Should NOT verify account - empty email token', async () => {
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            email: 'your_email_10@test.com',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: 'test123',
         };
@@ -243,9 +243,9 @@ describe("User's API", () => {
         const expiredVerifyToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZW1haWwiLCJpYXQiOjE2MDI2ODg3MjEsImV4cCI6MTYwMzI5MzUyMX0.CWhtDg0BYoaL9sld0hwOd7U12agsXSB-7SZ6XYF9hko';
         const form: Type.SignUpForm = {
-            email: 'your_email_3@test.com',
-            firstName: 'Roger 3',
-            lastName: 'That 3',
+            email: 'your_email_10@test.com',
+            firstName: 'Roger 10',
+            lastName: 'That 10',
             password: 'test123',
             confirmPassword: 'test123',
         };
@@ -314,7 +314,7 @@ describe("User's API", () => {
 
     it('Should NOT login existing user - invalid email', async () => {
         const form: Type.LoginForm = {
-            email: 'your_email_3@test',
+            email: 'your_email_10@test',
             password: user1.password,
         };
 
@@ -490,7 +490,7 @@ describe("User's API", () => {
         const token: string = response.body;
         const updateUser = <Type.UpdateUserForm>{
             password: user1.password,
-            email: 'your_email_3_update@test.com',
+            email: 'your_email_10_update@test.com',
         };
         await request(app).put(`${URL}/profile`).send(updateUser).set('Authorization', `Bearer ${token}`).expect(200);
         const user: Type.UserI | null = await User.findById({ _id: user1._id });

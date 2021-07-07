@@ -21,7 +21,7 @@ const checkProperty: Type.CheckPropertyFn = (propertyName, data, length) => {
     return true;
 };
 
-const validateSignUpData: Type.ValidatorFn<Type.SignUpForm> = (data) => {
+const validateUserSignUp: Type.ValidatorFn<Type.SignUpForm> = (data) => {
     const { email, password, confirmPassword } = data;
     const errors: Type.ErrorContainer = {};
 
@@ -50,7 +50,7 @@ const validateSignUpData: Type.ValidatorFn<Type.SignUpForm> = (data) => {
     };
 };
 
-const validateLoginData: Type.ValidatorFn<Type.LoginForm> = (data) => {
+const validateUserLogin: Type.ValidatorFn<Type.LoginForm> = (data) => {
     const { email } = data;
     const errors: Type.ErrorContainer = {};
 
@@ -64,7 +64,7 @@ const validateLoginData: Type.ValidatorFn<Type.LoginForm> = (data) => {
     };
 };
 
-const validateUpdateData: Type.ValidatorFn<Type.UpdateUserForm> = (data) => {
+const validateUserUpdate: Type.ValidatorFn<Type.UpdateUserForm> = (data) => {
     const { email, newPassword, confirmNewPassword } = data;
     const errors: Type.ErrorContainer = {};
     let count = 0;
@@ -105,7 +105,7 @@ const validateUpdateData: Type.ValidatorFn<Type.UpdateUserForm> = (data) => {
     };
 };
 
-const validatePassword: Type.ValidatorFn<Type.PasswordForm> = (data) => {
+const validateUserPassword: Type.ValidatorFn<Type.PasswordForm> = (data) => {
     const { password, confirmPassword } = data;
     const errors: Type.ErrorContainer = {};
 
@@ -125,7 +125,7 @@ const validatePassword: Type.ValidatorFn<Type.PasswordForm> = (data) => {
     };
 };
 
-const validateEmail: Type.ValidatorFn<Type.EmailForm> = (data) => {
+const validateUserEmail: Type.ValidatorFn<Type.EmailForm> = (data) => {
     const { email } = data;
     const errors: Type.ErrorContainer = {};
 
@@ -139,12 +139,14 @@ const validateEmail: Type.ValidatorFn<Type.EmailForm> = (data) => {
 };
 
 const validateApi: Type.ValidatorFn<Type.ApiForm> = (data) => {
+    const { active } = data;
     const errors: Type.ErrorContainer = {};
 
     if (!checkProperty('name', data)) errors.name = 'API name must not be empty.';
+    if (!checkProperty('url', data)) errors.url = 'API URL must not be empty.';
     if (!checkProperty('key', data)) errors.key = 'API key must not be empty.';
     if (!checkProperty('value', data)) errors.value = 'API value must not be empty.';
-    if (!checkProperty('url', data)) errors.url = 'API URL must not be empty.';
+    if (!active || !checkProperty('active', data)) errors.active = 'API active must not be empty.';
 
     return {
         errors,
@@ -155,10 +157,10 @@ const validateApi: Type.ValidatorFn<Type.ApiForm> = (data) => {
 export {
     isEmpty,
     isEmail,
-    validateSignUpData,
-    validateLoginData,
-    validateUpdateData,
-    validatePassword,
-    validateEmail,
+    validateUserSignUp,
+    validateUserLogin,
+    validateUserUpdate,
+    validateUserPassword,
+    validateUserEmail,
     validateApi,
 };

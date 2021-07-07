@@ -31,6 +31,7 @@ export interface ApiI extends Document {
     value?: string;
     userId?: mongoose.Types.ObjectId;
     active: boolean;
+    description: string;
     getKey(callback: Callback): void;
     createdAt?: string;
     updatedAt?: string;
@@ -47,17 +48,10 @@ export type ApisArray = {
 
 export type ApiForm = {
     name?: string;
-    key?: string;
-    value?: string;
-    url?: string;
-    active?: boolean;
-};
-
-export type UpdateApiForm = {
-    name?: string;
     url?: string;
     key?: string;
     value?: string;
+    description?: string;
     active?: boolean;
 };
 
