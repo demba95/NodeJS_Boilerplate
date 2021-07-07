@@ -1,8 +1,8 @@
 import userCtrlV1 from '@api/v1/users';
 import { auth } from '@middlewares/auth';
-import express from 'express';
+import { Router } from 'express';
 
-const router = express.Router();
+const router: Router = Router();
 
 router.post('/signup', userCtrlV1.signUpUser);
 router.post('/login', userCtrlV1.loginUser);

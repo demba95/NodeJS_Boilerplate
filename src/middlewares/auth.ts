@@ -13,7 +13,7 @@ const auth: RequestHandler = (req, res, next) => {
     try {
         if (token) {
             token = token.replace('Bearer ', '');
-            const user = <Type.UserJWT>jwt.verify(token, JWT_SECRET_KEY);
+            const user = <Type.UserJwtI>jwt.verify(token, JWT_SECRET_KEY);
             req.user = user;
             next();
         } else {
@@ -24,13 +24,13 @@ const auth: RequestHandler = (req, res, next) => {
     }
 };
 
-const createAccessToken: Type.JWTAccessFn = (user: Type.User) => {
+const createAccessToken: Type.JwtAccessFn = (user) => {
     return jwt.sign({ _id: user._id, firstName: user.firstName, lastName: user.lastName }, JWT_SECRET_KEY, {
         expiresIn: JWT_SECRET_EXPIRES_IN,
     });
 };
 
-const createVerificationToken: Type.JWTVerifyFn = (mode: string) => {
+const createVerificationToken: Type.JwtVerifyFn = (mode) => {
     return jwt.sign({ mode }, JWT_VERIFICATION_SECRET_KEY, {
         expiresIn: JWT_VERIFICATION_EXPIRES_IN,
     });

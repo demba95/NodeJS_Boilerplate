@@ -64,8 +64,6 @@ apiSchema.methods.getKey = function (callback) {
 
 apiSchema.set('toJSON', {
     transform: function (_: any, ret: Type.ApiI) {
-        delete ret.key;
-        delete ret.value;
         delete ret.userId;
         delete ret.createdAt;
         delete ret.__v;

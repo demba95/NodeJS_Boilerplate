@@ -3,7 +3,7 @@ import { updateDocument } from '@fn/fn';
 import Api from '@models/api';
 import * as validator from '@validator/validator';
 import { RequestHandler } from 'express';
-import mongoose from 'mongoose';
+import { Types } from 'mongoose';
 
 const permittedFields: string[] = ['name', 'key', 'value', 'url', 'active'];
 
@@ -13,11 +13,11 @@ const newApi: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const api = await Api.findOne({ name: req.body.name, userId: req.user!._id });
+        const api: Type.ApiI | null = await Api.findOne({ name: req.body.name, userId: req.user!._id });
         if (api) return res.status(400).json({ message: 'API already exists.' });
 
         const newApi = new Api(req.body);
-        newApi.userId = mongoose.Types.ObjectId(req.user!._id);
+        newApi.userId = Types.ObjectId(req.user!._id);
         return res.status(201).json(await newApi.save());
     } catch (error) {
         res.status(500).json({
@@ -28,25 +28,25 @@ const newApi: RequestHandler = async (req, res) => {
 
 const getApis: RequestHandler = async (req, res) => {
     try {
-        const page = parseInt(req.body.page, 10) || 1;
-        const docs = parseInt(req.body.docs, 10) || 30;
-        const apisArray: Type.ApisArray[] = [];
+        const page: number = parseInt(req.body.page, 10) || 1;
+        const docs: number = parseInt(req.body.docs, 10) || 30;
+        const apisArray: Type.ApiForm[] = [];
 
-        const apis = await Api.find({ userId: req.user!._id })
+        const apis: Type.ApiI[] = await Api.find({ userId: req.user!._id })
             .skip((page - 1) * docs)
             .limit(docs);
 
         if (apis.length === 0) return res.status(404).json({ message: "You don't have any APIs" });
 
         apis.forEach((api) => {
-            api.getKey((key, value) => {
+            api.getKey!((key, value) => {
                 apisArray.push({
-                    _id: api._id,
-                    name: api.name,
-                    active: api.active,
-                    url: api.url,
-                    key: key.toString(),
-                    value: value.toString(),
+                    _id: api!._id,
+                    name: api!.name,
+                    active: api!.active,
+                    url: api!.url,
+                    key: key!.toString(),
+                    value: value!.toString(),
                 });
             });
         });
@@ -61,10 +61,10 @@ const getApis: RequestHandler = async (req, res) => {
 
 const getApi: RequestHandler = async (req, res) => {
     try {
-        const api = await Api.findOne({ _id: req.params.id, userId: req.user!._id });
+        const api: Type.ApiI | null = await Api.findOne({ _id: req.params.id, userId: req.user!._id });
         if (!api) return res.status(404).json({ message: 'API not found.' });
 
-        api.getKey((key, value) => {
+        api.getKey!((key, value) => {
             return res.json({
                 _id: api._id,
                 name: api.name,
@@ -112,7 +112,7 @@ const deleteApi: RequestHandler = async (req, res) => {
     const apiId: string = req.params.id!;
 
     try {
-        const deletedApi = await Api.findOneAndDelete({ _id: apiId, userId: req.user!._id });
+        const deletedApi: Type.ApiI | null = await Api.findOneAndDelete({ _id: apiId, userId: req.user!._id });
         if (deletedApi) return res.json({ message: 'API has been deleted successfully.' });
 
         return res

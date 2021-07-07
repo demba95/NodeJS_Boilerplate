@@ -1,6 +1,5 @@
 import * as Type from '@cTypes/types';
 import bcrypt from 'bcrypt';
-import { NextFunction } from 'express';
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
@@ -58,7 +57,7 @@ userSchema.pre<Type.UserI>('save', async function (next) {
     next();
 });
 
-userSchema.methods.comparePassword = function (tryPassword: string, callback: NextFunction) {
+userSchema.methods.comparePassword = function (tryPassword, callback) {
     bcrypt.compare(tryPassword, this.get('password'), callback);
 };
 

@@ -2,7 +2,7 @@ import * as Type from '@cTypes/types';
 import { checkProperty } from '@validator/1_shared';
 
 const validateApi: Type.ValidatorFn<Type.ApiForm> = (data) => {
-    const errors: Type.ErrorContainer = {};
+    const errors: Type.Obj = {};
 
     if (!checkProperty('name', data)) errors.name = 'API name must not be empty.';
     if (!checkProperty('url', data)) errors.url = 'API URL must not be empty.';

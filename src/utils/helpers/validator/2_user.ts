@@ -5,7 +5,7 @@ const PASSWORD_LENGTH = +process.env.PASSWORD_LEN!;
 
 const validateUserSignUp: Type.ValidatorFn<Type.SignUpForm> = (data) => {
     const { email, password, confirmPassword } = data;
-    const errors: Type.ErrorContainer = {};
+    const errors: Type.Obj = {};
 
     if (!checkProperty('email', data)) errors.email = 'Email must not be empty.';
     else if (checkProperty('email', data) && !isEmail(email)) errors.email = 'Email must be a valid email address.';
@@ -32,7 +32,7 @@ const validateUserSignUp: Type.ValidatorFn<Type.SignUpForm> = (data) => {
 
 const validateUserLogin: Type.ValidatorFn<Type.LoginForm> = (data) => {
     const { email } = data;
-    const errors: Type.ErrorContainer = {};
+    const errors: Type.Obj = {};
 
     if (!checkProperty('email', data)) errors.email = 'Email must not be empty.';
     else if (checkProperty('email', data) && !isEmail(email)) errors.email = 'Email must be a valid email address.';
@@ -46,7 +46,7 @@ const validateUserLogin: Type.ValidatorFn<Type.LoginForm> = (data) => {
 
 const validateUserUpdate: Type.ValidatorFn<Type.UpdateUserForm> = (data) => {
     const { email, newPassword, confirmNewPassword } = data;
-    const errors: Type.ErrorContainer = {};
+    const errors: Type.Obj = {};
     let count = 0;
 
     if (!checkProperty('email', data)) errors.email = 'New email must not be empty.';
@@ -87,7 +87,7 @@ const validateUserUpdate: Type.ValidatorFn<Type.UpdateUserForm> = (data) => {
 
 const validateUserPassword: Type.ValidatorFn<Type.PasswordForm> = (data) => {
     const { password, confirmPassword } = data;
-    const errors: Type.ErrorContainer = {};
+    const errors: Type.Obj = {};
 
     if (!checkProperty('password', data)) errors.password = 'Password must not be empty.';
     if (!checkProperty('password', data, PASSWORD_LENGTH))
@@ -107,7 +107,7 @@ const validateUserPassword: Type.ValidatorFn<Type.PasswordForm> = (data) => {
 
 const validateUserEmail: Type.ValidatorFn<Type.EmailForm> = (data) => {
     const { email } = data;
-    const errors: Type.ErrorContainer = {};
+    const errors: Type.Obj = {};
 
     if (!checkProperty('email', data)) errors.email = 'Email must not be empty.';
     else if (checkProperty('email', data) && !isEmail(email)) errors.email = 'Email must be a valid email address.';

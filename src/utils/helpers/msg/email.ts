@@ -2,7 +2,7 @@ import * as Type from '@cTypes/types';
 
 const FRONTEND_URL = process.env.FRONTEND_URL!;
 
-const signUp = (user: Type.UserI, host: string): Type.Msg => {
+const signUp: Type.EmailFn<Type.UserI, string> = (user, host) => {
     return {
         from: process.env.SENDGRID_EMAIL!,
         to: user.email,
@@ -15,7 +15,7 @@ const signUp = (user: Type.UserI, host: string): Type.Msg => {
     };
 };
 
-const updateEmail = (user: Type.UserI, host: string): Type.Msg => {
+const updateEmail: Type.EmailFn<Type.UserI, string> = (user, host) => {
     return {
         from: process.env.SENDGRID_EMAIL!,
         to: user.tempEmail,
@@ -27,7 +27,7 @@ const updateEmail = (user: Type.UserI, host: string): Type.Msg => {
     };
 };
 
-const resetPassword = (user: Type.UserI): Type.Msg => {
+const resetPassword: Type.EmailFn<Type.UserI, null> = (user) => {
     return {
         from: process.env.SENDGRID_EMAIL!,
         to: user.email,
@@ -41,7 +41,7 @@ const resetPassword = (user: Type.UserI): Type.Msg => {
     };
 };
 
-const updatePassword = (user: Type.UserI): Type.Msg => {
+const updatePassword: Type.EmailFn<Type.UserI, null> = (user) => {
     return {
         from: process.env.SENDGRID_EMAIL!,
         to: user.email,

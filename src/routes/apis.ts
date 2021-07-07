@@ -1,8 +1,8 @@
 import apiCtrlV1 from '@api/v1/apis';
 import { auth } from '@middlewares/auth';
-import express from 'express';
+import { Router } from 'express';
 
-const router = express.Router();
+const router: Router = Router();
 
 router.post('/new', auth, apiCtrlV1.newApi);
 router.post('/apis', auth, apiCtrlV1.getApis);
