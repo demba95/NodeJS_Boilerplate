@@ -1,6 +1,6 @@
 import * as Type from '@cTypes/types';
 
-const FRONTEND_URL = process.env.FRONTEND_URL!;
+const URL_FRONTEND = process.env.URL_FRONTEND!;
 
 const signUp: Type.EmailFn<Type.UserI, string> = (user, host) => {
     return {
@@ -35,7 +35,7 @@ const resetPassword: Type.EmailFn<Type.UserI, null> = (user) => {
         html: `
                 <h1>Hello ${user.firstName}</h1>
                 We're sending you this email because you requested a password reset. Click on this link to create a new password:
-                <a href="${FRONTEND_URL}/reset-password/${user.verifyToken}">Set a new password</a>
+                <a href="${URL_FRONTEND}/reset-password/${user.verifyToken}">Set a new password</a>
                 If you didn't request a password reset, you can ignore this email. Your password will not be changed.
             `,
     };

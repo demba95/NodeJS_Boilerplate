@@ -40,7 +40,8 @@
         "helmet": "^4.6.0",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.12.13",
-        "morgan": "^1.10.0"
+        "morgan": "^1.10.0",
+        "telegraf": "^4.4.0"
     },
     "devDependencies": {
         "@babel/cli": "^7.14.5",

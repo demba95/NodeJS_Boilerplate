@@ -1,21 +1,23 @@
+import { Context } from 'telegraf';
 import { Obj } from './1_shared';
 import { EmailMsg, User } from './2_types';
+import { UserI } from './3_interfaces';
 
 // _ Email
-type EmailFn<U, H> = {
+export type EmailFn<U, H> = {
     (user: U, host?: H): EmailMsg;
 };
 
 // _ Validator
-type CheckFn<T> = {
+export type CheckFn<T> = {
     (value: T): boolean;
 };
 
-type CheckPropertyFn = {
+export type CheckPropertyFn = {
     (propertyName: string, data: Obj, length?: number | undefined): boolean;
 };
 
-type ValidatorFn<T> = {
+export type ValidatorFn<T> = {
     (data: T): {
         errors: Obj;
         valid: boolean;
@@ -23,17 +25,24 @@ type ValidatorFn<T> = {
 };
 
 // _ MongoDB
-type UpdateDocumentFn = {
+export type UpdateDocumentFn = {
     (document: Obj, body: Obj, permit: string[]): void;
 };
 
 // _ JWT
-type JwtAccessFn = {
+export type JwtAccessFn = {
     (user: User): string;
 };
 
-type JwtVerifyFn = {
+export type JwtVerifyFn = {
     (mode: string): string;
 };
 
-export { EmailFn, CheckFn, CheckPropertyFn, UpdateDocumentFn, JwtVerifyFn, JwtAccessFn, ValidatorFn };
+// _ Telegram
+export type ClearTelegramMsgFn = {
+    (chatId: string, msgId: string, tg: any, time: number): Promise<void>;
+};
+
+export type IsTelegramRegisteredFn = {
+    (ctx: Context): Promise<UserI>;
+};

@@ -1,4 +1,4 @@
-type EmailMsg = {
+export type EmailMsg = {
     from: string;
     to: string;
     subject: string;
@@ -6,50 +6,50 @@ type EmailMsg = {
 };
 
 // _ User
-type User = {
+export type User = {
     _id?: string;
     firstName: string;
     lastName: string;
 };
 
-type LoginForm = {
+export type LoginForm = {
     _id?: string;
     email: string;
     password: string;
 };
 
-type DeleteForm = {
+export type DeleteForm = {
     password: string;
 };
 
-type EmailForm = {
+export type EmailForm = {
     email: string;
 };
 
-type PasswordForm = {
+export type PasswordForm = {
     password: string;
     confirmPassword?: string;
 };
 
-type SignUpFormExtra = {
+export type SignUpFormExtra = {
     confirmPassword?: string;
     verifyToken?: string;
 };
 
-type SignUpForm = User & LoginForm & SignUpFormExtra;
+export type SignUpForm = User & LoginForm & SignUpFormExtra;
 
-type UpdateUserFormExtra = {
+export type UpdateUserFormExtra = {
     password: string;
     email: string;
     newPassword: string;
     confirmNewPassword: string;
 };
 
-type UpdateUserForm = User & UpdateUserFormExtra;
+export type UpdateUserForm = User & UpdateUserFormExtra;
 
 // _ API
 
-type ApiForm = {
+export type ApiForm = {
     _id?: string;
     name?: string;
     url?: string;
@@ -58,5 +58,3 @@ type ApiForm = {
     description?: string;
     active?: boolean;
 };
-
-export { User, ApiForm, LoginForm, SignUpForm, UpdateUserForm, DeleteForm, EmailForm, PasswordForm, EmailMsg };

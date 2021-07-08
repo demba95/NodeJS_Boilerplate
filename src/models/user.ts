@@ -46,6 +46,16 @@ const userSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        telegramId: {
+            type: Number,
+            trim: true,
+            unique: true,
+            default: '',
+        },
+        isTelegramVerified: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         timestamps: true,

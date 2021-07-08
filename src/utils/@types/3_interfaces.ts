@@ -8,7 +8,7 @@ declare module 'express-serve-static-core' {
     }
 }
 
-interface UserI extends Document {
+export interface UserI extends Document {
     _id: string;
     firstName: string;
     lastName: string;
@@ -18,12 +18,14 @@ interface UserI extends Document {
     password?: string;
     status?: string;
     admin?: boolean;
+    telegramId: number;
+    isTelegramVerified: boolean;
     comparePassword(password: string, callback: Callback): void;
     createdAt?: string;
     updatedAt?: string;
 }
 
-interface ApiI extends Document {
+export interface ApiI extends Document {
     _id: string;
     name: string;
     url: string;
@@ -37,9 +39,7 @@ interface ApiI extends Document {
     updatedAt?: string;
 }
 
-interface UserJwtI extends User {
+export interface UserJwtI extends User {
     iat: number;
     exp: number;
 }
-
-export { UserI, ApiI, UserJwtI };

@@ -1,7 +1,5 @@
-type Callback = (error: string, isMatch: boolean) => void;
+export type Callback = (error: string, isMatch: boolean) => void;
 
-type Obj = {
+export type Obj = {
     [index: string]: any;
 };
-
-export { Callback, Obj };
