@@ -18,7 +18,7 @@ export interface UserI extends Document {
     password?: string;
     status?: string;
     admin?: boolean;
-    telegramId: number;
+    telegramId: string;
     isTelegramVerified: boolean;
     comparePassword(password: string, callback: Callback): void;
     createdAt?: string;

@@ -43,6 +43,7 @@ export type UpdateUserFormExtra = {
     email: string;
     newPassword: string;
     confirmNewPassword: string;
+    telegramId: string;
 };
 
 export type UpdateUserForm = User & UpdateUserFormExtra;

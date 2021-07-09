@@ -1,3 +1,4 @@
+import { bot } from '@config/telegram';
 import * as Type from '@cTypes/types';
 import * as auth from '@middlewares/auth';
 import User from '@models/user';
@@ -123,6 +124,19 @@ const updateUser: RequestHandler = async (req, res) => {
                 if (form.firstName) user.firstName = form.firstName;
                 if (form.lastName) user.lastName = form.lastName;
                 if (form.newPassword) user.password = form.newPassword;
+                if (
+                    (!validator.isEmpty(form.telegramId) && user.telegramId === '') ||
+                    (!validator.isEmpty(form.telegramId) && form.telegramId.trim() !== user.telegramId)
+                ) {
+                    user.telegramId = form.telegramId;
+                    user.isTelegramVerified = false;
+
+                    const msg: string = 'Please send /verify to confirm your telegram.';
+                    await bot.telegram.sendMessage(form.telegramId, msg, { parse_mode: 'HTML' });
+                } else {
+                    user.telegramId = '';
+                    user.isTelegramVerified = false;
+                }
                 if (user.email !== form.email) {
                     response.message += ` An email has been sent to ${form.email}. Please verify your new email to update your email address.`;
                     user.tempEmail = form.email;

@@ -50,4 +50,5 @@ const clearTelegramMsg: Type.ClearTelegramMsgFn = async (chatId, msgId, tg, time
         tg
     );
 };
+
 export { isTelegramRegistered, clearTelegramMsg };
