@@ -49,7 +49,6 @@ const userSchema = new Schema(
         telegramId: {
             type: String,
             trim: true,
-            unique: true,
             default: '',
         },
         isTelegramVerified: {

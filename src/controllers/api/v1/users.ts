@@ -54,6 +54,10 @@ const loginUser: RequestHandler = async (req, res) => {
     try {
         const user: Type.UserI | null = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
+        if (user.status === 'suspended')
+            return res
+                .status(400)
+                .json({ message: 'Your account has been suspended. Please contact our support team.' });
 
         user.comparePassword(form.password, (_: any, matchPassword: boolean) => {
             const response: { message: string; verifyToken?: string } = {
@@ -128,11 +132,19 @@ const updateUser: RequestHandler = async (req, res) => {
                     (!validator.isEmpty(form.telegramId) && user.telegramId === '') ||
                     (!validator.isEmpty(form.telegramId) && form.telegramId.trim() !== user.telegramId)
                 ) {
+                    if (form.telegramId.trim() !== user.telegramId) {
+                        const userExists: Type.UserI | null = await User.findOne({ telegramId: form.telegramId });
+                        if (userExists && userExists.isTelegramVerified)
+                            return res.status(400).json({ message: `Telegram ${form.telegramId} is already in use.` });
+                    }
+
                     user.telegramId = form.telegramId;
                     user.isTelegramVerified = false;
 
-                    const msg: string = 'Please send /verify to confirm your telegram.';
-                    await bot.telegram.sendMessage(form.telegramId, msg, { parse_mode: 'HTML' });
+                    if (ENV !== 'test') {
+                        const msg: string = 'Please send /verify to confirm your telegram.';
+                        await bot.telegram.sendMessage(form.telegramId, msg, { parse_mode: 'HTML' });
+                    }
                 } else {
                     user.telegramId = '';
                     user.isTelegramVerified = false;
@@ -240,6 +252,8 @@ const resendVerifyEmail: RequestHandler = async (req, res) => {
         if (user.status === 'activated') return res.json({ message: 'Your account is already verified.' });
 
         user.verifyToken = auth.createVerificationToken('email');
+
+        res.json({ message: 'A verification code was sent to your email.' });
     } catch (error) {
         res.status(500).json({
             message: 'Something went wrong with the email verification. Please try again later.',

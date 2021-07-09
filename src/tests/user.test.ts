@@ -3,7 +3,7 @@ import User from '@models/user';
 import jwt from 'jsonwebtoken';
 import request from 'supertest';
 import app from '~/app';
-import { setupDatabase, user1, user2 } from './database/database';
+import { setupDatabase, user1, user2, user3, user5 } from './database/database';
 
 const USER_URL = '/api/users';
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
@@ -205,7 +205,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should NOT verify account - empty email token', async () => {
+    it('Should NOT verify account - invalid email token', async () => {
         const form: Type.SignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
@@ -285,6 +285,18 @@ describe("User's API", () => {
         const response: ResponseMsg = await request(app).post(`${USER_URL}/login`).send(form).expect(403);
         expect(response.body).toMatchObject({
             message: 'Please verify your email first.',
+        });
+    });
+
+    it('Should NOT login existing user - suspended user', async () => {
+        const form: Type.LoginForm = {
+            email: user5.email,
+            password: user5.password,
+        };
+
+        const response: ResponseMsg = await request(app).post(`${USER_URL}/login`).send(form).expect(400);
+        expect(response.body).toMatchObject({
+            message: 'Your account has been suspended. Please contact our support team.',
         });
     });
 
@@ -515,6 +527,30 @@ describe("User's API", () => {
         });
     });
 
+    it("Should update user's profile - telegram id", async () => {
+        const form: Type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
+        const token: string = response.body;
+        const updateUser = <Type.UpdateUserForm>{
+            password: user1.password,
+            email: user1.email,
+            telegramId: '123456',
+        };
+        await request(app)
+            .put(`${USER_URL}/profile`)
+            .send(updateUser)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(200);
+        const user: Type.UserI | null = await User.findById({ _id: user1._id });
+        expect(user).toMatchObject({
+            telegramId: updateUser.telegramId,
+        });
+    });
+
     it("Should NOT update user's profile - user not found", async () => {
         const form: Type.LoginForm = {
             email: user1.email,
@@ -648,6 +684,30 @@ describe("User's API", () => {
             .expect(400);
         expect(response2.body).toMatchObject({
             lastName: 'Last name must not be empty.',
+        });
+    });
+
+    it("Should NOT update user's profile - telegram id already exists.", async () => {
+        const form: Type.LoginForm = {
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
+        const token: string = response.body;
+        const updateUser = <Type.UpdateUserForm>{
+            telegramId: user3.telegramId,
+            email: user1.email,
+            password: user1.password,
+        };
+
+        const response2 = await request(app)
+            .put(`${USER_URL}/profile`)
+            .send(updateUser)
+            .set('Authorization', `Bearer ${token}`)
+            .expect(400);
+        expect(response2.body).toMatchObject({
+            message: `Telegram ${user3.telegramId} is already in use.`,
         });
     });
 
@@ -932,6 +992,14 @@ describe("User's API", () => {
         expect(response2.body).toMatchObject({
             message: 'Wrong password.',
         });
+    });
+
+    it('Should resend email verification', async () => {
+        const response: UserProfile = await request(app)
+            .post(`${USER_URL}/email`)
+            .send({ email: user2.email })
+            .expect(200);
+        expect(response.body).toMatchObject({ message: 'A verification code was sent to your email.' });
     });
 
     it('Should NOT resend email verification - empty email', async () => {

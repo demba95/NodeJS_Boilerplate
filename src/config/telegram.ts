@@ -9,8 +9,9 @@ const bot = new Telegraf(TELEGRAM_BOT_TOKEN);
 const secretPath: string = `/telegram/${bot.secretPathComponent()}`;
 const webhook: string = `${TELEGRAM_WEBHOOK}${secretPath}`;
 
-bot.telegram.setWebhook(webhook);
-
-console.log(`Telegram running on ${webhook}`);
+if (process.env.ENV! !== 'test') {
+    bot.telegram.setWebhook(webhook);
+    console.log(`Telegram running on ${webhook}`);
+}
 
 export { bot, secretPath };

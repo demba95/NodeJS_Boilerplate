@@ -9,13 +9,17 @@ class UserClass {
     email: string;
     password: string;
     status: string;
+    telegramId: string;
+    isTelegramVerified: boolean;
 
     constructor(
         protected readonly _firstName: string,
         _lastName: string,
         _email: string,
         _password: string,
-        _status: string
+        _status: string,
+        _telegramId: string,
+        _isTelegramVerified: boolean
     ) {
         this._id = new ObjectID();
         this.firstName = _firstName;
@@ -23,6 +27,8 @@ class UserClass {
         this.email = _email;
         this.password = _password;
         this.status = _status;
+        this.telegramId = _telegramId;
+        this.isTelegramVerified = _isTelegramVerified;
     }
 }
 
@@ -53,10 +59,52 @@ class ApiClass {
     }
 }
 
-const user1 = new UserClass('User name 1', 'User last name 1', 'your_email_1@test.com', 'test123', 'activated');
-const user2 = new UserClass('User name 2', 'User last name 2', 'your_email_2@test.com', 'test123', 'incomplete');
-const user3 = new UserClass('User name 3', 'User last name 3', 'your_email_3@test.com', 'test123', 'activated');
-const user4 = new UserClass('User name 4', 'User last name 4', 'your_email_4@test.com', 'test123', 'activated');
+const user1 = new UserClass(
+    'User name 1',
+    'User last name 1',
+    'your_email_1@test.com',
+    'test123',
+    'activated',
+    '12345a',
+    true
+);
+const user2 = new UserClass(
+    'User name 2',
+    'User last name 2',
+    'your_email_2@test.com',
+    'test123',
+    'incomplete',
+    '12345b',
+    false
+);
+const user3 = new UserClass(
+    'User name 3',
+    'User last name 3',
+    'your_email_3@test.com',
+    'test123',
+    'activated',
+    '12345c',
+    true
+);
+const user4 = new UserClass(
+    'User name 4',
+    'User last name 4',
+    'your_email_4@test.com',
+    'test123',
+    'activated',
+    '12345d',
+    true
+);
+const user5 = new UserClass(
+    'User name 5',
+    'User last name 5',
+    'your_email_5@test.com',
+    'test123',
+    'suspended',
+    '12345d',
+    true
+);
+
 const user1api1 = new ApiClass(
     'First Api',
     'First api key',
@@ -88,10 +136,11 @@ const setupDatabase = async () => {
     await new User(user2).save();
     await new User(user3).save();
     await new User(user4).save();
+    await new User(user5).save();
     await Api.deleteMany({});
     await new Api(user1api1).save();
     await new Api(user1api2).save();
     await new Api(user3api1).save();
 };
 
-export { user1, user2, user3, user4, user1api1, user1api2, user3api1, setupDatabase };
+export { user1, user2, user3, user4, user5, user1api1, user1api2, user3api1, setupDatabase };

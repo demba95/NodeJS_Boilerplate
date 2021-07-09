@@ -7,7 +7,7 @@ const URL_FRONTEND: string = process.env.URL_FRONTEND!;
 const isTelegramRegistered: Type.IsTelegramRegisteredFn = async (ctx) => {
     try {
         let msg: string = '';
-        const user: Type.UserI | null = await User.findOne({ telegramId: ctx!.from!.id });
+        const user: Type.UserI | null = await User.findOne({ telegramId: ctx!.from!.id.toString() });
         if (!user) {
             msg = `Hello <b>${ctx!.from!.first_name} ${ctx!.from!.last_name}</b>!\
                    \n\
