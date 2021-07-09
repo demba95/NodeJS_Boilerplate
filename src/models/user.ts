@@ -55,6 +55,14 @@ const userSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        loginCount: {
+            type: Number,
+            default: 0,
+        },
+        waitCount: {
+            type: Number,
+            default: 0,
+        },
     },
     {
         timestamps: true,
@@ -78,6 +86,8 @@ userSchema.set('toJSON', {
         delete ret.verifyToken;
         delete ret.status;
         delete ret.admin;
+        delete ret.loginCount;
+        delete ret.waitCount;
         delete ret.createdAt;
         delete ret.updatedAt;
         delete ret.__v;

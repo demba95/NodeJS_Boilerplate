@@ -21,6 +21,8 @@ export interface UserI extends Document {
     telegramId: string;
     isTelegramVerified: boolean;
     comparePassword(password: string, callback: Callback): void;
+    loginCount?: number;
+    waitCount?: Number;
     createdAt?: string;
     updatedAt?: string;
 }

@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import { Context } from 'telegraf';
 import { Obj } from './1_shared';
 import { EmailMsg, User } from './2_types';
@@ -36,6 +37,15 @@ export type JwtAccessFn = {
 
 export type JwtVerifyFn = {
     (mode: string): string;
+};
+
+// _ User
+export type AddTryFn = {
+    (user: UserI, res: Response): void;
+};
+
+export type CheckTimeElapsed = {
+    (user: UserI, res: Response): Promise<boolean>;
 };
 
 // _ Telegram

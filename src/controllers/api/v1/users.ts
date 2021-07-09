@@ -12,6 +12,61 @@ sgMail.setApiKey(process.env.SENDGRID_KEY!);
 
 const JWT_VERIFICATION_SECRET_KEY: string = process.env.JWT_VERIFICATION_SECRET_KEY!;
 const ENV: string = process.env.ENV!;
+const LOGIN_WAIT_TIME: number = 5;
+const LOGIN_MAX_TRY: number = 5;
+
+const addTry: Type.AddTryFn = async (user, res) => {
+    try {
+        const loginCount: number = +user.loginCount! + 1;
+        const waitTime: number = LOGIN_WAIT_TIME * +user.waitCount! * +user.waitCount!;
+
+        user.loginCount = loginCount;
+        if (loginCount > LOGIN_MAX_TRY) user.waitCount = +user.waitCount! + 1;
+        await user.save();
+
+        if (LOGIN_MAX_TRY - user.loginCount! >= 0) {
+            return res.status(400).json({
+                message: `Wrong credentials, you have ${LOGIN_MAX_TRY - loginCount + 1} more tries.`,
+            });
+        }
+
+        if (LOGIN_MAX_TRY - user.loginCount! === -1)
+            return res.status(400).json({
+                message: `Too many unsuccessful tries. Next try you will be blocked for ${LOGIN_WAIT_TIME} mins.`,
+            });
+
+        res.status(400).json({ message: `You have been blocked for ${waitTime} mins.` });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Something went wrong while trying to login. Please try again later or contact our support.',
+        });
+    }
+};
+
+const checkTimeElapsed: Type.CheckTimeElapsed = async (user, res) => {
+    let loginCount: number = +user.loginCount!;
+
+    switch (true) {
+        case loginCount <= LOGIN_MAX_TRY:
+            return true;
+        case loginCount > LOGIN_MAX_TRY:
+            const date: number = new Date().getTime();
+            const updateDate: number = new Date(user.updatedAt!).getTime();
+
+            if ((date - updateDate) / 1000 / 60 >= LOGIN_WAIT_TIME * +user.waitCount! * +user.waitCount!) {
+                user.loginCount = 0;
+                user.waitCount = 0;
+                await user.save();
+                return true;
+            }
+
+            addTry(user, res);
+
+            return false;
+        default:
+            return false;
+    }
+};
 
 const signUpUser: RequestHandler = async (req, res) => {
     const form: Type.SignUpForm = req.body;
@@ -47,7 +102,6 @@ const signUpUser: RequestHandler = async (req, res) => {
 
 const loginUser: RequestHandler = async (req, res) => {
     const form: Type.LoginForm = req.body;
-
     const { valid, errors } = validator.validateUserLogin(form);
     if (!valid) return res.status(400).json(errors);
 
@@ -59,23 +113,25 @@ const loginUser: RequestHandler = async (req, res) => {
                 .status(400)
                 .json({ message: 'Your account has been suspended. Please contact our support team.' });
 
-        user.comparePassword(form.password, (_: any, matchPassword: boolean) => {
-            const response: { message: string; verifyToken?: string } = {
-                message: 'Please verify your email first.',
-            };
-            if (matchPassword) {
-                if (user.status === 'activated') {
-                    const token = auth.createAccessToken(user);
-                    return res.json(token);
+        if (await checkTimeElapsed(user, res)) {
+            user.comparePassword(form.password, (_: any, matchPassword: boolean) => {
+                const response: { message: string; verifyToken?: string } = {
+                    message: 'Please verify your email first.',
+                };
+                if (matchPassword) {
+                    if (user.status === 'activated') {
+                        const token = auth.createAccessToken(user);
+                        return res.json(token);
+                    }
+
+                    if (ENV !== 'production') response.verifyToken = user.verifyToken;
+
+                    return res.status(403).json(response);
+                } else {
+                    addTry(user, res);
                 }
-
-                if (ENV !== 'production') response.verifyToken = user.verifyToken;
-
-                return res.status(403).json(response);
-            }
-
-            res.status(403).json({ message: 'Wrong credentials.' });
-        });
+            });
+        }
     } catch (error) {
         res.status(500).json({
             message: 'Something went wrong while trying to login. Please try again later or contact our support.',
