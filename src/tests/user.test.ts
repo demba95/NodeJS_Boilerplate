@@ -5,10 +5,12 @@ import request from 'supertest';
 import app from '~/app';
 import { setupDatabase, user1, user2, user3, user5 } from './database/database';
 
-const USER_URL = '/api/users';
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
-const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY!;
-const PASSWORD_LEN = process.env.PASSWORD_LEN!;
+const USER_URL: string = '/api/users';
+const JWT_SECRET_KEY: string = process.env.JWT_SECRET_KEY!;
+const JWT_VERIFICATION_SECRET_KEY: string = process.env.JWT_VERIFICATION_SECRET_KEY!;
+const PASSWORD_LEN: number = +process.env.PASSWORD_LEN!;
+const LOGIN_WAIT_TIME: number = +process.env.LOGIN_WAIT_TIME!;
+const LOGIN_MAX_TRY: number = +process.env.LOGIN_MAX_TRY!;
 
 beforeEach(setupDatabase);
 
@@ -288,6 +290,23 @@ describe("User's API", () => {
         });
     });
 
+    it('Should NOT login existing user - temporary ban user', async () => {
+        const form: Type.LoginForm = {
+            email: user1.email,
+            password: user1.password + 'wrong',
+        };
+
+        await request(app).post(`${USER_URL}/login`).send(form).expect(400);
+        await request(app).post(`${USER_URL}/login`).send(form).expect(400);
+        await request(app).post(`${USER_URL}/login`).send(form).expect(400);
+        const response: ResponseMsg = await request(app).post(`${USER_URL}/login`).send(form).expect(400);
+        const user: Type.UserI | null = await User.findOne({ _id: user1._id.toString() });
+        const waitTime: number = LOGIN_WAIT_TIME * (+user!.waitCount! - 1) * (+user!.waitCount! - 1);
+        expect(response.body).toMatchObject({
+            message: `You have been blocked for ${waitTime} mins.`,
+        });
+    });
+
     it('Should NOT login existing user - suspended user', async () => {
         const form: Type.LoginForm = {
             email: user5.email,
@@ -306,9 +325,9 @@ describe("User's API", () => {
             password: user1.password + 'wrong_password',
         };
 
-        const response: ResponseMsg = await request(app).post(`${USER_URL}/login`).send(form).expect(403);
+        const response: ResponseMsg = await request(app).post(`${USER_URL}/login`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            message: 'Wrong credentials.',
+            message: `Wrong credentials, you have ${LOGIN_MAX_TRY} more tries.`,
         });
     });
 

@@ -11,9 +11,9 @@ import jwt from 'jsonwebtoken';
 sgMail.setApiKey(process.env.SENDGRID_KEY!);
 
 const JWT_VERIFICATION_SECRET_KEY: string = process.env.JWT_VERIFICATION_SECRET_KEY!;
+const LOGIN_WAIT_TIME: number = +process.env.LOGIN_WAIT_TIME!;
+const LOGIN_MAX_TRY: number = +process.env.LOGIN_MAX_TRY!;
 const ENV: string = process.env.ENV!;
-const LOGIN_WAIT_TIME: number = 5;
-const LOGIN_MAX_TRY: number = 5;
 
 const addTry: Type.AddTryFn = async (user, res) => {
     try {
