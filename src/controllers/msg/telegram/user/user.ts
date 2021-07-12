@@ -2,7 +2,7 @@ import { bot } from '@config/telegram';
 import * as Type from '@cTypes/types';
 import User from '@models/user';
 import { Markup } from 'telegraf';
-import { isTelegramRegistered } from './1_shared';
+import { isTelegramRegistered } from '../helpers/helpers';
 
 const URL_FRONTEND: string = process.env.URL_FRONTEND!;
 
