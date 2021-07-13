@@ -114,12 +114,17 @@ const loginUser: RequestHandler = async (req, res) => {
                 .json({ message: 'Your account has been suspended. Please contact our support team.' });
 
         if (await checkTimeElapsed(user, res)) {
-            user.comparePassword(form.password, (_: any, matchPassword: boolean) => {
+            user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
                 const response: { message: string; verifyToken?: string } = {
                     message: 'Please verify your email first.',
                 };
                 if (matchPassword) {
                     if (user.status === 'activated') {
+                        if (user.loginCount !== 0 || user.waitCount !== 0) {
+                            user.loginCount = 0;
+                            user.waitCount = 0;
+                            await user.save();
+                        }
                         const token = auth.createAccessToken(user);
                         return res.json(token);
                     }
