@@ -41,6 +41,18 @@ export interface ApiI extends Document {
     updatedAt?: string;
 }
 
+export interface IoTI extends Document {
+    _id: string;
+    name: string;
+    token: string;
+    expiresIn: string;
+    description: string;
+    active: boolean;
+    userId?: mongoose.Types.ObjectId;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 export interface UserJwtI extends User {
     iat: number;
     exp: number;
