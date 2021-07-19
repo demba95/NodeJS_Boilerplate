@@ -5,7 +5,7 @@ import * as validator from '@validator/validator';
 import { RequestHandler } from 'express';
 import { Types } from 'mongoose';
 
-const permittedFields: string[] = ['name', 'key', 'value', 'url', 'active'];
+const permittedFields: string[] = ['name', 'key', 'value', 'url', 'description', 'active'];
 
 const newApi: RequestHandler = async (req, res) => {
     const form: Type.ApiForm = req.body;
@@ -16,7 +16,8 @@ const newApi: RequestHandler = async (req, res) => {
         const api: Type.ApiI | null = await Api.findOne({ name: req.body.name, userId: req.user!._id });
         if (api) return res.status(400).json({ message: 'API already exists.' });
 
-        const newApi = new Api(req.body);
+        delete form._id;
+        const newApi = new Api(form);
         newApi.userId = Types.ObjectId(req.user!._id);
         return res.status(201).json(await newApi.save());
     } catch (error) {
@@ -47,6 +48,7 @@ const getApis: RequestHandler = async (req, res) => {
                     url: api!.url,
                     key: key!.toString(),
                     value: value!.toString(),
+                    description: api!.description,
                 });
             });
         });
@@ -92,7 +94,7 @@ const updateApi: RequestHandler = async (req, res) => {
             name: req.body.name?.trim(),
             userId: req.user!._id,
         });
-        if (apiExists && apiExists._id !== apiId)
+        if (apiExists && apiExists._id.toString() !== apiId)
             return res.status(400).json({ message: 'API name already in use, please use a different name.' });
 
         const api = await Api.findOne({ _id: apiId });
