@@ -1,6 +1,7 @@
 import { bot } from '@config/telegram';
 import * as Type from '@cTypes/types';
 import * as auth from '@middlewares/auth';
+import Api from '@models/api';
 import User from '@models/user';
 import * as email from '@msg/email';
 import sgMail from '@sendgrid/mail';
@@ -206,9 +207,6 @@ const updateUser: RequestHandler = async (req, res) => {
                         const msg: string = 'Please send /verify to confirm your telegram.';
                         await bot.telegram.sendMessage(form.telegramId, msg, { parse_mode: 'HTML' });
                     }
-                } else {
-                    user.telegramId = '';
-                    user.isTelegramVerified = false;
                 }
                 if (user.email !== form.email) {
                     response.message += ` An email has been sent to ${form.email}. Please verify your new email to update your email address.`;
@@ -256,6 +254,7 @@ const deleteUser: RequestHandler = async (req, res) => {
         user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
             if (matchPassword) {
                 await user.remove();
+                await Api.deleteMany({ userId: req.user!._id });
                 return res.json({ message: 'Your account has been deleted.' });
             }
 
