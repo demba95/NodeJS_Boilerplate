@@ -12,33 +12,33 @@ export type User = {
     lastName: string;
 };
 
-export type LoginForm = {
+export type UserLoginForm = {
     _id?: string;
     email: string;
     password: string;
 };
 
-export type DeleteForm = {
+export type UserDeleteForm = {
     password: string;
 };
 
-export type EmailForm = {
+export type UserEmailForm = {
     email: string;
 };
 
-export type PasswordForm = {
+export type UserPasswordForm = {
     password: string;
     confirmPassword?: string;
 };
 
-export type SignUpFormExtra = {
+export type UserSignUpFormExtra = {
     confirmPassword?: string;
     verifyToken?: string;
 };
 
-export type SignUpForm = User & LoginForm & SignUpFormExtra;
+export type UserSignUpForm = User & UserLoginForm & UserSignUpFormExtra;
 
-export type UpdateUserFormExtra = {
+export type UserProfileFormExtra = {
     password: string;
     email: string;
     newPassword: string;
@@ -46,10 +46,9 @@ export type UpdateUserFormExtra = {
     telegramId: string;
 };
 
-export type UpdateUserForm = User & UpdateUserFormExtra;
+export type UserProfileForm = User & UserProfileFormExtra;
 
 // _ API
-
 export type ApiForm = {
     _id?: string;
     name?: string;
@@ -58,4 +57,14 @@ export type ApiForm = {
     value?: string;
     description?: string;
     active?: boolean;
+};
+
+// _ IoT
+export type IoTForm = {
+    _id?: string;
+    name: string;
+    token: string;
+    expiresIn: string;
+    description: string;
+    active: boolean;
 };

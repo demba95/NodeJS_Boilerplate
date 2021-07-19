@@ -3,7 +3,7 @@ import { checkProperty, isEmail } from '@validator/1_shared';
 
 const PASSWORD_LENGTH = +process.env.PASSWORD_LEN!;
 
-const validateUserSignUp: Type.ValidatorFn<Type.SignUpForm> = (data) => {
+const userSignUpForm: Type.ValidatorFn<Type.UserSignUpForm> = (data) => {
     const { email, password, confirmPassword } = data;
     const errors: Type.Obj = {};
 
@@ -30,7 +30,7 @@ const validateUserSignUp: Type.ValidatorFn<Type.SignUpForm> = (data) => {
     };
 };
 
-const validateUserLogin: Type.ValidatorFn<Type.LoginForm> = (data) => {
+const userLoginForm: Type.ValidatorFn<Type.UserLoginForm> = (data) => {
     const { email } = data;
     const errors: Type.Obj = {};
 
@@ -44,7 +44,7 @@ const validateUserLogin: Type.ValidatorFn<Type.LoginForm> = (data) => {
     };
 };
 
-const validateUserUpdate: Type.ValidatorFn<Type.UpdateUserForm> = (data) => {
+const userProfileForm: Type.ValidatorFn<Type.UserProfileForm> = (data) => {
     const { email, newPassword, confirmNewPassword } = data;
     const errors: Type.Obj = {};
     let count = 0;
@@ -85,7 +85,7 @@ const validateUserUpdate: Type.ValidatorFn<Type.UpdateUserForm> = (data) => {
     };
 };
 
-const validateUserPassword: Type.ValidatorFn<Type.PasswordForm> = (data) => {
+const userPasswordForm: Type.ValidatorFn<Type.UserPasswordForm> = (data) => {
     const { password, confirmPassword } = data;
     const errors: Type.Obj = {};
 
@@ -105,7 +105,7 @@ const validateUserPassword: Type.ValidatorFn<Type.PasswordForm> = (data) => {
     };
 };
 
-const validateUserEmail: Type.ValidatorFn<Type.EmailForm> = (data) => {
+const userEmailForm: Type.ValidatorFn<Type.UserEmailForm> = (data) => {
     const { email } = data;
     const errors: Type.Obj = {};
 
@@ -118,4 +118,4 @@ const validateUserEmail: Type.ValidatorFn<Type.EmailForm> = (data) => {
     };
 };
 
-export { validateUserSignUp, validateUserLogin, validateUserUpdate, validateUserPassword, validateUserEmail };
+export { userSignUpForm, userLoginForm, userProfileForm, userPasswordForm, userEmailForm };

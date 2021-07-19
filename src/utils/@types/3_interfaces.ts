@@ -1,10 +1,10 @@
 import mongoose, { Document } from 'mongoose';
 import { Callback } from './1_shared';
-import { LoginForm, SignUpForm, User } from './2_types';
+import { User, UserLoginForm, UserSignUpForm } from './2_types';
 
 declare module 'express-serve-static-core' {
     export interface Request {
-        user?: UserJwtI | LoginForm | SignUpForm;
+        user?: UserJwtI | UserLoginForm | UserSignUpForm;
     }
 }
 

@@ -1,7 +1,7 @@
 import * as Type from '@cTypes/types';
 import { checkProperty } from '@validator/1_shared';
 
-const validateApi: Type.ValidatorFn<Type.ApiForm> = (data) => {
+const apiForm: Type.ValidatorFn<Type.ApiForm> = (data) => {
     const errors: Type.Obj = {};
 
     if (!checkProperty('name', data)) errors.name = 'API name must not be empty.';
@@ -16,4 +16,4 @@ const validateApi: Type.ValidatorFn<Type.ApiForm> = (data) => {
     };
 };
 
-export { validateApi };
+export { apiForm };
