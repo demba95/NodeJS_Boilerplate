@@ -224,10 +224,7 @@ describe("Api's API", () => {
         const response1: LoginResponse = await request(app).post(`${USER_URL}/login`).send(userForm).expect(200);
         const token: string = response1.body;
 
-        const response2 = await request(app)
-            .post(`${API_URL}/apis`)
-            .set('Authorization', `Bearer ${token}`)
-            .expect(200);
+        const response2 = await request(app).get(`${API_URL}`).set('Authorization', `Bearer ${token}`).expect(200);
         expect(response2.body).toHaveLength(2);
     });
 
@@ -239,13 +236,8 @@ describe("Api's API", () => {
         const response1: LoginResponse = await request(app).post(`${USER_URL}/login`).send(userForm).expect(200);
         const token: string = response1.body;
 
-        const response2 = await request(app)
-            .post(`${API_URL}/apis`)
-            .set('Authorization', `Bearer ${token}`)
-            .expect(404);
-        expect(response2.body).toMatchObject({
-            message: "You don't have any APIs",
-        });
+        const response2 = await request(app).get(`${API_URL}`).set('Authorization', `Bearer ${token}`).expect(404);
+        expect(response2.body).toMatchObject({});
     });
 
     it("Should get user's API", async () => {
