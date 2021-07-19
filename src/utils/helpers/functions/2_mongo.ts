@@ -1,4 +1,4 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 
 export const updateDocument: Type.UpdateDocumentFn = (document, body, permittedFields) => {
     permittedFields.forEach((key) => {

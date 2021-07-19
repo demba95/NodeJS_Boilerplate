@@ -1,6 +1,6 @@
 import '@config/database';
 import { bot, secretPath } from '@config/telegram';
-import '@controllers/msg/telegram/telegram';
+import '@controllers/telegram/telegram';
 import apiRoutes from '@routes/apis';
 import userRoutes from '@routes/users';
 import cors from 'cors';

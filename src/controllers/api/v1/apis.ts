@@ -1,7 +1,7 @@
-import * as Type from '@cTypes/types';
-import { updateDocument } from '@fn/fn';
+import { updateDocument } from '@cFunctions';
+import * as Type from '@cTypes';
 import Api from '@models/api';
-import * as validate from '@validator/validator';
+import * as validate from '@validator';
 import { RequestHandler } from 'express';
 import { Types } from 'mongoose';
 

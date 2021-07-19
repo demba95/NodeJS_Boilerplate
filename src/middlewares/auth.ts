@@ -1,11 +1,11 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY!;
-const JWT_SECRET_EXPIRES_IN = process.env.JWT_SECRET_EXPIRES_IN!;
-const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY!;
-const JWT_VERIFICATION_EXPIRES_IN = process.env.JWT_VERIFICATION_EXPIRES_IN!;
+const JWT_SECRET_KEY: string = process.env.JWT_SECRET_KEY!;
+const JWT_SECRET_EXPIRES_IN: string = process.env.JWT_SECRET_EXPIRES_IN!;
+const JWT_VERIFICATION_SECRET_KEY: string = process.env.JWT_VERIFICATION_SECRET_KEY!;
+const JWT_VERIFICATION_EXPIRES_IN: string = process.env.JWT_VERIFICATION_EXPIRES_IN!;
 
 const auth: RequestHandler = (req, res, next) => {
     let token: string = req.get('Authorization') || req.query.token || req.body.token;

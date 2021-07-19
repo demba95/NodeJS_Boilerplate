@@ -1,7 +1,7 @@
-import * as Type from '@cTypes/types';
-import { checkProperty } from '@validator/1_shared';
+import * as Type from '@cTypes';
+import { checkProperty } from './1_shared';
 
-const apiForm: Type.ValidatorFn<Type.ApiForm> = (data) => {
+export const apiForm: Type.ValidatorFn<Type.ApiForm> = (data) => {
     const errors: Type.Obj = {};
 
     if (!checkProperty('name', data)) errors.name = 'API name must not be empty.';
@@ -15,5 +15,3 @@ const apiForm: Type.ValidatorFn<Type.ApiForm> = (data) => {
         valid: Object.keys(errors).length === 0 ? true : false,
     };
 };
-
-export { apiForm };

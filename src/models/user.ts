@@ -1,4 +1,4 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
 

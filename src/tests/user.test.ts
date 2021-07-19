@@ -1,4 +1,4 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 import User from '@models/user';
 import jwt from 'jsonwebtoken';
 import request from 'supertest';

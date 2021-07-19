@@ -1,4 +1,4 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 import CryptoJS from 'crypto-js';
 import mongoose from 'mongoose';
 

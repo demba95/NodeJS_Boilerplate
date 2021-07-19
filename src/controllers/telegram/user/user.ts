@@ -1,8 +1,8 @@
 import { bot } from '@config/telegram';
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 import User from '@models/user';
 import { Markup } from 'telegraf';
-import { isTelegramRegistered } from '../helpers/helpers';
+import { isTelegramRegistered } from '../shared/helpers';
 
 const URL_FRONTEND: string = process.env.URL_FRONTEND!;
 

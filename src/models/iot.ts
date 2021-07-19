@@ -1,4 +1,4 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;

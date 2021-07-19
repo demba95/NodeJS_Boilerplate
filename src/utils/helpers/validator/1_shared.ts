@@ -1,22 +1,20 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 
-const isEmpty: Type.CheckFn<string | undefined> = (value) => {
+export const isEmpty: Type.CheckFn<string | undefined> = (value) => {
     if (value === undefined || (value.length === 0 && value.trim() === '')) return true;
     return false;
 };
 
-const isEmail: Type.CheckFn<string> = (value) => {
+export const isEmail: Type.CheckFn<string> = (value) => {
     const emailRegEx =
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (value && value.match(emailRegEx)) return true;
     return false;
 };
 
-const checkProperty: Type.CheckPropertyFn = (propertyName, data, length) => {
+export const checkProperty: Type.CheckPropertyFn = (propertyName, data, length) => {
     if (!data.hasOwnProperty(propertyName)) return false;
     if (isEmpty(data[propertyName])) return false;
     if (length && data[propertyName].length < length) return false;
     return true;
 };
-
-export { isEmpty, isEmail, checkProperty };

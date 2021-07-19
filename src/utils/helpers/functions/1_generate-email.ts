@@ -1,8 +1,8 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 
-const URL_FRONTEND = process.env.URL_FRONTEND!;
+const URL_FRONTEND: string = process.env.URL_FRONTEND!;
 
-const signUp: Type.EmailFn<Type.UserI, string> = (user, host) => {
+export const userSignUp: Type.EmailFn<Type.UserI, string> = (user, host) => {
     return {
         from: process.env.SENDGRID_EMAIL!,
         to: user.email,
@@ -15,7 +15,7 @@ const signUp: Type.EmailFn<Type.UserI, string> = (user, host) => {
     };
 };
 
-const updateEmail: Type.EmailFn<Type.UserI, string> = (user, host) => {
+export const updateUserEmail: Type.EmailFn<Type.UserI, string> = (user, host) => {
     return {
         from: process.env.SENDGRID_EMAIL!,
         to: user.tempEmail,
@@ -27,7 +27,7 @@ const updateEmail: Type.EmailFn<Type.UserI, string> = (user, host) => {
     };
 };
 
-const resetPassword: Type.EmailFn<Type.UserI, null> = (user) => {
+export const resetUserPassword: Type.EmailFn<Type.UserI, null> = (user) => {
     return {
         from: process.env.SENDGRID_EMAIL!,
         to: user.email,
@@ -41,7 +41,7 @@ const resetPassword: Type.EmailFn<Type.UserI, null> = (user) => {
     };
 };
 
-const updatePassword: Type.EmailFn<Type.UserI, null> = (user) => {
+export const updateUserPassword: Type.EmailFn<Type.UserI, null> = (user) => {
     return {
         from: process.env.SENDGRID_EMAIL!,
         to: user.email,
@@ -52,5 +52,3 @@ const updatePassword: Type.EmailFn<Type.UserI, null> = (user) => {
             `,
     };
 };
-
-export { signUp, updateEmail, resetPassword, updatePassword };

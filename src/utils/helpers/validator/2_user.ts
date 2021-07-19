@@ -1,9 +1,9 @@
-import * as Type from '@cTypes/types';
-import { checkProperty, isEmail } from '@validator/1_shared';
+import * as Type from '@cTypes';
+import { checkProperty, isEmail } from './1_shared';
 
-const PASSWORD_LENGTH = +process.env.PASSWORD_LEN!;
+const PASSWORD_LENGTH: number = +process.env.PASSWORD_LEN!;
 
-const userSignUpForm: Type.ValidatorFn<Type.UserSignUpForm> = (data) => {
+export const userSignUpForm: Type.ValidatorFn<Type.UserSignUpForm> = (data) => {
     const { email, password, confirmPassword } = data;
     const errors: Type.Obj = {};
 
@@ -30,7 +30,7 @@ const userSignUpForm: Type.ValidatorFn<Type.UserSignUpForm> = (data) => {
     };
 };
 
-const userLoginForm: Type.ValidatorFn<Type.UserLoginForm> = (data) => {
+export const userLoginForm: Type.ValidatorFn<Type.UserLoginForm> = (data) => {
     const { email } = data;
     const errors: Type.Obj = {};
 
@@ -44,7 +44,7 @@ const userLoginForm: Type.ValidatorFn<Type.UserLoginForm> = (data) => {
     };
 };
 
-const userProfileForm: Type.ValidatorFn<Type.UserProfileForm> = (data) => {
+export const userProfileForm: Type.ValidatorFn<Type.UserProfileForm> = (data) => {
     const { email, newPassword, confirmNewPassword } = data;
     const errors: Type.Obj = {};
     let count = 0;
@@ -85,7 +85,7 @@ const userProfileForm: Type.ValidatorFn<Type.UserProfileForm> = (data) => {
     };
 };
 
-const userPasswordForm: Type.ValidatorFn<Type.UserPasswordForm> = (data) => {
+export const userPasswordForm: Type.ValidatorFn<Type.UserPasswordForm> = (data) => {
     const { password, confirmPassword } = data;
     const errors: Type.Obj = {};
 
@@ -105,7 +105,7 @@ const userPasswordForm: Type.ValidatorFn<Type.UserPasswordForm> = (data) => {
     };
 };
 
-const userEmailForm: Type.ValidatorFn<Type.UserEmailForm> = (data) => {
+export const userEmailForm: Type.ValidatorFn<Type.UserEmailForm> = (data) => {
     const { email } = data;
     const errors: Type.Obj = {};
 
@@ -117,5 +117,3 @@ const userEmailForm: Type.ValidatorFn<Type.UserEmailForm> = (data) => {
         valid: Object.keys(errors).length === 0 ? true : false,
     };
 };
-
-export { userSignUpForm, userLoginForm, userProfileForm, userPasswordForm, userEmailForm };

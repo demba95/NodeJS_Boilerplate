@@ -1,18 +1,18 @@
-import userCtrlV1 from '@api/v1/users';
-import { auth } from '@middlewares/auth';
+import { auth } from '@auth';
+import userCtr from '@users';
 import { Router } from 'express';
 
 const router: Router = Router();
 
-router.post('/signup', userCtrlV1.signUpUser);
-router.post('/login', userCtrlV1.loginUser);
-router.post('/email', userCtrlV1.resendVerifyEmail);
-router.get('/email/:verifyToken', userCtrlV1.verifyEmail);
-router.post('/password', userCtrlV1.resetPassword);
-router.post('/password/:verifyToken', userCtrlV1.updatePassword);
+router.post('/signup', userCtr.signUpUser);
+router.post('/login', userCtr.loginUser);
+router.post('/email', userCtr.resendVerifyEmail);
+router.get('/email/:verifyToken', userCtr.verifyEmail);
+router.post('/password', userCtr.resetPassword);
+router.post('/password/:verifyToken', userCtr.updatePassword);
 
-router.get('/profile', auth, userCtrlV1.getUser);
-router.put('/profile', auth, userCtrlV1.updateUser);
-router.delete('/profile', auth, userCtrlV1.deleteUser);
+router.get('/profile', auth, userCtr.getUser);
+router.put('/profile', auth, userCtr.updateUser);
+router.delete('/profile', auth, userCtr.deleteUser);
 
 export default router;

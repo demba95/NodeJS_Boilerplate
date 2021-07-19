@@ -1,12 +1,12 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 import Api from '@models/api';
 import CryptoJS from 'crypto-js';
 import request from 'supertest';
 import app from '~/app';
 import { setupDatabase, user1, user1api1, user3api1, user4 } from './database/database';
 
-const USER_URL = '/api/users';
-const API_URL = '/api/apis';
+const USER_URL: string = '/api/users';
+const API_URL: string = '/api/apis';
 const SECRET_KEY_BASE: string = process.env.SECRET_KEY_BASE!;
 
 beforeEach(setupDatabase);

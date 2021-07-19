@@ -1,7 +1,7 @@
-import * as Type from '@cTypes/types';
-import { checkProperty } from '@validator/1_shared';
+import * as Type from '@cTypes';
+import { checkProperty } from './1_shared';
 
-const iotForm: Type.ValidatorFn<Type.IoTForm> = (data) => {
+export const iotForm: Type.ValidatorFn<Type.IoTForm> = (data) => {
     const errors: Type.Obj = {};
 
     if (!checkProperty('name', data)) errors.name = 'Device name must not be empty.';
@@ -13,5 +13,3 @@ const iotForm: Type.ValidatorFn<Type.IoTForm> = (data) => {
         valid: Object.keys(errors).length === 0 ? true : false,
     };
 };
-
-export { iotForm };
