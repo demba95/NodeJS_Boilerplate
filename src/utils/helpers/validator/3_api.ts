@@ -8,7 +8,7 @@ const apiForm: Type.ValidatorFn<Type.ApiForm> = (data) => {
     if (!checkProperty('url', data)) errors.url = 'API URL must not be empty.';
     if (!checkProperty('key', data)) errors.key = 'API key must not be empty.';
     if (!checkProperty('value', data)) errors.value = 'API value must not be empty.';
-    if (!checkProperty('active', data)) errors.active = 'API active must not be empty.';
+    if (!checkProperty('active', data)) errors.active = 'API status must not be empty.';
 
     return {
         errors,

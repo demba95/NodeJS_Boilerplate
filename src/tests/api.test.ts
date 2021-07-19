@@ -184,7 +184,7 @@ describe("Api's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            active: 'API active must not be empty.',
+            active: 'API status must not be empty.',
         });
     });
 
