@@ -1,10 +1,10 @@
 import mongoose, { Document } from 'mongoose';
 import { Callback } from './1_shared';
-import { LoginForm, SignUpForm, User } from './2_types';
+import { User, UserLoginForm, UserSignUpForm } from './2_types';
 
 declare module 'express-serve-static-core' {
     export interface Request {
-        user?: UserJwtI | LoginForm | SignUpForm;
+        user?: UserJwtI | UserLoginForm | UserSignUpForm;
     }
 }
 
@@ -37,6 +37,18 @@ export interface ApiI extends Document {
     active: boolean;
     description: string;
     getKey?(callback: Callback): void;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface IoTI extends Document {
+    _id: string;
+    name: string;
+    token: string;
+    expiresIn: string;
+    description: string;
+    active: boolean;
+    userId?: mongoose.Types.ObjectId;
     createdAt?: string;
     updatedAt?: string;
 }

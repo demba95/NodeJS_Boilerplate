@@ -1,11 +1,11 @@
+import * as auth from '@auth';
+import * as generateEmail from '@cFunctions';
 import { bot } from '@config/telegram';
-import * as Type from '@cTypes/types';
-import * as auth from '@middlewares/auth';
+import * as Type from '@cTypes';
 import Api from '@models/api';
 import User from '@models/user';
-import * as email from '@msg/email';
 import sgMail from '@sendgrid/mail';
-import * as validator from '@validator/validator';
+import * as validate from '@validator';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -70,8 +70,8 @@ const checkTimeElapsed: Type.CheckTimeElapsed = async (user, res) => {
 };
 
 const signUpUser: RequestHandler = async (req, res) => {
-    const form: Type.SignUpForm = req.body;
-    const { valid, errors } = validator.validateUserSignUp(form);
+    const form: Type.UserSignUpForm = req.body;
+    const { valid, errors } = validate.userSignUpForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -87,8 +87,8 @@ const signUpUser: RequestHandler = async (req, res) => {
         await newUser.save();
 
         if (ENV === 'production') {
-            const msg = email.signUp(newUser, req.headers.host!);
-            await sgMail.send(msg);
+            const email = generateEmail.userSignUp(newUser, req.headers.host!);
+            await sgMail.send(email);
         } else {
             response.verifyToken = form.verifyToken;
         }
@@ -102,8 +102,8 @@ const signUpUser: RequestHandler = async (req, res) => {
 };
 
 const loginUser: RequestHandler = async (req, res) => {
-    const form: Type.LoginForm = req.body;
-    const { valid, errors } = validator.validateUserLogin(form);
+    const form: Type.UserLoginForm = req.body;
+    const { valid, errors } = validate.userLoginForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -161,8 +161,8 @@ const getUser: RequestHandler = async (req, res) => {
 };
 
 const updateUser: RequestHandler = async (req, res) => {
-    const form: Type.UpdateUserForm = req.body;
-    const { valid, errors } = validator.validateUserUpdate(form);
+    const form: Type.UserProfileForm = req.body;
+    const { valid, errors } = validate.userProfileForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -191,8 +191,8 @@ const updateUser: RequestHandler = async (req, res) => {
                 if (form.lastName) user.lastName = form.lastName;
                 if (form.newPassword) user.password = form.newPassword;
                 if (
-                    (!validator.isEmpty(form.telegramId) && user.telegramId === '') ||
-                    (!validator.isEmpty(form.telegramId) && form.telegramId.trim() !== user.telegramId)
+                    (!validate.isEmpty(form.telegramId) && user.telegramId === '') ||
+                    (!validate.isEmpty(form.telegramId) && form.telegramId.trim() !== user.telegramId)
                 ) {
                     if (form.telegramId.trim() !== user.telegramId) {
                         const userExists: Type.UserI | null = await User.findOne({ telegramId: form.telegramId });
@@ -216,8 +216,8 @@ const updateUser: RequestHandler = async (req, res) => {
 
                     try {
                         if (ENV === 'production') {
-                            const msg = email.updateEmail(user, req.headers.host!);
-                            await sgMail.send(msg);
+                            const email = generateEmail.updateUserEmail(user, req.headers.host!);
+                            await sgMail.send(email);
                         } else {
                             response.verifyToken = user.verifyToken;
                         }
@@ -243,8 +243,8 @@ const updateUser: RequestHandler = async (req, res) => {
 };
 
 const deleteUser: RequestHandler = async (req, res) => {
-    const form: Type.DeleteForm = req.body;
-    const { valid, errors } = validator.validateUserPassword(form);
+    const form: Type.UserDeleteForm = req.body;
+    const { valid, errors } = validate.userPasswordForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -302,8 +302,8 @@ const verifyEmail: RequestHandler = async (req, res) => {
 };
 
 const resendVerifyEmail: RequestHandler = async (req, res) => {
-    const form: Type.EmailForm = req.body;
-    const { valid, errors } = validator.validateUserEmail(form);
+    const form: Type.UserEmailForm = req.body;
+    const { valid, errors } = validate.userEmailForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -322,8 +322,8 @@ const resendVerifyEmail: RequestHandler = async (req, res) => {
 };
 
 const resetPassword: RequestHandler = async (req, res) => {
-    const form: Type.EmailForm = req.body;
-    const { valid, errors } = validator.validateUserEmail(form);
+    const form: Type.UserEmailForm = req.body;
+    const { valid, errors } = validate.userEmailForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -337,8 +337,8 @@ const resetPassword: RequestHandler = async (req, res) => {
         await user.save();
 
         if (ENV === 'production') {
-            const msg = email.resetPassword(user);
-            await sgMail.send(msg);
+            const email = generateEmail.resetUserPassword(user);
+            await sgMail.send(email);
         } else {
             response.verifyToken = user.verifyToken;
         }
@@ -360,8 +360,8 @@ const updatePassword: RequestHandler = async (req, res) => {
         return res.status(401).json({ message: 'Expired password token.' });
     }
 
-    const form: Type.PasswordForm = req.body;
-    const { valid, errors } = validator.validateUserPassword(form);
+    const form: Type.UserPasswordForm = req.body;
+    const { valid, errors } = validate.userPasswordForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -381,8 +381,8 @@ const updatePassword: RequestHandler = async (req, res) => {
         await user.save();
 
         if (ENV === 'production') {
-            const msg = email.updatePassword(user);
-            await sgMail.send(msg);
+            const email = generateEmail.updateUserPassword(user);
+            await sgMail.send(email);
         }
 
         res.json(response);

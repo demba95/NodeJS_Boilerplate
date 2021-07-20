@@ -1,19 +1,19 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 import Api from '@models/api';
 import CryptoJS from 'crypto-js';
 import request from 'supertest';
 import app from '~/app';
 import { setupDatabase, user1, user1api1, user3api1, user4 } from './database/database';
 
-const USER_URL = '/api/users';
-const API_URL = '/api/apis';
+const USER_URL: string = '/api/users';
+const API_URL: string = '/api/apis';
 const SECRET_KEY_BASE: string = process.env.SECRET_KEY_BASE!;
 
 beforeEach(setupDatabase);
 
 describe("Api's API", () => {
     it('Should create new API', async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -40,7 +40,7 @@ describe("Api's API", () => {
     });
 
     it('Should NOT create new API - api already exists', async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -65,7 +65,7 @@ describe("Api's API", () => {
     });
 
     it('Should NOT create new API - api name is empty', async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -90,7 +90,7 @@ describe("Api's API", () => {
     });
 
     it('Should NOT create new API - api key is empty', async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -115,7 +115,7 @@ describe("Api's API", () => {
     });
 
     it('Should NOT create new API - api value is empty', async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -140,7 +140,7 @@ describe("Api's API", () => {
     });
 
     it('Should NOT create new API - api url is empty', async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -165,7 +165,7 @@ describe("Api's API", () => {
     });
 
     it('Should NOT create new API - api active is empty', async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -184,12 +184,12 @@ describe("Api's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(400);
         expect(response2.body).toMatchObject({
-            active: 'API active must not be empty.',
+            active: 'API status must not be empty.',
         });
     });
 
     it('Should decrypt API key and value', async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -217,7 +217,7 @@ describe("Api's API", () => {
     });
 
     it("Should get user's APIs", async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -229,7 +229,7 @@ describe("Api's API", () => {
     });
 
     it("Should get user's APIs - you don't have apis", async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user4.email,
             password: user4.password,
         };
@@ -241,7 +241,7 @@ describe("Api's API", () => {
     });
 
     it("Should get user's API", async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -263,7 +263,7 @@ describe("Api's API", () => {
     });
 
     it("Should NOT get user's API - api not found", async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -280,7 +280,7 @@ describe("Api's API", () => {
     });
 
     it("Should update user's API", async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -306,7 +306,7 @@ describe("Api's API", () => {
     });
 
     it("Should NOT update user's API - api name already in use", async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -332,7 +332,7 @@ describe("Api's API", () => {
     });
 
     it("Should delete user's API", async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -349,7 +349,7 @@ describe("Api's API", () => {
     });
 
     it("Should NOT delete user's API - api id not found", async () => {
-        const userForm: Type.LoginForm = {
+        const userForm: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -361,7 +361,7 @@ describe("Api's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(404);
         expect(response2.body).toMatchObject({
-            message: 'API Id not found. Please make sure you have entered the correct API Id.',
+            message: 'API Id not found. Please make sure you have entered the correct id.',
         });
     });
 });

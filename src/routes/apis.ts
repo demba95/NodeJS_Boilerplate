@@ -1,13 +1,13 @@
-import apiCtrlV1 from '@api/v1/apis';
-import { auth } from '@middlewares/auth';
+import apiCtrl from '@apis';
+import { auth } from '@auth';
 import { Router } from 'express';
 
 const router: Router = Router();
 
-router.post('/new', auth, apiCtrlV1.newApi);
-router.put('/:id', auth, apiCtrlV1.updateApi);
-router.get('/:id', auth, apiCtrlV1.getApi);
-router.delete('/:id', auth, apiCtrlV1.deleteApi);
-router.get('/', auth, apiCtrlV1.getApis);
+router.post('/new', auth, apiCtrl.newApi);
+router.put('/:id', auth, apiCtrl.updateApi);
+router.get('/:id', auth, apiCtrl.getApi);
+router.delete('/:id', auth, apiCtrl.deleteApi);
+router.get('/', auth, apiCtrl.getApis);
 
 export default router;

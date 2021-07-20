@@ -1,10 +1,10 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 import User from '@models/user';
 
 const TELEGRAM_TIMEOUT_CHAT: number = +process.env.TELEGRAM_TIMEOUT_CHAT!;
 const URL_FRONTEND: string = process.env.URL_FRONTEND!;
 
-const isTelegramRegistered: Type.IsTelegramRegisteredFn = async (ctx) => {
+export const isTelegramRegistered: Type.IsTelegramRegisteredFn = async (ctx) => {
     try {
         let msg: string = '';
         const user: Type.UserI | null = await User.findOne({ telegramId: ctx!.from!.id.toString() });
@@ -39,7 +39,7 @@ const isTelegramRegistered: Type.IsTelegramRegisteredFn = async (ctx) => {
     }
 };
 
-const clearTelegramMsg: Type.ClearTelegramMsgFn = async (chatId, msgId, tg, time = TELEGRAM_TIMEOUT_CHAT) => {
+export const clearTelegramMsg: Type.ClearTelegramMsgFn = async (chatId, msgId, tg, time = TELEGRAM_TIMEOUT_CHAT) => {
     setTimeout(
         () => {
             tg.deleteMessage(chatId, msgId);
@@ -50,5 +50,3 @@ const clearTelegramMsg: Type.ClearTelegramMsgFn = async (chatId, msgId, tg, time
         tg
     );
 };
-
-export { isTelegramRegistered, clearTelegramMsg };

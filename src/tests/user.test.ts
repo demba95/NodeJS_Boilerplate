@@ -1,4 +1,4 @@
-import * as Type from '@cTypes/types';
+import * as Type from '@cTypes';
 import User from '@models/user';
 import jwt from 'jsonwebtoken';
 import request from 'supertest';
@@ -16,7 +16,7 @@ beforeEach(setupDatabase);
 
 describe("User's API", () => {
     it('Should sign up new user', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -33,7 +33,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT sign up new user - existing user/email', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: user1.email,
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -48,7 +48,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT sign up new user - empty first name', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: '',
             lastName: 'That 10',
@@ -63,7 +63,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT sign up new user - empty last name', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
             lastName: '',
@@ -78,7 +78,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT sign up new user - empty email', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: '',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -93,7 +93,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT sign up new user - invalid email', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -108,7 +108,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT sign up new user - empty password', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -124,7 +124,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT sign up new user - password length', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -139,7 +139,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT sign up new user - empty confirm password', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -155,7 +155,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT sign up new user - wrong confirm password', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -170,7 +170,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT sign up new user - empty form', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: '',
             firstName: '',
             lastName: '',
@@ -189,7 +189,7 @@ describe("User's API", () => {
     });
 
     it('Should verify account', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -208,7 +208,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT verify account - invalid email token', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -226,7 +226,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT verify account - empty email token', async () => {
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -244,7 +244,7 @@ describe("User's API", () => {
     it('Should NOT verify account - invalid email token', async () => {
         const expiredVerifyToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoiZW1haWwiLCJpYXQiOjE2MDI2ODg3MjEsImV4cCI6MTYwMzI5MzUyMX0.CWhtDg0BYoaL9sld0hwOd7U12agsXSB-7SZ6XYF9hko';
-        const form: Type.SignUpForm = {
+        const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',
             firstName: 'Roger 10',
             lastName: 'That 10',
@@ -263,7 +263,7 @@ describe("User's API", () => {
     });
 
     it('Should login existing user', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -279,7 +279,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT login existing user - unverified user', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user2.email,
             password: user2.password,
         };
@@ -291,7 +291,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT login existing user - temporary ban user', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password + 'wrong',
         };
@@ -308,7 +308,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT login existing user - suspended user', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user5.email,
             password: user5.password,
         };
@@ -320,7 +320,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT login existing user - wrong password', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password + 'wrong_password',
         };
@@ -332,7 +332,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT login existing user - empty password', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: '',
         };
@@ -344,7 +344,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT login existing user - invalid email', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: 'your_email_10@test',
             password: user1.password,
         };
@@ -356,7 +356,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT login existing user - empty email', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: '',
             password: user1.password,
         };
@@ -368,7 +368,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT login existing user - email not found', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: 'user1@notfound.com',
             password: user1.password,
         };
@@ -392,7 +392,7 @@ describe("User's API", () => {
     });
 
     it("Should fetch user's profile", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -411,7 +411,7 @@ describe("User's API", () => {
     });
 
     it("Should NOT fetch user's profile - user not found", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -448,14 +448,14 @@ describe("User's API", () => {
     });
 
     it("Should update user's profile - first name", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             firstName: 'Roger Update',
             email: user1.email,
             password: user1.password,
@@ -472,14 +472,14 @@ describe("User's API", () => {
     });
 
     it("Should update user's profile - last name", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             lastName: 'That Update',
             email: user1.email,
             password: user1.password,
@@ -496,14 +496,14 @@ describe("User's API", () => {
     });
 
     it("Should update user's profile - password", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             email: user1.email,
             password: user1.password,
             newPassword: '12345678',
@@ -515,7 +515,7 @@ describe("User's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(200);
 
-        const form2: Type.LoginForm = {
+        const form2: Type.UserLoginForm = {
             email: user1.email,
             password: updateUser.newPassword,
         };
@@ -524,14 +524,14 @@ describe("User's API", () => {
     });
 
     it("Should update user's profile - email", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             email: 'your_email_10_update@test.com',
         };
@@ -547,14 +547,14 @@ describe("User's API", () => {
     });
 
     it("Should update user's profile - telegram id", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             email: user1.email,
             telegramId: '123456',
@@ -571,7 +571,7 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - user not found", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -579,7 +579,7 @@ describe("User's API", () => {
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
         await User.findByIdAndDelete(user1._id);
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             firstName: 'new name',
             email: user1.email,
             password: user1.password,
@@ -595,14 +595,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - empty password", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             firstName: 'new name',
             password: '',
         };
@@ -617,14 +617,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - passwords length", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             newPassword: '12',
             confirmNewPassword: '12',
@@ -641,14 +641,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - empty new email", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             email: '',
         };
@@ -663,14 +663,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - empty first name", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             firstName: '',
         };
@@ -685,14 +685,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - empty last name", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             lastName: '',
         };
@@ -707,14 +707,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - telegram id already exists.", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             telegramId: user3.telegramId,
             email: user1.email,
             password: user1.password,
@@ -731,14 +731,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - empty new password", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             newPassword: '',
             confirmNewPassword: '12345678',
@@ -755,14 +755,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - empty confirm new password", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             newPassword: '12345678',
             confirmNewPassword: '',
@@ -779,14 +779,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - passwords not equal", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             newPassword: '12345678',
             confirmNewPassword: '123456789',
@@ -802,14 +802,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - unchanged fields", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
         };
         const response2 = await request(app)
@@ -823,14 +823,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's email - invalid new email", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             email: 'roger@',
         };
@@ -845,14 +845,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's email - email already in use", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password,
             email: user2.email,
         };
@@ -867,14 +867,14 @@ describe("User's API", () => {
     });
 
     it("Should NOT update user's profile - wrong credentials", async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
         const token: string = response.body;
-        const updateUser = <Type.UpdateUserForm>{
+        const updateUser = <Type.UserProfileForm>{
             password: user1.password + 'wrong_password',
             email: 'new_email@email.com',
         };
@@ -889,7 +889,7 @@ describe("User's API", () => {
     });
 
     it('Should delete user/profile', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -907,7 +907,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT delete user/profile - user not found', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -926,7 +926,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT delete user/profile - invalid token', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -941,7 +941,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT delete user/profile - invalid password', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -959,7 +959,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT delete user/profile - empty password', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -978,7 +978,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT delete user/profile - invalid password length', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -996,7 +996,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT delete user/profile - invalid password', async () => {
-        const form: Type.LoginForm = {
+        const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
@@ -1059,7 +1059,7 @@ describe("User's API", () => {
     });
 
     it('Should reset password', async () => {
-        const form: Type.EmailForm = {
+        const form: Type.UserEmailForm = {
             email: user1.email,
         };
 
@@ -1072,7 +1072,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT reset password - not found email', async () => {
-        const form: Type.EmailForm = {
+        const form: Type.UserEmailForm = {
             email: 'not_found' + user1.email,
         };
 
@@ -1083,7 +1083,7 @@ describe("User's API", () => {
     });
 
     it('Should NOT reset password - invalid email', async () => {
-        const form: Type.EmailForm = {
+        const form: Type.UserEmailForm = {
             email: 'invalid@email',
         };
 
@@ -1094,14 +1094,14 @@ describe("User's API", () => {
     });
 
     it('Should update reset password', async () => {
-        const form: Type.EmailForm = {
+        const form: Type.UserEmailForm = {
             email: user1.email,
         };
 
         await request(app).post(`${USER_URL}/password`).send(form).expect(200);
         const user: Type.UserI | null = await User.findById(user1._id);
 
-        const form2: Type.PasswordForm = {
+        const form2: Type.UserPasswordForm = {
             password: '12345678',
             confirmPassword: '12345678',
         };
@@ -1126,14 +1126,14 @@ describe("User's API", () => {
     });
 
     it('Should NOT update reset password - user not found', async () => {
-        const form: Type.EmailForm = {
+        const form: Type.UserEmailForm = {
             email: user1.email,
         };
 
         await request(app).post(`${USER_URL}/password`).send(form).expect(200);
         const user: Type.UserI | null = await User.findById(user1._id);
 
-        const form2: Type.PasswordForm = {
+        const form2: Type.UserPasswordForm = {
             password: '12345678',
             confirmPassword: '12345678',
         };
@@ -1149,14 +1149,14 @@ describe("User's API", () => {
     });
 
     it('Should NOT update reset password - password empty', async () => {
-        const form: Type.EmailForm = {
+        const form: Type.UserEmailForm = {
             email: user1.email,
         };
 
         await request(app).post(`${USER_URL}/password`).send(form).expect(200);
         const user: Type.UserI | null = await User.findById(user1._id);
 
-        const form2: Type.PasswordForm = {
+        const form2: Type.UserPasswordForm = {
             password: '',
             confirmPassword: '12345678',
         };
@@ -1172,14 +1172,14 @@ describe("User's API", () => {
     });
 
     it('Should NOT update reset password - confirm password empty', async () => {
-        const form: Type.EmailForm = {
+        const form: Type.UserEmailForm = {
             email: user1.email,
         };
 
         await request(app).post(`${USER_URL}/password`).send(form).expect(200);
         const user: Type.UserI | null = await User.findById(user1._id);
 
-        const form2: Type.PasswordForm = {
+        const form2: Type.UserPasswordForm = {
             password: '12345678',
             confirmPassword: '',
         };
@@ -1195,14 +1195,14 @@ describe("User's API", () => {
     });
 
     it('Should NOT update reset password - confirm password length', async () => {
-        const form: Type.EmailForm = {
+        const form: Type.UserEmailForm = {
             email: user1.email,
         };
 
         await request(app).post(`${USER_URL}/password`).send(form).expect(200);
         const user: Type.UserI | null = await User.findById(user1._id);
 
-        const form2: Type.PasswordForm = {
+        const form2: Type.UserPasswordForm = {
             password: '12345678',
             confirmPassword: '123',
         };
@@ -1217,14 +1217,14 @@ describe("User's API", () => {
     });
 
     it('Should NOT update reset password - different passwords', async () => {
-        const form: Type.EmailForm = {
+        const form: Type.UserEmailForm = {
             email: user1.email,
         };
 
         await request(app).post(`${USER_URL}/password`).send(form).expect(200);
         const user: Type.UserI | null = await User.findById(user1._id);
 
-        const form2: Type.PasswordForm = {
+        const form2: Type.UserPasswordForm = {
             password: '12345678',
             confirmPassword: '1234',
         };
@@ -1246,7 +1246,7 @@ describe("User's API", () => {
         user!.verifyToken = verifyToken;
         await user!.save();
 
-        const form: Type.PasswordForm = {
+        const form: Type.UserPasswordForm = {
             password: '12345678',
             confirmPassword: '12345678',
         };
@@ -1262,7 +1262,7 @@ describe("User's API", () => {
     it('Should NOT update reset password - invalid token', async () => {
         const verifyToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtb2RlIjoicGFzc3dvcmQiLCJpYXQiOjE2MDQ1MDU1MTgsImV4cCI6MTYwNTExMDMxOH0.PzKZh_9JdxSiLFkUa023Cku99iSTCDgbNjSu2rzO8ac';
-        const form: Type.PasswordForm = {
+        const form: Type.UserPasswordForm = {
             password: '12345678',
             confirmPassword: '12345678',
         };

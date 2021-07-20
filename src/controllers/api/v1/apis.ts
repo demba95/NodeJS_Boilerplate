@@ -1,7 +1,7 @@
-import * as Type from '@cTypes/types';
-import { updateDocument } from '@fn/fn';
+import { updateDocument } from '@cFunctions';
+import * as Type from '@cTypes';
 import Api from '@models/api';
-import * as validator from '@validator/validator';
+import * as validate from '@validator';
 import { RequestHandler } from 'express';
 import { Types } from 'mongoose';
 
@@ -9,7 +9,7 @@ const permittedFields: string[] = ['name', 'key', 'value', 'url', 'description',
 
 const newApi: RequestHandler = async (req, res) => {
     const form: Type.ApiForm = req.body;
-    const { valid, errors } = validator.validateApi(form);
+    const { valid, errors } = validate.apiForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -19,10 +19,11 @@ const newApi: RequestHandler = async (req, res) => {
         delete form._id;
         const newApi = new Api(form);
         newApi.userId = Types.ObjectId(req.user!._id);
-        return res.status(201).json(await newApi.save());
+
+        res.status(201).json(await newApi.save());
     } catch (error) {
         res.status(500).json({
-            message: 'Something went wrong while trying to create a new API. Please try again.',
+            message: 'Something went wrong while trying to create a new api. Please try again.',
         });
     }
 };
@@ -37,7 +38,7 @@ const getApis: RequestHandler = async (req, res) => {
             .skip((page - 1) * docs)
             .limit(docs);
 
-        if (apis.length === 0) return res.status(404).json({ message: "You don't have any APIs" });
+        if (apis.length === 0) return res.status(404).json({ message: "You don't have any api." });
 
         apis.forEach((api) => {
             api.getKey!((key, value) => {
@@ -56,7 +57,7 @@ const getApis: RequestHandler = async (req, res) => {
         res.json(apisArray);
     } catch (error) {
         res.status(500).json({
-            message: 'Something went wrong while getting your APIs. Please try again.',
+            message: 'Something went wrong while getting your apis. Please try again.',
         });
     }
 };
@@ -67,7 +68,7 @@ const getApi: RequestHandler = async (req, res) => {
         if (!api) return res.status(404).json({ message: 'API not found.' });
 
         api.getKey!((key, value) => {
-            return res.json({
+            res.json({
                 _id: api._id,
                 name: api.name,
                 active: api.active,
@@ -78,7 +79,7 @@ const getApi: RequestHandler = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({
-            message: 'Something went wrong while getting your API. Please try again.',
+            message: 'Something went wrong while getting your api. Please try again.',
         });
     }
 };
@@ -86,7 +87,7 @@ const getApi: RequestHandler = async (req, res) => {
 const updateApi: RequestHandler = async (req, res) => {
     const apiId: string = req.params.id!;
     const form: Type.ApiForm = req.body;
-    const { valid, errors } = validator.validateApi(form);
+    const { valid, errors } = validate.apiForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -105,7 +106,7 @@ const updateApi: RequestHandler = async (req, res) => {
         res.json({ message: 'API has been updated successfully.' });
     } catch (error) {
         res.status(500).json({
-            message: 'Something went wrong while updating your API. Please try again.',
+            message: 'Something went wrong while updating your api. Please try again.',
         });
     }
 };
@@ -117,12 +118,10 @@ const deleteApi: RequestHandler = async (req, res) => {
         const deletedApi: Type.ApiI | null = await Api.findOneAndDelete({ _id: apiId, userId: req.user!._id });
         if (deletedApi) return res.json({ message: 'API has been deleted successfully.' });
 
-        return res
-            .status(404)
-            .json({ message: 'API Id not found. Please make sure you have entered the correct API Id.' });
+        res.status(404).json({ message: 'API Id not found. Please make sure you have entered the correct id.' });
     } catch (error) {
         res.status(500).json({
-            message: 'Something went wrong while deleting your API. Please try again.',
+            message: 'Something went wrong while deleting your api. Please try again.',
         });
     }
 };
