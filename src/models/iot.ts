@@ -43,9 +43,10 @@ iotSchema.set('toJSON', {
     transform: function (_: any, ret: Type.IoTI) {
         delete ret.userId;
         delete ret.createdAt;
+        delete ret.updatedAt;
         delete ret.__v;
         return ret;
     },
 });
 
-export default mongoose.model<Type.IoTI>('Api', iotSchema);
+export default mongoose.model<Type.IoTI>('IoT', iotSchema);

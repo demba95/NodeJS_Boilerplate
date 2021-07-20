@@ -67,6 +67,7 @@ apiSchema.set('toJSON', {
     transform: function (_: any, ret: Type.ApiI) {
         delete ret.userId;
         delete ret.createdAt;
+        delete ret.updatedAt;
         delete ret.__v;
         return ret;
     },
