@@ -12,6 +12,7 @@ import jwt from 'jsonwebtoken';
 sgMail.setApiKey(process.env.SENDGRID_KEY!);
 
 const JWT_VERIFICATION_SECRET_KEY: string = process.env.JWT_VERIFICATION_SECRET_KEY!;
+const JWT_VERIFICATION_EXPIRES_IN: number = +process.env.JWT_VERIFICATION_EXPIRES_IN!;
 const LOGIN_WAIT_TIME: number = +process.env.LOGIN_WAIT_TIME!;
 const LOGIN_MAX_TRY: number = +process.env.LOGIN_MAX_TRY!;
 const ENV: string = process.env.ENV!;
@@ -82,7 +83,11 @@ export const signUpUser: RequestHandler = async (req, res) => {
         };
 
         delete form.confirmPassword;
-        form.verifyToken = auth.createVerificationToken('email');
+        form.verifyToken = auth.createVerificationToken(
+            'email',
+            JWT_VERIFICATION_SECRET_KEY,
+            JWT_VERIFICATION_EXPIRES_IN
+        );
         const newUser: Type.UserI = new User(form);
         await newUser.save();
 
@@ -211,7 +216,11 @@ export const updateUser: RequestHandler = async (req, res) => {
                 if (user.email !== form.email) {
                     response.message += ` An email has been sent to ${form.email}. Please verify your new email to update your email address.`;
                     user.tempEmail = form.email;
-                    user.verifyToken = auth.createVerificationToken('email');
+                    user.verifyToken = auth.createVerificationToken(
+                        'email',
+                        JWT_VERIFICATION_SECRET_KEY,
+                        JWT_VERIFICATION_EXPIRES_IN
+                    );
                     await user.save();
 
                     try {
@@ -311,7 +320,11 @@ export const resendVerifyEmail: RequestHandler = async (req, res) => {
         if (!user) return res.status(404).json({ message: 'Email not found.' });
         if (user.status === 'activated') return res.json({ message: 'Your account is already verified.' });
 
-        user.verifyToken = auth.createVerificationToken('email');
+        user.verifyToken = auth.createVerificationToken(
+            'email',
+            JWT_VERIFICATION_SECRET_KEY,
+            JWT_VERIFICATION_EXPIRES_IN
+        );
 
         res.json({ message: 'A verification code was sent to your email.' });
     } catch (error) {
@@ -333,7 +346,11 @@ export const resetPassword: RequestHandler = async (req, res) => {
             message: 'Please check your email to reset your password.',
         };
 
-        user.verifyToken = auth.createVerificationToken('password');
+        user.verifyToken = auth.createVerificationToken(
+            'password',
+            JWT_VERIFICATION_SECRET_KEY,
+            JWT_VERIFICATION_EXPIRES_IN
+        );
         await user.save();
 
         if (ENV === 'production') {

@@ -36,7 +36,7 @@ export type JwtAccessFn = {
 };
 
 export type JwtVerifyFn = {
-    (mode: string): string;
+    (mode: string, secretKey: string, expiresIn: number): string;
 };
 
 // _ User

@@ -4,8 +4,6 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET_KEY: string = process.env.JWT_SECRET_KEY!;
 const JWT_SECRET_EXPIRES_IN: string = process.env.JWT_SECRET_EXPIRES_IN!;
-const JWT_VERIFICATION_SECRET_KEY: string = process.env.JWT_VERIFICATION_SECRET_KEY!;
-const JWT_VERIFICATION_EXPIRES_IN: string = process.env.JWT_VERIFICATION_EXPIRES_IN!;
 
 const auth: RequestHandler = (req, res, next) => {
     let token: string = req.get('Authorization') || req.query.token || req.body.token;
@@ -30,10 +28,14 @@ const createAccessToken: Type.JwtAccessFn = (user) => {
     });
 };
 
-const createVerificationToken: Type.JwtVerifyFn = (mode) => {
-    return jwt.sign({ mode }, JWT_VERIFICATION_SECRET_KEY, {
-        expiresIn: JWT_VERIFICATION_EXPIRES_IN,
-    });
+const createVerificationToken: Type.JwtVerifyFn = (mode, secretKey, expiresIn) => {
+    if (expiresIn > 0) {
+        return jwt.sign({ mode }, secretKey, {
+            expiresIn: `${expiresIn}d`,
+        });
+    } else {
+        return jwt.sign({ mode }, secretKey);
+    }
 };
 
 export { auth, createAccessToken, createVerificationToken };

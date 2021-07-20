@@ -92,7 +92,7 @@ export const updateApi: RequestHandler = async (req, res) => {
 
     try {
         const apiExists: Type.ApiI | null = await Api.findOne({
-            name: req.body.name?.trim(),
+            name: req.body.name!.trim(),
             userId: req.user!._id,
         });
         if (apiExists && apiExists._id.toString() !== apiId)
