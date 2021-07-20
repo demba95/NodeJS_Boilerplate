@@ -7,7 +7,7 @@ import { Types } from 'mongoose';
 
 const permittedFields: string[] = ['name', 'key', 'value', 'url', 'description', 'active'];
 
-const newApi: RequestHandler = async (req, res) => {
+export const newApi: RequestHandler = async (req, res) => {
     const form: Type.ApiForm = req.body;
     const { valid, errors } = validate.apiForm(form);
     if (!valid) return res.status(400).json(errors);
@@ -28,10 +28,10 @@ const newApi: RequestHandler = async (req, res) => {
     }
 };
 
-const getApis: RequestHandler = async (req, res) => {
+export const getApis: RequestHandler = async (req, res) => {
     try {
-        const page: number = parseInt(req.body.page, 10) || 1;
-        const docs: number = parseInt(req.body.docs, 10) || 30;
+        const page: number = +req.query.page! || 1;
+        const docs: number = +req.query.docs! || 30;
         const apisArray: Type.ApiForm[] = [];
 
         const apis: Type.ApiI[] = await Api.find({ userId: req.user!._id })
@@ -62,7 +62,7 @@ const getApis: RequestHandler = async (req, res) => {
     }
 };
 
-const getApi: RequestHandler = async (req, res) => {
+export const getApi: RequestHandler = async (req, res) => {
     try {
         const api: Type.ApiI | null = await Api.findOne({ _id: req.params.id, userId: req.user!._id });
         if (!api) return res.status(404).json({ message: 'API not found.' });
@@ -84,7 +84,7 @@ const getApi: RequestHandler = async (req, res) => {
     }
 };
 
-const updateApi: RequestHandler = async (req, res) => {
+export const updateApi: RequestHandler = async (req, res) => {
     const apiId: string = req.params.id!;
     const form: Type.ApiForm = req.body;
     const { valid, errors } = validate.apiForm(form);
@@ -111,7 +111,7 @@ const updateApi: RequestHandler = async (req, res) => {
     }
 };
 
-const deleteApi: RequestHandler = async (req, res) => {
+export const deleteApi: RequestHandler = async (req, res) => {
     const apiId: string = req.params.id!;
 
     try {
@@ -124,12 +124,4 @@ const deleteApi: RequestHandler = async (req, res) => {
             message: 'Something went wrong while deleting your api. Please try again.',
         });
     }
-};
-
-export default {
-    newApi,
-    getApi,
-    getApis,
-    updateApi,
-    deleteApi,
 };

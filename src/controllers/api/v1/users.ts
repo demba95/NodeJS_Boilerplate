@@ -16,7 +16,7 @@ const LOGIN_WAIT_TIME: number = +process.env.LOGIN_WAIT_TIME!;
 const LOGIN_MAX_TRY: number = +process.env.LOGIN_MAX_TRY!;
 const ENV: string = process.env.ENV!;
 
-const addTry: Type.AddTryFn = async (user, res) => {
+export const addTry: Type.AddTryFn = async (user, res) => {
     try {
         const loginCount: number = +user.loginCount! + 1;
         const waitTime: number = LOGIN_WAIT_TIME * +user.waitCount! * +user.waitCount!;
@@ -44,7 +44,7 @@ const addTry: Type.AddTryFn = async (user, res) => {
     }
 };
 
-const checkTimeElapsed: Type.CheckTimeElapsed = async (user, res) => {
+export const checkTimeElapsed: Type.CheckTimeElapsed = async (user, res) => {
     let loginCount: number = +user.loginCount!;
 
     switch (true) {
@@ -69,7 +69,7 @@ const checkTimeElapsed: Type.CheckTimeElapsed = async (user, res) => {
     }
 };
 
-const signUpUser: RequestHandler = async (req, res) => {
+export const signUpUser: RequestHandler = async (req, res) => {
     const form: Type.UserSignUpForm = req.body;
     const { valid, errors } = validate.userSignUpForm(form);
     if (!valid) return res.status(400).json(errors);
@@ -101,7 +101,7 @@ const signUpUser: RequestHandler = async (req, res) => {
     }
 };
 
-const loginUser: RequestHandler = async (req, res) => {
+export const loginUser: RequestHandler = async (req, res) => {
     const form: Type.UserLoginForm = req.body;
     const { valid, errors } = validate.userLoginForm(form);
     if (!valid) return res.status(400).json(errors);
@@ -145,7 +145,7 @@ const loginUser: RequestHandler = async (req, res) => {
     }
 };
 
-const getUser: RequestHandler = async (req, res) => {
+export const getUser: RequestHandler = async (req, res) => {
     try {
         const user: Type.UserI | null = await User.findOne({
             _id: req.user!._id,
@@ -160,7 +160,7 @@ const getUser: RequestHandler = async (req, res) => {
     }
 };
 
-const updateUser: RequestHandler = async (req, res) => {
+export const updateUser: RequestHandler = async (req, res) => {
     const form: Type.UserProfileForm = req.body;
     const { valid, errors } = validate.userProfileForm(form);
     if (!valid) return res.status(400).json(errors);
@@ -242,7 +242,7 @@ const updateUser: RequestHandler = async (req, res) => {
     }
 };
 
-const deleteUser: RequestHandler = async (req, res) => {
+export const deleteUser: RequestHandler = async (req, res) => {
     const form: Type.UserDeleteForm = req.body;
     const { valid, errors } = validate.userPasswordForm(form);
     if (!valid) return res.status(400).json(errors);
@@ -267,7 +267,7 @@ const deleteUser: RequestHandler = async (req, res) => {
     }
 };
 
-const verifyEmail: RequestHandler = async (req, res) => {
+export const verifyEmail: RequestHandler = async (req, res) => {
     const token: string = req.params.verifyToken!;
 
     try {
@@ -301,7 +301,7 @@ const verifyEmail: RequestHandler = async (req, res) => {
     }
 };
 
-const resendVerifyEmail: RequestHandler = async (req, res) => {
+export const resendVerifyEmail: RequestHandler = async (req, res) => {
     const form: Type.UserEmailForm = req.body;
     const { valid, errors } = validate.userEmailForm(form);
     if (!valid) return res.status(400).json(errors);
@@ -321,7 +321,7 @@ const resendVerifyEmail: RequestHandler = async (req, res) => {
     }
 };
 
-const resetPassword: RequestHandler = async (req, res) => {
+export const resetPassword: RequestHandler = async (req, res) => {
     const form: Type.UserEmailForm = req.body;
     const { valid, errors } = validate.userEmailForm(form);
     if (!valid) return res.status(400).json(errors);
@@ -351,7 +351,7 @@ const resetPassword: RequestHandler = async (req, res) => {
     }
 };
 
-const updatePassword: RequestHandler = async (req, res) => {
+export const updatePassword: RequestHandler = async (req, res) => {
     const token: string = req.params.verifyToken!;
 
     try {
@@ -391,16 +391,4 @@ const updatePassword: RequestHandler = async (req, res) => {
             message: 'Something went wrong with the email verification. Please try again later.',
         });
     }
-};
-
-export default {
-    signUpUser,
-    loginUser,
-    getUser,
-    updateUser,
-    deleteUser,
-    verifyEmail,
-    resendVerifyEmail,
-    resetPassword,
-    updatePassword,
 };

@@ -1,4 +1,4 @@
-import apiCtrl from '@apis';
+import * as apiCtrl from '@apis';
 import { auth } from '@auth';
 import { Router } from 'express';
 
@@ -8,6 +8,6 @@ router.post('/new', auth, apiCtrl.newApi);
 router.put('/:id', auth, apiCtrl.updateApi);
 router.get('/:id', auth, apiCtrl.getApi);
 router.delete('/:id', auth, apiCtrl.deleteApi);
-router.get('/', auth, apiCtrl.getApis);
+router.post('/', auth, apiCtrl.getApis);
 
 export default router;

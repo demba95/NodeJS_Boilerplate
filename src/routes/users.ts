@@ -1,18 +1,18 @@
 import { auth } from '@auth';
-import userCtr from '@users';
+import * as userCtrl from '@users';
 import { Router } from 'express';
 
 const router: Router = Router();
 
-router.post('/signup', userCtr.signUpUser);
-router.post('/login', userCtr.loginUser);
-router.post('/email', userCtr.resendVerifyEmail);
-router.get('/email/:verifyToken', userCtr.verifyEmail);
-router.post('/password', userCtr.resetPassword);
-router.post('/password/:verifyToken', userCtr.updatePassword);
+router.post('/signup', userCtrl.signUpUser);
+router.post('/login', userCtrl.loginUser);
+router.post('/email', userCtrl.resendVerifyEmail);
+router.get('/email/:verifyToken', userCtrl.verifyEmail);
+router.post('/password', userCtrl.resetPassword);
+router.post('/password/:verifyToken', userCtrl.updatePassword);
 
-router.get('/profile', auth, userCtr.getUser);
-router.put('/profile', auth, userCtr.updateUser);
-router.delete('/profile', auth, userCtr.deleteUser);
+router.get('/profile', auth, userCtrl.getUser);
+router.put('/profile', auth, userCtrl.updateUser);
+router.delete('/profile', auth, userCtrl.deleteUser);
 
 export default router;

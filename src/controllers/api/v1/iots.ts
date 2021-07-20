@@ -7,7 +7,7 @@ import { Types } from 'mongoose';
 
 const permittedFields: string[] = ['name', 'key', 'value', 'url', 'description', 'active'];
 
-const newIoT: RequestHandler = async (req, res) => {
+export const newIoT: RequestHandler = async (req, res) => {
     const form: Type.IoTForm = req.body;
     const { valid, errors } = validate.iotForm(form);
     if (!valid) return res.status(400).json(errors);
@@ -28,11 +28,10 @@ const newIoT: RequestHandler = async (req, res) => {
     }
 };
 
-const getIoTs: RequestHandler = async (req, res) => {
+export const getIoTs: RequestHandler = async (req, res) => {
     try {
-        const page: number = parseInt(req.body.page, 10) || 1;
-        const docs: number = parseInt(req.body.docs, 10) || 30;
-        const iotsArray: Type.IoTForm[] = [];
+        const page: number = +req.body.page! || 1;
+        const docs: number = +req.body.docs! || 30;
 
         const iots: Type.IoTI[] = await IoT.find({ userId: req.user!._id })
             .skip((page - 1) * docs)
@@ -40,7 +39,7 @@ const getIoTs: RequestHandler = async (req, res) => {
 
         if (iots.length === 0) return res.status(404).json({ message: "You don't have any device" });
 
-        res.json(iotsArray);
+        res.json(iots);
     } catch (error) {
         res.status(500).json({
             message: 'Something went wrong while getting your devices. Please try again.',
@@ -48,7 +47,7 @@ const getIoTs: RequestHandler = async (req, res) => {
     }
 };
 
-const getIoT: RequestHandler = async (req, res) => {
+export const getIoT: RequestHandler = async (req, res) => {
     try {
         const iot: Type.IoTI | null = await IoT.findOne({ _id: req.params.id, userId: req.user!._id });
         if (!iot) return res.status(404).json({ message: 'Device not found.' });
@@ -61,7 +60,7 @@ const getIoT: RequestHandler = async (req, res) => {
     }
 };
 
-const updateIoT: RequestHandler = async (req, res) => {
+export const updateIoT: RequestHandler = async (req, res) => {
     const iotId: string = req.params.id!;
     const form: Type.IoTForm = req.body;
     const { valid, errors } = validate.iotForm(form);
@@ -88,7 +87,7 @@ const updateIoT: RequestHandler = async (req, res) => {
     }
 };
 
-const deleteIoT: RequestHandler = async (req, res) => {
+export const deleteIoT: RequestHandler = async (req, res) => {
     const iotId: string = req.params.id!;
 
     try {
@@ -101,12 +100,4 @@ const deleteIoT: RequestHandler = async (req, res) => {
             message: 'Something went wrong while deleting your device. Please try again.',
         });
     }
-};
-
-export default {
-    newIoT,
-    getIoT,
-    getIoTs,
-    updateIoT,
-    deleteIoT,
 };
