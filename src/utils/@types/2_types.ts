@@ -64,7 +64,7 @@ export type IoTForm = {
     _id?: string;
     name: string;
     token: string;
-    expiresIn: string;
+    expiresIn: number;
     description: string;
     active: boolean;
 };

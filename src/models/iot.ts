@@ -13,12 +13,13 @@ const iotSchema = new Schema(
         },
         token: {
             type: String,
-            required: true,
+            default: '',
             trim: true,
         },
         expiresIn: {
-            type: String,
-            trim: true,
+            type: Number,
+            min: 0,
+            default: 0,
         },
         description: {
             type: String,

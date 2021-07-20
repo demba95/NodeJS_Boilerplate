@@ -1,3 +1,4 @@
+import * as auth from '@auth';
 import { updateDocument } from '@cFunctions';
 import * as Type from '@cTypes';
 import IoT from '@models/iot';
@@ -5,7 +6,8 @@ import * as validate from '@validator';
 import { RequestHandler } from 'express';
 import { Types } from 'mongoose';
 
-const permittedFields: string[] = ['name', 'key', 'value', 'url', 'description', 'active'];
+const JWT_IOT_SECRET_KEY: string = process.env.JWT_IOT_SECRET_KEY!;
+const permittedFields: string[] = ['name', 'expiresIn', 'description', 'active'];
 
 export const newIoT: RequestHandler = async (req, res) => {
     const form: Type.IoTForm = req.body;
@@ -18,6 +20,8 @@ export const newIoT: RequestHandler = async (req, res) => {
 
         delete form._id;
         const newIoT = new IoT(form);
+        const days: number = +form.expiresIn || 0;
+        newIoT.token = auth.createVerificationToken('device', JWT_IOT_SECRET_KEY, days);
         newIoT.userId = Types.ObjectId(req.user!._id);
 
         res.status(201).json(await newIoT.save());
@@ -68,7 +72,7 @@ export const updateIoT: RequestHandler = async (req, res) => {
 
     try {
         const iotExists: Type.IoTI | null = await IoT.findOne({
-            name: req.body.name?.trim(),
+            name: req.body.name!.trim(),
             userId: req.user!._id,
         });
         if (iotExists && iotExists._id.toString() !== iotId)
@@ -76,10 +80,12 @@ export const updateIoT: RequestHandler = async (req, res) => {
 
         const iot = await IoT.findOne({ _id: iotId });
         if (!iot) return res.status(404).json({ message: 'Device not found.' });
+        if (form.hasOwnProperty('expiresIn') && +form.expiresIn !== +iot.expiresIn)
+            iot.token = auth.createVerificationToken('device', JWT_IOT_SECRET_KEY, +form.expiresIn);
         updateDocument(iot, req.body, permittedFields);
         await iot.save();
 
-        res.json({ message: 'Device has been updated successfully.' });
+        res.json({ message: 'Device has been updated successfully.', data: iot });
     } catch (error) {
         res.status(500).json({
             message: 'Something went wrong while updating your device. Please try again.',
