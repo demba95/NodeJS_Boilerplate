@@ -3,7 +3,7 @@ import Api from '@models/api';
 import CryptoJS from 'crypto-js';
 import request from 'supertest';
 import app from '~/app';
-import { setupDatabase, user1, user1api1, user3api1, user4 } from './database/database';
+import { setupDatabase, user1, user1api1, user1api2, user3api1 } from './database/database';
 import { getLoginToken } from './helpers/helpers';
 
 const API_URL: string = '/api/apis';
@@ -36,7 +36,7 @@ describe("Api's API", () => {
     it('Should NOT create new API - api already exists', async () => {
         const token: string = await getLoginToken(user1);
         const apiForm: Type.ApiForm = {
-            name: 'First Api',
+            name: 'Api 1, User 1',
             key: '123456789',
             value: 'asdfg',
             url: 'http://firstapi.com',
@@ -74,7 +74,7 @@ describe("Api's API", () => {
     it('Should NOT create new API - api key is empty', async () => {
         const token: string = await getLoginToken(user1);
         const apiForm: Type.ApiForm = {
-            name: 'First Api',
+            name: 'Api 1, User 1',
             key: '',
             value: 'asdfg',
             url: 'http://firstapi.com',
@@ -93,7 +93,7 @@ describe("Api's API", () => {
     it('Should NOT create new API - api value is empty', async () => {
         const token: string = await getLoginToken(user1);
         const apiForm: Type.ApiForm = {
-            name: 'First Api',
+            name: 'Api 1, User 1',
             key: '123456789',
             value: '',
             url: 'http://firstapi.com',
@@ -112,7 +112,7 @@ describe("Api's API", () => {
     it('Should NOT create new API - api url is empty', async () => {
         const token: string = await getLoginToken(user1);
         const apiForm: Type.ApiForm = {
-            name: 'First Api',
+            name: 'Api 1, User 1',
             key: '123456789',
             value: 'asdfg',
             url: '',
@@ -131,7 +131,7 @@ describe("Api's API", () => {
     it('Should NOT create new API - api active is empty', async () => {
         const token: string = await getLoginToken(user1);
         const apiForm: Type.ApiForm = {
-            name: 'First Api',
+            name: 'Api 1, User 1',
             key: '123456789',
             value: 'asdfg',
             url: 'http://firstapi.com',
@@ -170,14 +170,8 @@ describe("Api's API", () => {
 
     it("Should get user's APIs", async () => {
         const token: string = await getLoginToken(user1);
-        const response = await request(app).get(`${API_URL}`).set('Authorization', `Bearer ${token}`).expect(200);
+        const response = await request(app).post(`${API_URL}`).set('Authorization', `Bearer ${token}`).expect(200);
         expect(response.body).toHaveLength(2);
-    });
-
-    it("Should get user's APIs - you don't have apis", async () => {
-        const token: string = await getLoginToken(user4);
-        const response = await request(app).get(`${API_URL}`).set('Authorization', `Bearer ${token}`).expect(404);
-        expect(response.body).toMatchObject({});
     });
 
     it("Should get user's API", async () => {
@@ -210,9 +204,9 @@ describe("Api's API", () => {
     it("Should update user's API", async () => {
         const token: string = await getLoginToken(user1);
         const apiForm: Type.ApiForm = {
-            name: 'Api 1 Updated',
-            key: 'Api 1 key Updated',
-            value: 'Api 1 value Updated',
+            name: 'Api 1, User 1 Updated',
+            key: 'Api key 1, User 1 Updated',
+            value: 'Api value 1, User 1 Updated',
             url: 'www.rogertakeshita.com',
             active: true,
         };
@@ -230,9 +224,9 @@ describe("Api's API", () => {
     it("Should NOT update user's API - api name already in use", async () => {
         const token: string = await getLoginToken(user1);
         const apiForm: Type.ApiForm = {
-            name: 'Second Api',
-            key: 'Api 1 key Updated',
-            value: 'Api 1 value Updated',
+            name: user1api2.name,
+            key: 'Api key 1, User 1 Updated',
+            value: 'Api value 1, User 1 Updated',
             url: 'www.rogertakeshita.com',
             active: true,
         };

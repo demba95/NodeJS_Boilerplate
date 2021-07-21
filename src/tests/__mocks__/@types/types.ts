@@ -21,6 +21,16 @@ export type ApiObj = {
     userId: mongoose.Types.ObjectId;
 };
 
+export type IoTObj = {
+    _id: mongoose.Types.ObjectId;
+    name: string;
+    token: string;
+    expiresIn: number;
+    description: string;
+    active: boolean;
+    userId: mongoose.Types.ObjectId;
+};
+
 export type LoginResponse = {
     body: string;
 };
