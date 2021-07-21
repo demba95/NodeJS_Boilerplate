@@ -1,134 +1,126 @@
+import * as auth from '@auth';
 import Api from '@models/api';
+import IoT from '@models/iot';
 import User from '@models/user';
-import { ObjectID } from 'mongodb';
+import mongoose from 'mongoose';
+import * as TestType from '../__mocks__/@types/types';
 
-class UserClass {
-    _id: ObjectID;
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    status: string;
-    telegramId: string;
-    isTelegramVerified: boolean;
+const JWT_IOT_SECRET_KEY: string = process.env.JWT_IOT_SECRET_KEY!;
 
-    constructor(
-        protected readonly _firstName: string,
-        _lastName: string,
-        _email: string,
-        _password: string,
-        _status: string,
-        _telegramId: string,
-        _isTelegramVerified: boolean
-    ) {
-        this._id = new ObjectID();
-        this.firstName = _firstName;
-        this.lastName = _lastName;
-        this.email = _email;
-        this.password = _password;
-        this.status = _status;
-        this.telegramId = _telegramId;
-        this.isTelegramVerified = _isTelegramVerified;
-    }
-}
+const user1: TestType.UserObj = {
+    _id: mongoose.Types.ObjectId(),
+    firstName: 'User name 1',
+    lastName: 'User last name 1',
+    email: 'your_email_1@test.com',
+    password: 'test123',
+    status: 'activated',
+    telegramId: '12345a',
+    isTelegramVerified: true,
+};
 
-class ApiClass {
-    _id: ObjectID;
-    userId: ObjectID;
-    name: string;
-    key: string;
-    value: string;
-    url: string;
-    active: boolean;
+const user2: TestType.UserObj = {
+    _id: mongoose.Types.ObjectId(),
+    firstName: 'User name 2',
+    lastName: 'User last name 2',
+    email: 'your_email_2@test.com',
+    password: 'test123',
+    status: 'incomplete',
+    telegramId: '12345b',
+    isTelegramVerified: false,
+};
 
-    constructor(
-        protected readonly _name: string,
-        _key: string,
-        _value: string,
-        _url: string,
-        _active: boolean,
-        _userId: ObjectID
-    ) {
-        this._id = new ObjectID();
-        this.name = _name;
-        this.key = _key;
-        this.value = _value;
-        this.url = _url;
-        this.active = _active;
-        this.userId = _userId;
-    }
-}
+const user3: TestType.UserObj = {
+    _id: mongoose.Types.ObjectId(),
+    firstName: 'User name 3',
+    lastName: 'User last name 3',
+    email: 'your_email_3@test.com',
+    password: 'test123',
+    status: 'activated',
+    telegramId: '12345c',
+    isTelegramVerified: true,
+};
 
-const user1 = new UserClass(
-    'User name 1',
-    'User last name 1',
-    'your_email_1@test.com',
-    'test123',
-    'activated',
-    '12345a',
-    true
-);
-const user2 = new UserClass(
-    'User name 2',
-    'User last name 2',
-    'your_email_2@test.com',
-    'test123',
-    'incomplete',
-    '12345b',
-    false
-);
-const user3 = new UserClass(
-    'User name 3',
-    'User last name 3',
-    'your_email_3@test.com',
-    'test123',
-    'activated',
-    '12345c',
-    true
-);
-const user4 = new UserClass(
-    'User name 4',
-    'User last name 4',
-    'your_email_4@test.com',
-    'test123',
-    'activated',
-    '12345d',
-    true
-);
-const user5 = new UserClass(
-    'User name 5',
-    'User last name 5',
-    'your_email_5@test.com',
-    'test123',
-    'suspended',
-    '12345d',
-    true
-);
+const user4: TestType.UserObj = {
+    _id: mongoose.Types.ObjectId(),
+    firstName: 'User name 4',
+    lastName: 'User last name 4',
+    email: 'your_email_4@test.com',
+    password: 'test123',
+    status: 'activated',
+    telegramId: '12345d',
+    isTelegramVerified: true,
+};
 
-const user1api1 = new ApiClass(
-    'First Api',
-    'First api key',
-    'First secret value',
-    'www.rogertakeshita.com',
-    true,
-    user1._id
-);
-const user1api2 = new ApiClass(
-    'Second Api',
-    'Second api key',
-    'Second secret value',
-    'www.rogertakeshita.com',
-    false,
-    user1._id
-);
-const user3api1 = new ApiClass(
-    'Third Api',
-    'Third api key',
-    'Third secret value',
-    'www.rogertakeshita.com',
-    true,
-    user3._id
-);
+const user5: TestType.UserObj = {
+    _id: mongoose.Types.ObjectId(),
+    firstName: 'User name 5',
+    lastName: 'User last name 5',
+    email: 'your_email_5@test.com',
+    password: 'test123',
+    status: 'suspended',
+    telegramId: '12345e',
+    isTelegramVerified: true,
+};
+
+const user1api1: TestType.ApiObj = {
+    _id: mongoose.Types.ObjectId(),
+    name: 'Api 1, User 1',
+    key: 'Api key 1, User 1',
+    value: 'Api secret value 1, User 1',
+    url: 'www.rogertakeshita.com',
+    active: true,
+    userId: user1._id,
+};
+
+const user1api2: TestType.ApiObj = {
+    _id: mongoose.Types.ObjectId(),
+    name: 'Api 2, User 1',
+    key: 'Api key 2, User 1',
+    value: 'Api secret value 2, User 1',
+    url: 'www.rogertakeshita.com',
+    active: false,
+    userId: user1._id,
+};
+
+const user3api1: TestType.ApiObj = {
+    _id: mongoose.Types.ObjectId(),
+    name: 'Api 1, User 3',
+    key: 'Api key 1, User 3',
+    value: 'Api secret value 1, User 3',
+    url: 'www.rogertakeshita.com',
+    active: true,
+    userId: user3._id,
+};
+
+const user1iot1: TestType.IoTObj = {
+    _id: mongoose.Types.ObjectId(),
+    name: 'IoT 1, User 1',
+    token: auth.createVerificationToken('device', JWT_IOT_SECRET_KEY, 7),
+    expiresIn: 7,
+    description: 'IoT description 1, User 1',
+    active: true,
+    userId: user1._id,
+};
+
+const user1iot2: TestType.IoTObj = {
+    _id: mongoose.Types.ObjectId(),
+    name: 'IoT 2, User 1',
+    token: auth.createVerificationToken('device', JWT_IOT_SECRET_KEY, 7),
+    expiresIn: 7,
+    description: 'IoT description 2, User 1',
+    active: false,
+    userId: user1._id,
+};
+
+const user3iot1: TestType.IoTObj = {
+    _id: mongoose.Types.ObjectId(),
+    name: 'IoT 1, User 3',
+    token: auth.createVerificationToken('device', JWT_IOT_SECRET_KEY, 7),
+    expiresIn: 7,
+    description: 'IoT description 1, User 3',
+    active: true,
+    userId: user3._id,
+};
 
 const setupDatabase = async () => {
     await User.deleteMany({});
@@ -141,6 +133,23 @@ const setupDatabase = async () => {
     await new Api(user1api1).save();
     await new Api(user1api2).save();
     await new Api(user3api1).save();
+    await IoT.deleteMany({});
+    await new IoT(user1iot1).save();
+    await new IoT(user1iot2).save();
+    await new IoT(user3iot1).save();
 };
 
-export { user1, user2, user3, user4, user5, user1api1, user1api2, user3api1, setupDatabase };
+export {
+    user1,
+    user2,
+    user3,
+    user4,
+    user5,
+    user1api1,
+    user1api2,
+    user3api1,
+    user1iot1,
+    user1iot2,
+    user3iot1,
+    setupDatabase,
+};

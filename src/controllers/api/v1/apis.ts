@@ -38,8 +38,6 @@ export const getApis: RequestHandler = async (req, res) => {
             .skip((page - 1) * docs)
             .limit(docs);
 
-        if (apis.length === 0) return res.status(404).json({ message: "You don't have any api." });
-
         apis.forEach((api) => {
             api.getKey!((key, value) => {
                 apisArray.push({

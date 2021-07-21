@@ -41,8 +41,6 @@ export const getIoTs: RequestHandler = async (req, res) => {
             .skip((page - 1) * docs)
             .limit(docs);
 
-        if (iots.length === 0) return res.status(404).json({ message: "You don't have any device" });
-
         res.json(iots);
     } catch (error) {
         res.status(500).json({
