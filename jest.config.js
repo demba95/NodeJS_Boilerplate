@@ -16,6 +16,7 @@ module.exports = {
         '@controllers/(.*)': '<rootDir>/src/controllers/$1',
         '@apis': '<rootDir>/src/controllers/api/v1/apis.ts',
         '@iots': '<rootDir>/src/controllers/api/v1/iots.ts',
+        '@iotDevices': '<rootDir>/src/controllers/api/v1/iot-devices.ts',
         '@users': '<rootDir>/src/controllers/api/v1/users.ts',
         '@middlewares/(.*)': '<rootDir>/src/middlewares/$1',
         '@auth': '<rootDir>/src/middlewares/auth.ts',

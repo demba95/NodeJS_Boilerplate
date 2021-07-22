@@ -19,9 +19,10 @@ export const newIoT: RequestHandler = async (req, res) => {
         if (iot) return res.status(400).json({ message: 'Device already exists.' });
 
         delete form._id;
+        console.log(form);
         const newIoT = new IoT(form);
         const days: number = +form.expiresIn || 0;
-        newIoT.token = auth.createVerificationToken('device', {}, JWT_IOT_SECRET_KEY, days);
+        newIoT.token = auth.createVerificationToken('device', { _id: newIoT._id }, JWT_IOT_SECRET_KEY, days);
         newIoT.userId = Types.ObjectId(req.user!._id);
 
         res.status(201).json(await newIoT.save());
@@ -79,7 +80,7 @@ export const updateIoT: RequestHandler = async (req, res) => {
         const iot = await IoT.findOne({ _id: iotId });
         if (!iot) return res.status(404).json({ message: 'Device not found.' });
         if (form.hasOwnProperty('expiresIn') && +form.expiresIn !== +iot.expiresIn)
-            iot.token = auth.createVerificationToken('device', {}, JWT_IOT_SECRET_KEY, +form.expiresIn);
+            iot.token = auth.createVerificationToken('device', { _id: iot._id }, JWT_IOT_SECRET_KEY, +form.expiresIn);
         updateDocument(iot, req.body, permittedFields);
         await iot.save();
 

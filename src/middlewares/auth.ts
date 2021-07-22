@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 
 const JWT_SECRET_KEY: string = process.env.JWT_SECRET_KEY!;
 const JWT_SECRET_EXPIRES_IN: string = process.env.JWT_SECRET_EXPIRES_IN!;
+const JWT_IOT_SECRET_KEY: string = process.env.JWT_IOT_SECRET_KEY!;
 
 const auth: RequestHandler = (req, res, next) => {
     let token: string = req.get('Authorization') || req.query.token || req.body.token;
@@ -13,6 +14,23 @@ const auth: RequestHandler = (req, res, next) => {
             token = token.replace('Bearer ', '');
             const user = <Type.UserJwtI>jwt.verify(token, JWT_SECRET_KEY);
             req.user = user;
+            next();
+        } else {
+            res.status(401).json({ message: 'Token not found.' });
+        }
+    } catch (error) {
+        return res.status(401).json({ message: 'Not authorized, invalid token.' });
+    }
+};
+
+const authIoT: RequestHandler = (req, res, next) => {
+    let token: string = req.get('Authorization') || req.query.token || req.body.token;
+
+    try {
+        if (token) {
+            token = token.replace('Bearer ', '');
+            const iot = <Type.IoTJwtI>jwt.verify(token, JWT_IOT_SECRET_KEY);
+            req.iot = iot;
             next();
         } else {
             res.status(401).json({ message: 'Token not found.' });
@@ -40,4 +58,4 @@ const createVerificationToken: Type.JwtVerifyFn = (mode, attrs = {}, secretKey, 
     }
 };
 
-export { auth, createAccessToken, createVerificationToken };
+export { auth, authIoT, createAccessToken, createVerificationToken };
