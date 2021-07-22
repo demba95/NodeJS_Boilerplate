@@ -28,13 +28,15 @@ const createAccessToken: Type.JwtAccessFn = (user) => {
     });
 };
 
-const createVerificationToken: Type.JwtVerifyFn = (mode, secretKey, expiresIn) => {
+const createVerificationToken: Type.JwtVerifyFn = (mode, attrs = {}, secretKey, expiresIn) => {
+    attrs[mode] = mode;
+
     if (expiresIn > 0) {
-        return jwt.sign({ mode }, secretKey, {
+        return jwt.sign(attrs, secretKey, {
             expiresIn: `${expiresIn}d`,
         });
     } else {
-        return jwt.sign({ mode }, secretKey);
+        return jwt.sign(attrs, secretKey);
     }
 };
 
