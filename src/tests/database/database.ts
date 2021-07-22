@@ -95,7 +95,7 @@ const user3api1: TestType.ApiObj = {
 const user1iot1: TestType.IoTObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'IoT 1, User 1',
-    token: auth.createVerificationToken('device', JWT_IOT_SECRET_KEY, 7),
+    token: auth.createVerificationToken('device', {}, JWT_IOT_SECRET_KEY, 7),
     expiresIn: 7,
     description: 'IoT description 1, User 1',
     active: true,
@@ -105,7 +105,7 @@ const user1iot1: TestType.IoTObj = {
 const user1iot2: TestType.IoTObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'IoT 2, User 1',
-    token: auth.createVerificationToken('device', JWT_IOT_SECRET_KEY, 7),
+    token: auth.createVerificationToken('device', {}, JWT_IOT_SECRET_KEY, 7),
     expiresIn: 7,
     description: 'IoT description 2, User 1',
     active: false,
@@ -115,7 +115,7 @@ const user1iot2: TestType.IoTObj = {
 const user3iot1: TestType.IoTObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'IoT 1, User 3',
-    token: auth.createVerificationToken('device', JWT_IOT_SECRET_KEY, 7),
+    token: auth.createVerificationToken('device', {}, JWT_IOT_SECRET_KEY, 7),
     expiresIn: 7,
     description: 'IoT description 1, User 3',
     active: true,

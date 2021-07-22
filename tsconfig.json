@@ -23,6 +23,7 @@
             "@controllers/*": ["./controllers/*"],
             "@apis": ["./controllers/api/v1/apis.ts"],
             "@iots": ["./controllers/api/v1/iots.ts"],
+            "@iotDevices": ["./controllers/api/v1/iot-devices.ts"],
             "@users": ["./controllers/api/v1/users.ts"],
             "@middlewares/*": ["./middlewares/*"],
             "@auth": ["./middlewares/auth.ts"],

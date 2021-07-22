@@ -85,6 +85,7 @@ export const signUpUser: RequestHandler = async (req, res) => {
         delete form.confirmPassword;
         form.verifyToken = auth.createVerificationToken(
             'email',
+            {},
             JWT_VERIFICATION_SECRET_KEY,
             JWT_VERIFICATION_EXPIRES_IN
         );
@@ -218,6 +219,7 @@ export const updateUser: RequestHandler = async (req, res) => {
                     user.tempEmail = form.email;
                     user.verifyToken = auth.createVerificationToken(
                         'email',
+                        {},
                         JWT_VERIFICATION_SECRET_KEY,
                         JWT_VERIFICATION_EXPIRES_IN
                     );
@@ -322,6 +324,7 @@ export const resendVerifyEmail: RequestHandler = async (req, res) => {
 
         user.verifyToken = auth.createVerificationToken(
             'email',
+            {},
             JWT_VERIFICATION_SECRET_KEY,
             JWT_VERIFICATION_EXPIRES_IN
         );
@@ -348,6 +351,7 @@ export const resetPassword: RequestHandler = async (req, res) => {
 
         user.verifyToken = auth.createVerificationToken(
             'password',
+            {},
             JWT_VERIFICATION_SECRET_KEY,
             JWT_VERIFICATION_EXPIRES_IN
         );

@@ -1,6 +1,13 @@
 import mongoose, { Document } from 'mongoose';
 import { Callback } from './1_shared';
-import { User, UserLoginForm, UserSignUpForm } from './2_types';
+import { IoTForm, User, UserLoginForm, UserSignUpForm } from './2_types';
+
+declare module 'express-serve-static-core' {
+    export interface Request {
+        user?: UserJwtI | UserLoginForm | UserSignUpForm;
+        iot?: IoTJwtI | IoTForm;
+    }
+}
 
 declare module 'express-serve-static-core' {
     export interface Request {
@@ -56,4 +63,9 @@ export interface IoTI extends Document {
 export interface UserJwtI extends User {
     iat: number;
     exp: number;
+}
+
+export interface IoTJwtI extends IoTForm {
+    iat: number;
+    exp?: number;
 }
