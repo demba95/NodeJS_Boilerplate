@@ -14,12 +14,15 @@ export const newDevice: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const device: Type.DeviceI = await Device.findOne({ name: req.body.name, userId: req.user!._id });
+        const device: Type.DeviceI = await Device.findOne({
+            name: form.name,
+            userId: req.user!._id,
+        });
         if (device) return res.status(400).json({ message: 'Device already exists.' });
 
         delete form._id;
         const newDevice = new Device(form);
-        const days: number = +form.expiresIn || 0;
+        const days: number = +form.expiresIn! || 0;
         newDevice.token = auth.createCustomToken(
             'device',
             { _id: newDevice._id, userId: req.user!._id },
@@ -31,16 +34,16 @@ export const newDevice: RequestHandler = async (req, res) => {
         res.status(201).json(await newDevice.save());
     } catch (error) {
         res.status(500).json({
-            message: 'Something went wrong while trying to create a new device. Please try again.',
+            message: 'Something went wrong while creating a new device. Please try again.',
         });
     }
 };
 
 export const getDevices: RequestHandler = async (req, res) => {
-    try {
-        const page: number = +req.body.page! || 1;
-        const docs: number = +req.body.docs! || 30;
+    const page: number = +req.body.page! || 1;
+    const docs: number = +req.body.docs! || 30;
 
+    try {
         const devices: Type.DeviceI[] = await Device.find({ userId: req.user!._id })
             .skip((page - 1) * docs)
             .limit(docs);
@@ -54,8 +57,10 @@ export const getDevices: RequestHandler = async (req, res) => {
 };
 
 export const getDevice: RequestHandler = async (req, res) => {
+    const deviceId: string = req.params.id!;
+
     try {
-        const device: Type.DeviceI = await Device.findOne({ _id: req.params.id, userId: req.user!._id });
+        const device: Type.DeviceI = await Device.findOne({ _id: deviceId, userId: req.user!._id });
         if (!device) return res.status(404).json({ message: 'Device not found.' });
 
         res.json(device);
@@ -82,12 +87,12 @@ export const updateDevice: RequestHandler = async (req, res) => {
 
         const device = await Device.findById(iotId);
         if (!device) return res.status(404).json({ message: 'Device not found.' });
-        if (form.hasOwnProperty('expiresIn') && +form.expiresIn !== +device.expiresIn)
+        if (form.hasOwnProperty('expiresIn') && +form.expiresIn! !== +device.expiresIn)
             device.token = auth.createCustomToken(
                 'device',
                 { _id: device._id, userId: req.user!._id },
                 JWT_DEVICE_SECRET_KEY,
-                +form.expiresIn
+                +form.expiresIn!
             );
         updateDocument(device, req.body, permittedFields);
         await device.save();
@@ -104,7 +109,10 @@ export const deleteDevice: RequestHandler = async (req, res) => {
     const iotId: string = req.params.id!;
 
     try {
-        const deletedIoT: Type.DeviceI = await Device.findOneAndDelete({ _id: iotId, userId: req.user!._id });
+        const deletedIoT: Type.DeviceI = await Device.findOneAndDelete({
+            _id: iotId,
+            userId: req.user!._id,
+        });
         if (deletedIoT) return res.json({ message: 'Device has been deleted successfully.' });
 
         res.status(404).json({ message: 'Device Id not found. Please make sure you have entered the correct id.' });

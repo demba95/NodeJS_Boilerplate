@@ -7,7 +7,7 @@ export const DeviceForm: Type.ValidatorFn<Type.DeviceForm> = (data) => {
 
     if (!checkProperty('name', data)) errors.name = 'Device name must not be empty.';
     if (!checkProperty('active', data)) errors.active = 'Device status must not be empty.';
-    if (data.hasOwnProperty('expiresIn') && isNaN(+expiresIn))
+    if (data.hasOwnProperty('expiresIn') && isNaN(+expiresIn!))
         errors.expiresIn = 'Device expiration must be an integer.';
     return {
         errors,

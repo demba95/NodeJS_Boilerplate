@@ -12,7 +12,10 @@ export const newApi: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const api: Type.ApiI = await Api.findOne({ name: req.body.name, userId: req.user!._id });
+        const api: Type.ApiI = await Api.findOne({
+            name: form.name,
+            userId: req.user!._id,
+        });
         if (api) return res.status(400).json({ message: 'API already exists.' });
 
         delete form._id;
@@ -28,11 +31,11 @@ export const newApi: RequestHandler = async (req, res) => {
 };
 
 export const getApis: RequestHandler = async (req, res) => {
-    try {
-        const page: number = +req.query.page! || 1;
-        const docs: number = +req.query.docs! || 30;
-        const apisArray: Type.ApiForm[] = [];
+    const page: number = +req.query.page! || 1;
+    const docs: number = +req.query.docs! || 30;
+    const apisArray: Type.ApiForm[] = [];
 
+    try {
         const apis: Type.ApiI[] = await Api.find({ userId: req.user!._id })
             .skip((page - 1) * docs)
             .limit(docs);
@@ -60,8 +63,13 @@ export const getApis: RequestHandler = async (req, res) => {
 };
 
 export const getApi: RequestHandler = async (req, res) => {
+    const apiId: string = req.params.id!;
+
     try {
-        const api: Type.ApiI = await Api.findOne({ _id: req.params.id, userId: req.user!._id });
+        const api: Type.ApiI = await Api.findOne({
+            _id: apiId,
+            userId: req.user!._id,
+        });
         if (!api) return res.status(404).json({ message: 'API not found.' });
 
         api.getKey!((key, value) => {
@@ -112,7 +120,10 @@ export const deleteApi: RequestHandler = async (req, res) => {
     const apiId: string = req.params.id!;
 
     try {
-        const deletedApi: Type.ApiI = await Api.findOneAndDelete({ _id: apiId, userId: req.user!._id });
+        const deletedApi: Type.ApiI = await Api.findOneAndDelete({
+            _id: apiId,
+            userId: req.user!._id,
+        });
         if (deletedApi) return res.json({ message: 'API has been deleted successfully.' });
 
         res.status(404).json({ message: 'API Id not found. Please make sure you have entered the correct id.' });

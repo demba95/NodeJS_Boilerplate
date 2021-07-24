@@ -121,7 +121,7 @@ describe("Device's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(200);
         expect(response.body.data).toMatchObject({
-            name: form.name.toLowerCase(),
+            name: form.name!.toLowerCase(),
             expiresIn: form.expiresIn,
             description: form.description,
             active: form.active,

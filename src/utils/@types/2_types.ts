@@ -64,12 +64,12 @@ export type ApiForm = {
 // _ Device
 export type DeviceForm = {
     _id?: string;
-    name: string;
-    token: string;
-    expiresIn: number;
-    description: string;
-    active: boolean;
-    notify: boolean;
+    name?: string;
+    token?: string;
+    expiresIn?: number;
+    description?: string;
+    active?: boolean;
+    notify?: boolean;
     userId?: string;
 };
 
