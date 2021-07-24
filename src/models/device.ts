@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-const iotSchema = new Schema(
+const deviceSchema = new Schema(
     {
         name: {
             type: String,
@@ -44,8 +44,8 @@ const iotSchema = new Schema(
     }
 );
 
-iotSchema.set('toJSON', {
-    transform: function (_: any, ret: Type.IoTI) {
+deviceSchema.set('toJSON', {
+    transform: function (_: any, ret: Type.DeviceI) {
         delete ret.userId;
         delete ret.createdAt;
         delete ret.updatedAt;
@@ -54,4 +54,4 @@ iotSchema.set('toJSON', {
     },
 });
 
-export default mongoose.model<Type.IoTI>('IoT', iotSchema);
+export default mongoose.model<Type.DeviceI>('Device', deviceSchema);

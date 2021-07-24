@@ -61,8 +61,8 @@ export type ApiForm = {
     active?: boolean;
 };
 
-// _ IoT
-export type IoTForm = {
+// _ Device
+export type DeviceForm = {
     _id?: string;
     name: string;
     token: string;
@@ -74,7 +74,7 @@ export type IoTForm = {
 };
 
 // _ IoT Device
-export type IoTData = {
+export type IoTDeviceData = {
     data: Obj;
     notify?: boolean;
 };

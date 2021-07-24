@@ -1,7 +1,7 @@
 import * as Type from '@cTypes';
 import { checkProperty } from './1_shared';
 
-export const iotForm: Type.ValidatorFn<Type.IoTForm> = (data) => {
+export const DeviceForm: Type.ValidatorFn<Type.DeviceForm> = (data) => {
     const { expiresIn } = data;
     const errors: Type.Obj = {};
 

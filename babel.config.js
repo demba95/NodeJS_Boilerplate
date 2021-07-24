@@ -20,7 +20,7 @@ module.exports = {
                     '@controllers': './src/controllers',
                     '@telegram': './src/controllers/telegram/shared',
                     '@apis': './src/controllers/api/v1',
-                    '@iots': './src/controllers/api/v1',
+                    '@devices': './src/controllers/api/v1',
                     '@iotDevices': './src/controllers/api/v1',
                     '@users': './src/controllers/api/v1',
                     '@middlewares': './src/middlewares',

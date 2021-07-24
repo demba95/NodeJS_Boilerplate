@@ -21,7 +21,7 @@ export type ApiObj = {
     userId: mongoose.Types.ObjectId;
 };
 
-export type IoTObj = {
+export type DeviceObj = {
     _id: mongoose.Types.ObjectId;
     name: string;
     token: string;

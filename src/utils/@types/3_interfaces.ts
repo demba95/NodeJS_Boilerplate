@@ -1,11 +1,11 @@
 import mongoose, { Document } from 'mongoose';
 import { Callback } from './1_shared';
-import { IoTForm, User, UserLoginForm, UserSignUpForm } from './2_types';
+import { DeviceForm, User, UserLoginForm, UserSignUpForm } from './2_types';
 
 declare module 'express-serve-static-core' {
     export interface Request {
         user?: UserJwtI | UserLoginForm | UserSignUpForm;
-        iot?: IoTJwtI | IoTForm;
+        device?: DeviceI | DeviceForm;
     }
 }
 
@@ -48,7 +48,7 @@ export interface ApiI extends Document {
     updatedAt?: string;
 }
 
-export interface IoTI extends Document {
+export interface DeviceI extends Document {
     _id: string;
     name: string;
     token: string;
@@ -66,7 +66,7 @@ export interface UserJwtI extends User {
     exp: number;
 }
 
-export interface IoTJwtI extends IoTForm {
+export interface DeviceJwtI extends DeviceForm {
     iat: number;
     exp?: number;
 }

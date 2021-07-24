@@ -1,26 +1,29 @@
 import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
-import IoT from '@models/iot';
+import Device from '@models/device';
 import User from '@models/user';
 import { clearTelegramMsg } from '@telegram/helpers';
 import { RequestHandler } from 'express';
 
 export const notify: RequestHandler = async (req, res) => {
     try {
-        const { data, notify }: Type.IoTData = req.body;
+        const { data, notify }: Type.IoTDeviceData = req.body;
 
         if (notify) {
-            const iot: Type.IoTI | null = await IoT.findOne({ _id: req.iot!._id, userId: req.iot!.userId });
-            if (!iot) return res.status(404).json({ message: 'Device not found.' });
+            const device: Type.DeviceI | null = await Device.findOne({
+                _id: req.device!._id,
+                userId: req.device!.userId,
+            });
+            if (!device) return res.status(404).json({ message: 'Device not found.' });
 
-            const user: Type.UserI | null = await User.findOne({ _id: req.iot!.userId });
+            const user: Type.UserI | null = await User.findById(req.device!.userId);
             if (!user) return res.status(404).json({ message: 'User not found.' });
 
             if (user!.telegramId.length === 0)
                 return res.status(400).json({ message: 'No telegram Id associated to your account.' });
             if (!user!.isTelegramVerified) return res.status(400).json({ message: 'Telegram not verified.' });
 
-            const msg: string = `<b>Device:</b> ${iot.name.toUpperCase()}\
+            const msg: string = `<b>Device:</b> ${device.name.toUpperCase()}\
                                 \n\
                                 \n   <u>Msg:</u> ${data.message}`;
             const { message_id: msgId }: any = await bot.telegram.sendMessage(user!.telegramId, msg, {
