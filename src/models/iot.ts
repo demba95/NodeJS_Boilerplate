@@ -29,6 +29,10 @@ const iotSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        notify: {
+            type: Boolean,
+            default: false,
+        },
         userId: {
             type: Schema.Types.ObjectId,
             ref: 'User',

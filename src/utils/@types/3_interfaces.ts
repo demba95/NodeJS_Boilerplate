@@ -55,6 +55,7 @@ export interface IoTI extends Document {
     expiresIn: number;
     description: string;
     active: boolean;
+    notify: boolean;
     userId?: mongoose.Types.ObjectId;
     createdAt?: string;
     updatedAt?: string;

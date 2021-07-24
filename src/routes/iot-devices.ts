@@ -4,6 +4,6 @@ import { Router } from 'express';
 
 const router: Router = Router();
 
-router.post('/arduino', authIoT, iotDeviceCtrl.newMessage);
+router.post('/arduino', authIoT, iotDeviceCtrl.notify);
 
 export default router;

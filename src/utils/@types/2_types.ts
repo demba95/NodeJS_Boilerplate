@@ -1,3 +1,5 @@
+import { Obj } from './1_shared';
+
 export type EmailMsg = {
     from: string;
     to: string;
@@ -67,4 +69,12 @@ export type IoTForm = {
     expiresIn: number;
     description: string;
     active: boolean;
+    notify: boolean;
+    userId?: string;
+};
+
+// _ IoT Device
+export type IoTData = {
+    data: Obj;
+    notify?: boolean;
 };
