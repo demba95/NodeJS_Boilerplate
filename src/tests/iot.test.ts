@@ -17,6 +17,7 @@ describe("IoT's API", () => {
             expiresIn: 0,
             description: 'IoT description',
             active: true,
+            notify: true,
         };
         const response = await request(app)
             .post(`${IOT_URL}/new`)
@@ -39,6 +40,7 @@ describe("IoT's API", () => {
             expiresIn: 0,
             description: 'IoT description',
             active: true,
+            notify: true,
         };
         const response = await request(app)
             .post(`${IOT_URL}/new`)
@@ -58,6 +60,7 @@ describe("IoT's API", () => {
             expiresIn: 0,
             description: 'IoT description',
             active: true,
+            notify: true,
         };
         const response = await request(app)
             .post(`${IOT_URL}/new`)
@@ -109,6 +112,7 @@ describe("IoT's API", () => {
             expiresIn: 3,
             description: 'IoT description, User 1 Updated',
             active: true,
+            notify: true,
         };
 
         const response = await request(app)
@@ -132,6 +136,7 @@ describe("IoT's API", () => {
             expiresIn: 3,
             description: 'IoT description, User 1 Updated',
             active: true,
+            notify: true,
         };
 
         const response = await request(app)
