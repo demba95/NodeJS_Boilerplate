@@ -21,7 +21,7 @@
             "~/*": ["./*"],
             "@config/*": ["./config/*"],
             "@controllers/*": ["./controllers/*"],
-            "@telegram/*": ["./controllers/telegram/shared/*"],
+            "@telegram-helper": ["./controllers/telegram/shared/helper.ts"],
             "@api": ["./controllers/api/v1/api.ts"],
             "@device": ["./controllers/api/v1/device.ts"],
             "@iot-device": ["./controllers/api/v1/iot-device.ts"],

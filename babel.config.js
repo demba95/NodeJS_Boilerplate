@@ -18,7 +18,7 @@ module.exports = {
                     '~': './src',
                     '@config': './src/config',
                     '@controllers': './src/controllers',
-                    '@telegram': './src/controllers/telegram/shared',
+                    '@telegram-helper': './src/controllers/telegram/shared',
                     '@api': './src/controllers/api/v1',
                     '@device': './src/controllers/api/v1',
                     '@iot-device': './src/controllers/api/v1',

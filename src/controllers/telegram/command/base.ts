@@ -1,8 +1,8 @@
 import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import User from '@models/user';
+import * as telegramHelper from '@telegram-helper';
 import { Markup } from 'telegraf';
-import { deleteMsg, getUserFromMsg, sendMsg } from '../shared/helpers';
 
 const URL_FRONTEND: string = process.env.URL_FRONTEND!;
 
@@ -12,11 +12,11 @@ bot.command('start', async (ctx) => {
     const telegramId: string = ctx.from.id.toString();
 
     try {
-        await getUserFromMsg(ctx);
-        await deleteMsg(chatId, msgId, 0);
+        await telegramHelper.getUserFromMsg(ctx);
+        await telegramHelper.deleteMsg(chatId, msgId, 0);
         const msg: string = `Bot is already running...\
                             \n   Send /help to view the available commands.`;
-        await sendMsg(telegramId, msg);
+        await telegramHelper.sendMsg(telegramId, msg);
     } catch (error) {
         throw error;
     }
@@ -48,9 +48,9 @@ bot.command('verify', async (ctx) => {
             msg = 'Your telegram is already verified!';
         }
 
-        await deleteMsg(chatId, msgId, 0);
-        const { message_id: newMsgId }: any = await sendMsg(telegramId, msg);
-        await deleteMsg(telegramId, newMsgId);
+        await telegramHelper.deleteMsg(chatId, msgId, 0);
+        const { message_id: newMsgId }: any = await telegramHelper.sendMsg(telegramId, msg);
+        await telegramHelper.deleteMsg(telegramId, newMsgId);
     } catch (error) {
         throw {
             type: 'INTERNAL_ERROR',
@@ -91,12 +91,12 @@ bot.command('help', async (ctx) => {
     }
 
     try {
-        await deleteMsg(chatId, msgId, 0);
+        await telegramHelper.deleteMsg(chatId, msgId, 0);
         const { message_id: newMsgId }: any = await ctx.reply(msg, {
             parse_mode: 'HTML',
             ...Markup.keyboard(keyboard, keyboardConfig).oneTime().resize(),
         });
-        await deleteMsg(chatId, newMsgId, 60);
+        await telegramHelper.deleteMsg(chatId, newMsgId, 60);
     } catch (error) {
         throw {
             type: 'INTERNAL_ERROR',
@@ -118,9 +118,9 @@ bot.command('me', async (ctx) => {
                  \n   <u>Telegram id:</u>  <a href="tg://user?id=${telegramId}">${telegramId}</a>`;
 
     try {
-        await deleteMsg(chatId, msgId, 0);
+        await telegramHelper.deleteMsg(chatId, msgId, 0);
         const { message_id: newMsgId }: any = await bot.telegram.sendMessage(telegramId, msg, { parse_mode: 'HTML' });
-        await deleteMsg(telegramId, newMsgId, 30);
+        await telegramHelper.deleteMsg(telegramId, newMsgId, 30);
     } catch (error) {
         throw {
             type: 'INTERNAL_ERROR',

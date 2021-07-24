@@ -2,7 +2,7 @@ import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import Device from '@models/device';
 import User from '@models/user';
-import { deleteMsg } from '@telegram/helpers';
+import * as telegramHelper from '@telegram-helper';
 import { RequestHandler } from 'express';
 
 export const notify: RequestHandler = async (req, res) => {
@@ -30,7 +30,7 @@ export const notify: RequestHandler = async (req, res) => {
                 parse_mode: 'HTML',
             });
 
-            await deleteMsg(user!.telegramId, msgId);
+            await telegramHelper.deleteMsg(user!.telegramId, msgId);
         }
 
         res.json('Server received your message!');
