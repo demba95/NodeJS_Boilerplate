@@ -43,7 +43,7 @@ export const addTry: Type.AddTryFn = async (user, res) => {
     }
 };
 
-export const checkTimeElapsed: Type.CheckTimeElapsed = async (user, res) => {
+export const checkTimeElapsed: Type.CheckTimeElapsedFn = async (user, res) => {
     let loginCount: number = +user!.loginCount!;
 
     switch (true) {

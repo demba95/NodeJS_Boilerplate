@@ -44,15 +44,19 @@ export type AddTryFn = {
     (user: UserI, res: Response): void;
 };
 
-export type CheckTimeElapsed = {
+export type CheckTimeElapsedFn = {
     (user: UserI, res: Response): Promise<boolean>;
 };
 
 // _ Telegram
-export type ClearTelegramMsgFn = {
-    (chatId: string, msgId: string, time?: number, tg?: any): Promise<void>;
+export type DeleteTelegramMsgFn = {
+    (chatId: string, msgId: string, time?: number): Promise<void>;
 };
 
-export type IsTelegramRegisteredFn = {
+export type SendTelegramMsgFn = {
+    (chatId: string, msg: string): Promise<any>;
+};
+
+export type GetUserFromMsgFn = {
     (ctx: Context): Promise<UserI>;
 };

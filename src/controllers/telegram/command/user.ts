@@ -2,28 +2,34 @@ import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import User from '@models/user';
 import { Markup } from 'telegraf';
-import { isTelegramRegistered } from '../shared/helpers';
+import { deleteMsg, getUserFromMsg, sendMsg } from '../shared/helpers';
 
 const URL_FRONTEND: string = process.env.URL_FRONTEND!;
 
 bot.command('start', async (ctx) => {
+    const chatId: string = ctx.chat.id.toString();
+    const msgId: string = ctx.message.message_id.toString();
+    const telegramId: string = ctx.from.id.toString();
+
     try {
-        await isTelegramRegistered(ctx);
-
+        await getUserFromMsg(ctx);
+        await deleteMsg(chatId, msgId, 0);
         const msg: string = `Bot is already running...\
-                             \n   Send /help to view the available commands.`;
-
-        ctx.chat.type === 'group' && (await ctx.tg.deleteMessage(ctx.from.id, ctx.message.message_id));
-        await ctx.reply(msg, { parse_mode: 'HTML' });
+                            \n   Send /help to view the available commands.`;
+        await sendMsg(telegramId, msg);
     } catch (error) {
         throw error;
     }
 });
 
 bot.command('verify', async (ctx) => {
+    let msg: string = '';
+    const chatId: string = ctx.chat.id.toString();
+    const telegramId: string = ctx.from.id.toString();
+    const msgId: string = ctx.message.message_id.toString();
+
     try {
-        let msg: string = '';
-        const user: Type.UserI = await User.findOne({ telegramId: ctx.from.id.toString() });
+        const user: Type.UserI = await User.findOne({ telegramId: telegramId });
 
         if (!user) {
             msg = `Hey <b>${ctx!.from!.first_name} ${ctx!.from!.last_name}</b>!\
@@ -31,7 +37,7 @@ bot.command('verify', async (ctx) => {
                    \n   Sorry! User not found.\
                    \n\
                    \n   Please sign up <a href="${URL_FRONTEND}/users/profile">here</a> to enable notifications.\
-                   \n   Your telegram id is <a href="tg://user?id=${ctx!.from!.id}">${ctx!.from!.id}</a>`;
+                   \n   Your telegram id is <a href="tg://user?id=${telegramId}">${telegramId}</a>`;
         } else if (user && !user.isTelegramVerified) {
             user.isTelegramVerified = true;
             await user.save();
@@ -39,11 +45,12 @@ bot.command('verify', async (ctx) => {
                    \n\
                    \n   Type /help to view all available commands.`;
         } else {
-            msg = 'Your telegram is already activated!';
+            msg = 'Your telegram is already verified!';
         }
 
-        ctx.chat.type === 'group' && (await ctx.tg.deleteMessage(ctx.from.id, ctx.message.message_id));
-        await ctx.reply(msg, { parse_mode: 'HTML' });
+        await deleteMsg(chatId, msgId, 0);
+        const { message_id: newMsgId }: any = await sendMsg(telegramId, msg);
+        await deleteMsg(telegramId, newMsgId);
     } catch (error) {
         throw {
             type: 'INTERNAL_ERROR',
@@ -53,6 +60,9 @@ bot.command('verify', async (ctx) => {
 });
 
 bot.command('help', async (ctx) => {
+    const chatId: string = ctx.chat.id.toString();
+    const msgId: string = ctx.message.message_id.toString();
+    const chatType: string = ctx.chat.type;
     let msg: string = '';
     let keyboard: string[] = [];
     let keyboardConfig: { columns: number; rows: number } = {
@@ -60,7 +70,7 @@ bot.command('help', async (ctx) => {
         rows: 0,
     };
 
-    if (ctx.chat.type === 'group') {
+    if (chatType === 'group') {
         msg = `AVAILABLE GROUP COMMANDS\
                \n\
                \n   /command1 »\
@@ -80,19 +90,41 @@ bot.command('help', async (ctx) => {
         keyboardConfig = { columns: 2, rows: 1 };
     }
 
-    ctx.chat.type === 'group' && (await ctx.tg.deleteMessage(ctx.chat.id, ctx.message.message_id));
-    await ctx.reply(msg, { parse_mode: 'HTML', ...Markup.keyboard(keyboard, keyboardConfig).oneTime().resize() });
+    try {
+        await deleteMsg(chatId, msgId, 0);
+        const { message_id: newMsgId }: any = await ctx.reply(msg, {
+            parse_mode: 'HTML',
+            ...Markup.keyboard(keyboard, keyboardConfig).oneTime().resize(),
+        });
+        await deleteMsg(chatId, newMsgId, 60);
+    } catch (error) {
+        throw {
+            type: 'INTERNAL_ERROR',
+            msg: 'Something went wrong. Please try again.',
+        };
+    }
 });
 
 bot.command('me', async (ctx) => {
+    const chatId: string = ctx.chat.id.toString();
+    const msgId: string = ctx.message.message_id.toString();
+    const telegramId: string = ctx.from.id.toString();
     const msg = `Here is your profile:\
                  \n\
                  \n   <u>First name:</u>    <b>${ctx.from.first_name}</b>\
                  \n   <u>Last name:</u>    <b>${ctx.from.last_name}</b>\
                  \n   <u>Username:</u>    <a href="tg://username?id=${ctx.from.username}">${ctx.from.username}</a>\
                  \n   <u>Direct msg:</u>   <a href="t.me/${ctx.from.username}">t.me/${ctx.from.username}</a>\
-                 \n   <u>Telegram id:</u>  <a href="tg://user?id=${ctx.from.id}">${ctx.from.id}</a>`;
+                 \n   <u>Telegram id:</u>  <a href="tg://user?id=${telegramId}">${telegramId}</a>`;
 
-    ctx.chat.type === 'group' && (await ctx.tg.deleteMessage(ctx.from.id, ctx.message.message_id));
-    await bot.telegram.sendMessage(ctx.from.id, msg, { parse_mode: 'HTML' });
+    try {
+        await deleteMsg(chatId, msgId, 0);
+        const { message_id: newMsgId }: any = await bot.telegram.sendMessage(telegramId, msg, { parse_mode: 'HTML' });
+        await deleteMsg(telegramId, newMsgId, 30);
+    } catch (error) {
+        throw {
+            type: 'INTERNAL_ERROR',
+            msg: 'Something went wrong. Please try again.',
+        };
+    }
 });

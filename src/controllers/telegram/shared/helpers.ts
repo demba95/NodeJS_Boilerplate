@@ -5,7 +5,7 @@ import User from '@models/user';
 const TELEGRAM_TIMEOUT_CHAT: number = +process.env.TELEGRAM_TIMEOUT_CHAT!;
 const URL_FRONTEND: string = process.env.URL_FRONTEND!;
 
-export const isTelegramRegistered: Type.IsTelegramRegisteredFn = async (ctx) => {
+export const getUserFromMsg: Type.GetUserFromMsgFn = async (ctx) => {
     try {
         let msg: string = '';
         const user: Type.UserI = await User.findOne({ telegramId: ctx!.from!.id.toString() });
@@ -40,26 +40,18 @@ export const isTelegramRegistered: Type.IsTelegramRegisteredFn = async (ctx) => 
     }
 };
 
-export const clearTelegramMsg: Type.ClearTelegramMsgFn = async (chatId, msgId, time = TELEGRAM_TIMEOUT_CHAT, tg) => {
-    if (tg) {
-        setTimeout(
-            async () => {
-                await tg.deleteMessage(chatId, parseInt(msgId, 10));
-            },
-            time,
-            chatId,
-            msgId,
-            tg
-        );
-    } else {
-        setTimeout(
-            async () => {
-                await bot.telegram.deleteMessage(chatId, parseInt(msgId, 10));
-            },
-            time,
-            bot,
-            chatId,
-            msgId
-        );
-    }
+export const sendMsg: Type.SendTelegramMsgFn = async (chatId, msg) => {
+    return await bot.telegram.sendMessage(chatId, msg, { parse_mode: 'HTML' });
+};
+
+export const deleteMsg: Type.DeleteTelegramMsgFn = async (chatId, msgId, time = TELEGRAM_TIMEOUT_CHAT) => {
+    setTimeout(
+        async () => {
+            await bot.telegram.deleteMessage(parseInt(chatId, 10), parseInt(msgId, 10));
+        },
+        time * 1000,
+        bot,
+        chatId,
+        msgId
+    );
 };
