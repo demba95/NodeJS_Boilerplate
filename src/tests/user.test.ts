@@ -7,7 +7,7 @@ import { setupDatabase, user1, user2, user3, user5 } from './database/database';
 import { getLoginToken } from './helpers/helpers';
 import * as TestType from './__mocks__/@types/types';
 
-const USER_URL: string = '/api/users';
+const USER_URL: string = '/api/user';
 const JWT_SECRET_KEY: string = process.env.JWT_SECRET_KEY!;
 const JWT_VERIFICATION_SECRET_KEY: string = process.env.JWT_VERIFICATION_SECRET_KEY!;
 const PASSWORD_LEN: number = +process.env.PASSWORD_LEN!;

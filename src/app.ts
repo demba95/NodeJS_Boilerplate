@@ -1,10 +1,10 @@
 import '@config/database';
 import { bot, secretPath } from '@config/telegram';
 import '@controllers/telegram/telegram';
-import apiRoutes from '@routes/apis';
-import deviceRoutes from '@routes/devices';
-import iotDeviceRoutes from '@routes/iot-devices';
-import userRoutes from '@routes/users';
+import apiRoutes from '@routes/api';
+import deviceRoutes from '@routes/device';
+import iotDeviceRoutes from '@routes/iot-device';
+import userRoutes from '@routes/user';
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
 import helmet from 'helmet';
@@ -16,10 +16,10 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 
-app.use('/api/users', userRoutes);
-app.use('/api/devices', deviceRoutes);
+app.use('/api/api', apiRoutes);
+app.use('/api/device', deviceRoutes);
 app.use('/api/iot-device', iotDeviceRoutes);
-app.use('/api/apis', apiRoutes);
+app.use('/api/user', userRoutes);
 app.use(bot.webhookCallback(secretPath));
 
 bot.catch(async (error: any, ctx) => {

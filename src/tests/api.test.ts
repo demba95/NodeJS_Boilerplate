@@ -6,7 +6,7 @@ import app from '~/app';
 import { setupDatabase, user1, user1api1, user1api2, user3api1 } from './database/database';
 import { getLoginToken } from './helpers/helpers';
 
-const API_URL: string = '/api/apis';
+const API_URL: string = '/api/api';
 const SECRET_KEY_BASE: string = process.env.SECRET_KEY_BASE!;
 
 beforeEach(setupDatabase);
