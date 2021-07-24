@@ -35,7 +35,7 @@ export const isTelegramRegistered: Type.IsTelegramRegisteredFn = async (ctx) => 
 
         throw {
             type: 'INTERNAL_ERROR',
-            msg: 'Something went wrong! Please try again.',
+            msg: 'Something went wrong. Please try again.',
         };
     }
 };

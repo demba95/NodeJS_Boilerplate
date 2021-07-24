@@ -24,9 +24,7 @@ export const newApi: RequestHandler = async (req, res) => {
 
         res.status(201).json(await newApi.save());
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while trying to create a new api. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while trying to create a new api.' });
     }
 };
 
@@ -56,9 +54,7 @@ export const getApis: RequestHandler = async (req, res) => {
 
         res.json(apisArray);
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while getting your apis. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while getting your apis.' });
     }
 };
 
@@ -83,9 +79,7 @@ export const getApi: RequestHandler = async (req, res) => {
             });
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while getting your api. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while getting your api.' });
     }
 };
 
@@ -110,9 +104,7 @@ export const updateApi: RequestHandler = async (req, res) => {
 
         res.json({ message: 'API has been updated successfully.' });
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while updating your api. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while updating your api.' });
     }
 };
 
@@ -128,8 +120,6 @@ export const deleteApi: RequestHandler = async (req, res) => {
 
         res.status(404).json({ message: 'API Id not found. Please make sure you have entered the correct id.' });
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while deleting your api. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while deleting your api.' });
     }
 };

@@ -33,9 +33,7 @@ export const newDevice: RequestHandler = async (req, res) => {
 
         res.status(201).json(await newDevice.save());
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while creating a new device. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while creating a new device.' });
     }
 };
 
@@ -50,9 +48,7 @@ export const getDevices: RequestHandler = async (req, res) => {
 
         res.json(devices);
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while getting your devices. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while getting your devices.' });
     }
 };
 
@@ -65,9 +61,7 @@ export const getDevice: RequestHandler = async (req, res) => {
 
         res.json(device);
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while getting your device. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while getting your device.' });
     }
 };
 
@@ -99,9 +93,7 @@ export const updateDevice: RequestHandler = async (req, res) => {
 
         res.json({ message: 'Device has been updated successfully.', data: device });
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while updating your device. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while updating your device.' });
     }
 };
 
@@ -117,8 +109,6 @@ export const deleteDevice: RequestHandler = async (req, res) => {
 
         res.status(404).json({ message: 'Device Id not found. Please make sure you have entered the correct id.' });
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while deleting your device. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while deleting your device.' });
     }
 };

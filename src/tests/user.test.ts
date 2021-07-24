@@ -317,7 +317,7 @@ describe("User's API", () => {
 
         const response: TestType.ResponseMsg = await request(app).post(`${USER_URL}/login`).send(form).expect(400);
         expect(response.body).toMatchObject({
-            message: 'Your account has been suspended. Please contact our support team.',
+            message: 'Your account is suspended.',
         });
     });
 

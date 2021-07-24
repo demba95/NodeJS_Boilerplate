@@ -27,9 +27,9 @@ export const addTry: Type.AddTryFn = async (user, res) => {
         await user!.save();
 
         if (LOGIN_MAX_TRY - user!.loginCount! >= 0) {
-            return res.status(400).json({
-                message: `Wrong credentials, you have ${LOGIN_MAX_TRY - loginCount + 1} more tries.`,
-            });
+            return res
+                .status(400)
+                .json({ message: `Wrong credentials, you have ${LOGIN_MAX_TRY - loginCount + 1} more tries.` });
         }
 
         if (LOGIN_MAX_TRY - user!.loginCount! === -1)
@@ -39,9 +39,7 @@ export const addTry: Type.AddTryFn = async (user, res) => {
 
         res.status(400).json({ message: `You have been blocked for ${waitTime} mins.` });
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while trying to login. Please try again later or contact our support.',
-        });
+        res.status(500).json({ message: 'Something went wrong while trying to login.' });
     }
 };
 
@@ -78,6 +76,7 @@ export const signUpUser: RequestHandler = async (req, res) => {
     try {
         const user: Type.UserI = await User.findOne({ email: form.email });
         if (user) return res.status(400).json({ message: 'Email already in use.' });
+
         const response: { message: string; verifyToken?: string } = {
             message: 'Your account has been created. Please check your email to verify your account.',
         };
@@ -101,9 +100,7 @@ export const signUpUser: RequestHandler = async (req, res) => {
 
         res.status(201).json(response);
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while trying to sign up. Please try again later or contact our support.',
-        });
+        res.status(500).json({ message: 'Something went wrong while trying to sign up.' });
     }
 };
 
@@ -115,10 +112,7 @@ export const loginUser: RequestHandler = async (req, res) => {
     try {
         const user: Type.UserI = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
-        if (user.status === 'suspended')
-            return res
-                .status(400)
-                .json({ message: 'Your account has been suspended. Please contact our support team.' });
+        if (user.status === 'suspended') return res.status(400).json({ message: 'Your account is suspended.' });
 
         if (await checkTimeElapsed(user, res)) {
             user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
@@ -145,9 +139,7 @@ export const loginUser: RequestHandler = async (req, res) => {
             });
         }
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while trying to login. Please try again later or contact our support.',
-        });
+        res.status(500).json({ message: 'Something went wrong while trying to login.' });
     }
 };
 
@@ -158,9 +150,7 @@ export const getUser: RequestHandler = async (req, res) => {
 
         res.json(user);
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while trying to get profile. Please try again later or contact our support.',
-        });
+        res.status(500).json({ message: 'Something went wrong while trying to get profile.' });
     }
 };
 
@@ -175,10 +165,7 @@ export const updateUser: RequestHandler = async (req, res) => {
 
         if (user.email !== form.email) {
             const email: Type.UserI = await User.findOne({ email: form.email });
-            if (email)
-                return res.status(400).json({
-                    message: `Email (${form.email}) is already in use.`,
-                });
+            if (email) return res.status(400).json({ message: `Email (${form.email}) is already in use.` });
         }
 
         user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
@@ -227,9 +214,7 @@ export const updateUser: RequestHandler = async (req, res) => {
                             response.verifyToken = user.verifyToken;
                         }
                     } catch (error) {
-                        res.status(500).json({
-                            message: 'Something went wrong sending you the email verification. Please try again later.',
-                        });
+                        res.status(500).json({ message: 'Something went wrong sending you the email verification.' });
                     }
                 } else {
                     await user.save();
@@ -241,9 +226,7 @@ export const updateUser: RequestHandler = async (req, res) => {
             res.status(403).json({ message: 'Wrong credentials.' });
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while updating. Please try again later or contact our support.',
-        });
+        res.status(500).json({ message: 'Something went wrong while updating.' });
     }
 };
 
@@ -266,9 +249,7 @@ export const deleteUser: RequestHandler = async (req, res) => {
             res.status(403).json({ message: 'Wrong password.' });
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while deleting. Please try again later or contact our support.',
-        });
+        res.status(500).json({ message: 'Something went wrong while deleting your user.' });
     }
 };
 
@@ -298,9 +279,7 @@ export const verifyEmail: RequestHandler = async (req, res) => {
 
         res.json({ message: 'Thank you! Your email has been verified.' });
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong verifying your account. Please try again later.',
-        });
+        res.status(500).json({ message: 'Something went wrong verifying your account.' });
     }
 };
 
@@ -323,9 +302,7 @@ export const resendVerifyEmail: RequestHandler = async (req, res) => {
 
         res.json({ message: 'A verification code was sent to your email.' });
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong with the email verification. Please try again later.',
-        });
+        res.status(500).json({ message: 'Something went wrong with the email verification.' });
     }
 };
 
@@ -358,9 +335,7 @@ export const resetPassword: RequestHandler = async (req, res) => {
 
         res.json(response);
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong with the email verification. Please try again later.',
-        });
+        res.status(500).json({ message: 'Something went wrong with the email verification.' });
     }
 };
 
@@ -400,8 +375,6 @@ export const updatePassword: RequestHandler = async (req, res) => {
 
         res.json(response);
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong with the email verification. Please try again later.',
-        });
+        res.status(500).json({ message: 'Something went wrong with the email verification.' });
     }
 };

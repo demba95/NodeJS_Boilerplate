@@ -35,8 +35,6 @@ export const notify: RequestHandler = async (req, res) => {
 
         res.json('Server received your message!');
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while executing your request. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while executing your request.' });
     }
 };
