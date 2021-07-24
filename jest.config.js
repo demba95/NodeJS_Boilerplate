@@ -17,7 +17,7 @@ module.exports = {
         '@telegram/(.*)': '<rootDir>/src/controllers/telegram/shared/$1',
         '@apis': '<rootDir>/src/controllers/api/v1/apis.ts',
         '@devices': '<rootDir>/src/controllers/api/v1/devices.ts',
-        '@iotDevices': '<rootDir>/src/controllers/api/v1/iot-devices.ts',
+        '@iot-devices': '<rootDir>/src/controllers/api/v1/iot-devices.ts',
         '@users': '<rootDir>/src/controllers/api/v1/users.ts',
         '@middlewares/(.*)': '<rootDir>/src/middlewares/$1',
         '@auth': '<rootDir>/src/middlewares/auth.ts',

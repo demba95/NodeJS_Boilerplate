@@ -72,7 +72,7 @@ const userSchema = new Schema(
 userSchema.pre<Type.UserI>('save', async function (next) {
     const user = this;
 
-    if (user.isModified('password')) user.password = await bcrypt.hash(this.get('password'), SALT_ROUNDS);
+    if (user!.isModified('password')) user!.password = await bcrypt.hash(this!.get('password'), SALT_ROUNDS);
     next();
 });
 
@@ -82,15 +82,15 @@ userSchema.methods.comparePassword = function (tryPassword, callback) {
 
 userSchema.set('toJSON', {
     transform: function (_: any, ret: Type.UserI) {
-        delete ret.password;
-        delete ret.verifyToken;
-        delete ret.status;
-        delete ret.admin;
-        delete ret.loginCount;
-        delete ret.waitCount;
-        delete ret.createdAt;
-        delete ret.updatedAt;
-        delete ret.__v;
+        delete ret!.password;
+        delete ret!.verifyToken;
+        delete ret!.status;
+        delete ret!.admin;
+        delete ret!.loginCount;
+        delete ret!.waitCount;
+        delete ret!.createdAt;
+        delete ret!.updatedAt;
+        delete ret!.__v;
         return ret;
     },
 });

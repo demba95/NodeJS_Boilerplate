@@ -24,7 +24,7 @@
             "@telegram/*": ["./controllers/telegram/shared/*"],
             "@apis": ["./controllers/api/v1/apis.ts"],
             "@devices": ["./controllers/api/v1/devices.ts"],
-            "@iotDevices": ["./controllers/api/v1/iot-devices.ts"],
+            "@iot-devices": ["./controllers/api/v1/iot-devices.ts"],
             "@users": ["./controllers/api/v1/users.ts"],
             "@middlewares/*": ["./middlewares/*"],
             "@auth": ["./middlewares/auth.ts"],

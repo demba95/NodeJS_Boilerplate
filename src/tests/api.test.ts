@@ -161,7 +161,7 @@ describe("Api's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(201);
         const api: Type.ApiI = response.body;
-        const apiDoc: Type.ApiI | null = await Api.findById(api._id);
+        const apiDoc: Type.ApiI = await Api.findById(api!._id);
         const keyValue = CryptoJS.AES.decrypt(apiDoc!.key!.toString(), SECRET_KEY_BASE).toString(CryptoJS.enc.Utf8);
         const valueValue = CryptoJS.AES.decrypt(apiDoc!.value!.toString(), SECRET_KEY_BASE).toString(CryptoJS.enc.Utf8);
         expect(keyValue).toBe(apiForm!.key);

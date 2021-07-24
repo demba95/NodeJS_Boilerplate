@@ -19,20 +19,20 @@ const ENV: string = process.env.ENV!;
 
 export const addTry: Type.AddTryFn = async (user, res) => {
     try {
-        const loginCount: number = +user.loginCount! + 1;
-        const waitTime: number = LOGIN_WAIT_TIME * +user.waitCount! * +user.waitCount!;
+        const loginCount: number = +user!.loginCount! + 1;
+        const waitTime: number = LOGIN_WAIT_TIME * +user!.waitCount! * +user!.waitCount!;
 
-        user.loginCount = loginCount;
-        if (loginCount > LOGIN_MAX_TRY) user.waitCount = +user.waitCount! + 1;
-        await user.save();
+        user!.loginCount = loginCount;
+        if (loginCount > LOGIN_MAX_TRY) user!.waitCount = +user!.waitCount! + 1;
+        await user!.save();
 
-        if (LOGIN_MAX_TRY - user.loginCount! >= 0) {
+        if (LOGIN_MAX_TRY - user!.loginCount! >= 0) {
             return res.status(400).json({
                 message: `Wrong credentials, you have ${LOGIN_MAX_TRY - loginCount + 1} more tries.`,
             });
         }
 
-        if (LOGIN_MAX_TRY - user.loginCount! === -1)
+        if (LOGIN_MAX_TRY - user!.loginCount! === -1)
             return res.status(400).json({
                 message: `Too many unsuccessful tries. Next try you will be blocked for ${LOGIN_WAIT_TIME} mins.`,
             });
@@ -46,19 +46,19 @@ export const addTry: Type.AddTryFn = async (user, res) => {
 };
 
 export const checkTimeElapsed: Type.CheckTimeElapsed = async (user, res) => {
-    let loginCount: number = +user.loginCount!;
+    let loginCount: number = +user!.loginCount!;
 
     switch (true) {
         case loginCount <= LOGIN_MAX_TRY:
             return true;
         case loginCount > LOGIN_MAX_TRY:
             const date: number = new Date().getTime();
-            const updateDate: number = new Date(user.updatedAt!).getTime();
+            const updateDate: number = new Date(user!.updatedAt!).getTime();
 
-            if ((date - updateDate) / 1000 / 60 >= LOGIN_WAIT_TIME * +user.waitCount! * +user.waitCount!) {
-                user.loginCount = 0;
-                user.waitCount = 0;
-                await user.save();
+            if ((date - updateDate) / 1000 / 60 >= LOGIN_WAIT_TIME * +user!.waitCount! * +user!.waitCount!) {
+                user!.loginCount = 0;
+                user!.waitCount = 0;
+                await user!.save();
                 return true;
             }
 
@@ -76,14 +76,14 @@ export const signUpUser: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const user: Type.UserI | null = await User.findOne({ email: form.email });
+        const user: Type.UserI = await User.findOne({ email: form.email });
         if (user) return res.status(400).json({ message: 'Email already in use.' });
         const response: { message: string; verifyToken?: string } = {
             message: 'Your account has been created. Please check your email to verify your account.',
         };
 
         delete form.confirmPassword;
-        form.verifyToken = auth.createVerificationToken(
+        form.verifyToken = auth.createCustomToken(
             'email',
             {},
             JWT_VERIFICATION_SECRET_KEY,
@@ -113,7 +113,7 @@ export const loginUser: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const user: Type.UserI | null = await User.findOne({ email: form.email });
+        const user: Type.UserI = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
         if (user.status === 'suspended')
             return res
@@ -153,9 +153,7 @@ export const loginUser: RequestHandler = async (req, res) => {
 
 export const getUser: RequestHandler = async (req, res) => {
     try {
-        const user: Type.UserI | null = await User.findOne({
-            _id: req.user!._id,
-        }).select('-tempEmail');
+        const user: Type.UserI = await User.findById(req.user!._id).select('-tempEmail');
         if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
 
         res.json(user);
@@ -172,15 +170,11 @@ export const updateUser: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const user: Type.UserI | null = await User.findOne({
-            _id: req.user!._id,
-        });
+        const user: Type.UserI = await User.findById(req.user!._id);
         if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
 
         if (user.email !== form.email) {
-            const email: Type.UserI | null = await User.findOne({
-                email: form.email,
-            });
+            const email: Type.UserI = await User.findOne({ email: form.email });
             if (email)
                 return res.status(400).json({
                     message: `Email (${form.email}) is already in use.`,
@@ -201,7 +195,7 @@ export const updateUser: RequestHandler = async (req, res) => {
                     (!validate.isEmpty(form.telegramId) && form.telegramId.trim() !== user.telegramId)
                 ) {
                     if (form.telegramId.trim() !== user.telegramId) {
-                        const userExists: Type.UserI | null = await User.findOne({ telegramId: form.telegramId });
+                        const userExists: Type.UserI = await User.findOne({ telegramId: form.telegramId });
                         if (userExists && userExists.isTelegramVerified)
                             return res.status(400).json({ message: `Telegram ${form.telegramId} is already in use.` });
                     }
@@ -217,7 +211,7 @@ export const updateUser: RequestHandler = async (req, res) => {
                 if (user.email !== form.email) {
                     response.message += ` An email has been sent to ${form.email}. Please verify your new email to update your email address.`;
                     user.tempEmail = form.email;
-                    user.verifyToken = auth.createVerificationToken(
+                    user.verifyToken = auth.createCustomToken(
                         'email',
                         {},
                         JWT_VERIFICATION_SECRET_KEY,
@@ -259,7 +253,7 @@ export const deleteUser: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const user: Type.UserI | null = await User.findOne({ _id: req.user!._id });
+        const user: Type.UserI = await User.findById(req.user!._id);
         if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
 
         user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
@@ -288,9 +282,7 @@ export const verifyEmail: RequestHandler = async (req, res) => {
     }
 
     try {
-        const user: Type.UserI | null = await User.findOne({
-            verifyToken: token,
-        });
+        const user: Type.UserI = await User.findOne({ verifyToken: token });
         if (!user)
             return res.status(404).json({ message: 'Invalid email token, please reset your email and try again.' });
 
@@ -318,11 +310,11 @@ export const resendVerifyEmail: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const user: Type.UserI | null = await User.findOne({ email: form.email });
+        const user: Type.UserI = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Email not found.' });
         if (user.status === 'activated') return res.json({ message: 'Your account is already verified.' });
 
-        user.verifyToken = auth.createVerificationToken(
+        user.verifyToken = auth.createCustomToken(
             'email',
             {},
             JWT_VERIFICATION_SECRET_KEY,
@@ -343,13 +335,13 @@ export const resetPassword: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const user: Type.UserI | null = await User.findOne({ email: form.email });
+        const user: Type.UserI = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Email not found.' });
         const response: { message: string; verifyToken?: string } = {
             message: 'Please check your email to reset your password.',
         };
 
-        user.verifyToken = auth.createVerificationToken(
+        user.verifyToken = auth.createCustomToken(
             'password',
             {},
             JWT_VERIFICATION_SECRET_KEY,
@@ -386,7 +378,7 @@ export const updatePassword: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const user: Type.UserI | null = await User.findOne({
+        const user: Type.UserI = await User.findOne({
             verifyToken: token,
         });
         if (!user)

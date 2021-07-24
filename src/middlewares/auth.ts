@@ -46,7 +46,7 @@ const createAccessToken: Type.JwtAccessFn = (user) => {
     });
 };
 
-const createVerificationToken: Type.JwtVerifyFn = (mode, attrs = {}, secretKey, expiresIn) => {
+const createCustomToken: Type.JwtVerifyFn = (mode, attrs = {}, secretKey, expiresIn) => {
     attrs[mode] = mode;
 
     if (expiresIn > 0) {
@@ -58,4 +58,4 @@ const createVerificationToken: Type.JwtVerifyFn = (mode, attrs = {}, secretKey, 
     }
 };
 
-export { auth, authDevice, createAccessToken, createVerificationToken };
+export { auth, authDevice, createAccessToken, createCustomToken };

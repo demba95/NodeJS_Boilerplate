@@ -21,7 +21,7 @@ module.exports = {
                     '@telegram': './src/controllers/telegram/shared',
                     '@apis': './src/controllers/api/v1',
                     '@devices': './src/controllers/api/v1',
-                    '@iotDevices': './src/controllers/api/v1',
+                    '@iot-devices': './src/controllers/api/v1',
                     '@users': './src/controllers/api/v1',
                     '@middlewares': './src/middlewares',
                     '@auth': './src/middlewares',

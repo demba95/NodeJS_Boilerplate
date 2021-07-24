@@ -46,10 +46,10 @@ const deviceSchema = new Schema(
 
 deviceSchema.set('toJSON', {
     transform: function (_: any, ret: Type.DeviceI) {
-        delete ret.userId;
-        delete ret.createdAt;
-        delete ret.updatedAt;
-        delete ret.__v;
+        delete ret!.userId;
+        delete ret!.createdAt;
+        delete ret!.updatedAt;
+        delete ret!.__v;
         return ret;
     },
 });

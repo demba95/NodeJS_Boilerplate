@@ -23,7 +23,7 @@ bot.command('start', async (ctx) => {
 bot.command('verify', async (ctx) => {
     try {
         let msg: string = '';
-        const user: Type.UserI | null = await User.findOne({ telegramId: ctx.from.id.toString() });
+        const user: Type.UserI = await User.findOne({ telegramId: ctx.from.id.toString() });
 
         if (!user) {
             msg = `Hey <b>${ctx!.from!.first_name} ${ctx!.from!.last_name}</b>!\

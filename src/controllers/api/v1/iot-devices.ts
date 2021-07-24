@@ -10,13 +10,13 @@ export const notify: RequestHandler = async (req, res) => {
         const { data, notify }: Type.IoTDeviceData = req.body;
 
         if (notify) {
-            const device: Type.DeviceI | null = await Device.findOne({
+            const device: Type.DeviceI = await Device.findOne({
                 _id: req.device!._id,
                 userId: req.device!.userId,
             });
             if (!device) return res.status(404).json({ message: 'Device not found.' });
 
-            const user: Type.UserI | null = await User.findById(req.device!.userId);
+            const user: Type.UserI = await User.findById(req.device!.userId);
             if (!user) return res.status(404).json({ message: 'User not found.' });
 
             if (user!.telegramId.length === 0)
