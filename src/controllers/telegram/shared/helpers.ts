@@ -1,3 +1,4 @@
+import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import User from '@models/user';
 
@@ -39,14 +40,26 @@ export const isTelegramRegistered: Type.IsTelegramRegisteredFn = async (ctx) => 
     }
 };
 
-export const clearTelegramMsg: Type.ClearTelegramMsgFn = async (chatId, msgId, tg, time = TELEGRAM_TIMEOUT_CHAT) => {
-    setTimeout(
-        () => {
-            tg.deleteMessage(chatId, msgId);
-        },
-        time,
-        chatId,
-        msgId,
-        tg
-    );
+export const clearTelegramMsg: Type.ClearTelegramMsgFn = async (chatId, msgId, time = TELEGRAM_TIMEOUT_CHAT, tg) => {
+    if (tg) {
+        setTimeout(
+            async () => {
+                await tg.deleteMessage(chatId, parseInt(msgId, 10));
+            },
+            time,
+            chatId,
+            msgId,
+            tg
+        );
+    } else {
+        setTimeout(
+            async () => {
+                await bot.telegram.deleteMessage(chatId, parseInt(msgId, 10));
+            },
+            time,
+            bot,
+            chatId,
+            msgId
+        );
+    }
 };

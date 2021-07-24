@@ -14,6 +14,7 @@ module.exports = {
         '~/(.*)': '<rootDir>/src/$1',
         '@config/(.*)': '<rootDir>/src/config/$1',
         '@controllers/(.*)': '<rootDir>/src/controllers/$1',
+        '@telegram/(.*)': '<rootDir>/src/controllers/telegram/shared/$1',
         '@apis': '<rootDir>/src/controllers/api/v1/apis.ts',
         '@iots': '<rootDir>/src/controllers/api/v1/iots.ts',
         '@iotDevices': '<rootDir>/src/controllers/api/v1/iot-devices.ts',

@@ -2,6 +2,7 @@ import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import IoT from '@models/iot';
 import User from '@models/user';
+import { clearTelegramMsg } from '@telegram/helpers';
 import { RequestHandler } from 'express';
 
 export const notify: RequestHandler = async (req, res) => {
@@ -19,10 +20,14 @@ export const notify: RequestHandler = async (req, res) => {
                 return res.status(400).json({ message: 'No telegram Id associated to your account.' });
             if (!user!.isTelegramVerified) return res.status(400).json({ message: 'Telegram not verified.' });
 
-            const msg: string = `<b>Device:</b> ${iot.name}\
+            const msg: string = `<b>Device:</b> ${iot.name.toUpperCase()}\
                                 \n\
                                 \n   <u>Msg:</u> ${data.message}`;
-            bot.telegram.sendMessage(user!.telegramId, msg, { parse_mode: 'HTML' });
+            const { message_id: msgId }: any = await bot.telegram.sendMessage(user!.telegramId, msg, {
+                parse_mode: 'HTML',
+            });
+
+            await clearTelegramMsg(user!.telegramId, msgId);
         }
 
         res.json('Server received your message!');

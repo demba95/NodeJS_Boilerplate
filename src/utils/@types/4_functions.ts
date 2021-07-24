@@ -50,7 +50,7 @@ export type CheckTimeElapsed = {
 
 // _ Telegram
 export type ClearTelegramMsgFn = {
-    (chatId: string, msgId: string, tg: any, time: number): Promise<void>;
+    (chatId: string, msgId: string, time?: number, tg?: any): Promise<void>;
 };
 
 export type IsTelegramRegisteredFn = {
