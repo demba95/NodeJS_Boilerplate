@@ -1,6 +1,7 @@
 import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import User from '@models/user';
+import { Types as TelegramType } from 'telegraf';
 
 const TELEGRAM_TIMEOUT_CHAT: number = +process.env.TELEGRAM_TIMEOUT_CHAT!;
 const URL_FRONTEND: string = process.env.URL_FRONTEND!;
@@ -40,14 +41,32 @@ export const getUserFromMsg: Type.GetUserFromMsgFn = async (ctx) => {
     }
 };
 
-export const sendMsg: Type.SendTelegramMsgFn = async (chatId, msg) => {
-    return await bot.telegram.sendMessage(chatId, msg, { parse_mode: 'HTML' });
+export const sendMsg: Type.SendTelegramMsgFn = async (chatId, msg, previewHtml = false) => {
+    let options: TelegramType.ExtraReplyMessage = {
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+    };
+
+    if (!previewHtml) delete options.disable_web_page_preview;
+
+    return await bot.telegram.sendMessage(chatId, msg, options);
+};
+
+export const editMsg: Type.EditTelegramMsgFn = async (chatId, msgId, msg, previewHtml = false) => {
+    let options: TelegramType.ExtraEditMessageText = {
+        parse_mode: 'HTML',
+        disable_web_page_preview: true,
+    };
+
+    if (!previewHtml) delete options.disable_web_page_preview;
+
+    return await bot.telegram.editMessageText(chatId, +msgId, undefined, msg, options);
 };
 
 export const deleteMsg: Type.DeleteTelegramMsgFn = async (chatId, msgId, time = TELEGRAM_TIMEOUT_CHAT) => {
     setTimeout(
         async () => {
-            await bot.telegram.deleteMessage(parseInt(chatId, 10), parseInt(msgId, 10));
+            await bot.telegram.deleteMessage(chatId.toString(), +msgId);
         },
         time * 1000,
         bot,

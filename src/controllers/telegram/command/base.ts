@@ -15,7 +15,7 @@ bot.command('start', async (ctx) => {
         await telegramHelper.getUserFromMsg(ctx);
         await telegramHelper.deleteMsg(chatId, msgId, 0);
         const msg: string = `Bot is already running...\
-                            \n   Send /help to view the available commands.`;
+                             \n   Send /help to view the available commands.`;
         await telegramHelper.sendMsg(telegramId, msg);
     } catch (error) {
         throw error;
@@ -73,18 +73,19 @@ bot.command('help', async (ctx) => {
     if (chatType === 'group') {
         msg = `AVAILABLE GROUP COMMANDS\
                \n\
-               \n   /command1 »\
-               \n   /command2 »\
-               \n   /command3 »\
-               \n   /help`;
+               \n   <b><u>Other:</u></b>\
+               \n      /command1 »\
+               \n      /command2 »\
+               \n      /command3 »\
+               \n      /help`;
         keyboard = new Array('/command1', '/command2', '/command3', '/help');
         keyboardConfig = { columns: 2, rows: 2 };
     } else {
         msg = `AVAILABLE CHAT COMMANDS\
                \n\
                \n   <b><u>Other:</u></b>\
-               \n   /me (your profile info)\
-               \n   /help (list of commands)`;
+               \n      /me (your profile info)\
+               \n      /help (list of commands)`;
 
         keyboard = new Array('/me', '/help');
         keyboardConfig = { columns: 2, rows: 1 };
@@ -92,11 +93,10 @@ bot.command('help', async (ctx) => {
 
     try {
         await telegramHelper.deleteMsg(chatId, msgId, 0);
-        const { message_id: newMsgId }: any = await ctx.reply(msg, {
+        await ctx.reply(msg, {
             parse_mode: 'HTML',
             ...Markup.keyboard(keyboard, keyboardConfig).oneTime().resize(),
         });
-        await telegramHelper.deleteMsg(chatId, newMsgId, 60);
     } catch (error) {
         throw {
             type: 'INTERNAL_ERROR',

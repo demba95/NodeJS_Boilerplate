@@ -50,11 +50,15 @@ export type CheckTimeElapsedFn = {
 
 // _ Telegram
 export type DeleteTelegramMsgFn = {
-    (chatId: string, msgId: string, time?: number): Promise<void>;
+    (chatId: string | number, msgId: string | number, time?: number): Promise<void>;
 };
 
 export type SendTelegramMsgFn = {
-    (chatId: string, msg: string): Promise<any>;
+    (chatId: string | number, msg: string, previewHtml?: boolean): Promise<any>;
+};
+
+export type EditTelegramMsgFn = {
+    (chatId: string | number, msgId: string | number, msg: string, previewHtml?: boolean): Promise<any>;
 };
 
 export type GetUserFromMsgFn = {

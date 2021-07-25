@@ -16,6 +16,7 @@
         "noFallthroughCasesInSwitch": true,
         "noUncheckedIndexedAccess": true,
         "moduleResolution": "node",
+        "suppressImplicitAnyIndexErrors": true,
         "baseUrl": "./src",
         "paths": {
             "~/*": ["./*"],
