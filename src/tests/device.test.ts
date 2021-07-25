@@ -4,7 +4,7 @@ import app from '~/app';
 import { setupDatabase, user1, user1device1, user1device2, user3device1 } from './database/database';
 import { getLoginToken } from './helpers/helpers';
 
-const DEVICE_URL: string = '/api/devices';
+const DEVICE_URL: string = '/api/device';
 
 beforeEach(setupDatabase);
 
@@ -121,7 +121,7 @@ describe("Device's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(200);
         expect(response.body.data).toMatchObject({
-            name: form.name.toLowerCase(),
+            name: form.name!.toLowerCase(),
             expiresIn: form.expiresIn,
             description: form.description,
             active: form.active,

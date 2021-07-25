@@ -51,8 +51,8 @@ const apiSchema = new Schema(
 apiSchema.pre<Type.ApiI>('save', function (next) {
     const api = this;
 
-    if (api.isModified('key')) api.key = CryptoJS.AES.encrypt(this.get('key'), SECRET_KEY_BASE).toString();
-    if (api.isModified('value')) api.value = CryptoJS.AES.encrypt(this.get('value'), SECRET_KEY_BASE).toString();
+    if (api!.isModified('key')) api!.key = CryptoJS.AES.encrypt(this!.get('key'), SECRET_KEY_BASE).toString();
+    if (api!.isModified('value')) api!.value = CryptoJS.AES.encrypt(this!.get('value'), SECRET_KEY_BASE).toString();
     next();
 });
 
@@ -65,10 +65,10 @@ apiSchema.methods.getKey = function (callback) {
 
 apiSchema.set('toJSON', {
     transform: function (_: any, ret: Type.ApiI) {
-        delete ret.userId;
-        delete ret.createdAt;
-        delete ret.updatedAt;
-        delete ret.__v;
+        delete ret!.userId;
+        delete ret!.createdAt;
+        delete ret!.updatedAt;
+        delete ret!.__v;
         return ret;
     },
 });

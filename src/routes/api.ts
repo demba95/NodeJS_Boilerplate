@@ -1,4 +1,4 @@
-import * as apiCtrl from '@apis';
+import * as apiCtrl from '@api';
 import { auth } from '@auth';
 import { Router } from 'express';
 

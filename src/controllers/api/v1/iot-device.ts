@@ -2,7 +2,7 @@ import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import Device from '@models/device';
 import User from '@models/user';
-import { clearTelegramMsg } from '@telegram/helpers';
+import * as telegramHelper from '@telegram-helper';
 import { RequestHandler } from 'express';
 
 export const notify: RequestHandler = async (req, res) => {
@@ -10,13 +10,13 @@ export const notify: RequestHandler = async (req, res) => {
         const { data, notify }: Type.IoTDeviceData = req.body;
 
         if (notify) {
-            const device: Type.DeviceI | null = await Device.findOne({
+            const device: Type.DeviceI = await Device.findOne({
                 _id: req.device!._id,
                 userId: req.device!.userId,
             });
             if (!device) return res.status(404).json({ message: 'Device not found.' });
 
-            const user: Type.UserI | null = await User.findById(req.device!.userId);
+            const user: Type.UserI = await User.findById(req.device!.userId);
             if (!user) return res.status(404).json({ message: 'User not found.' });
 
             if (user!.telegramId.length === 0)
@@ -30,13 +30,11 @@ export const notify: RequestHandler = async (req, res) => {
                 parse_mode: 'HTML',
             });
 
-            await clearTelegramMsg(user!.telegramId, msgId);
+            await telegramHelper.deleteMsg(user!.telegramId, msgId);
         }
 
         res.json('Server received your message!');
     } catch (error) {
-        res.status(500).json({
-            message: 'Something went wrong while executing your request. Please try again.',
-        });
+        res.status(500).json({ message: 'Something went wrong while executing your request.' });
     }
 };

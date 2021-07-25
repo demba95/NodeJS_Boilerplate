@@ -95,7 +95,7 @@ const user3api1: TestType.ApiObj = {
 const user1device1: TestType.DeviceObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'Device 1, User 1',
-    token: auth.createVerificationToken('device', {}, JWT_DEVICE_SECRET_KEY, 7),
+    token: auth.createCustomToken('device', {}, JWT_DEVICE_SECRET_KEY, 7),
     expiresIn: 7,
     description: 'Device description 1, User 1',
     active: true,
@@ -105,7 +105,7 @@ const user1device1: TestType.DeviceObj = {
 const user1device2: TestType.DeviceObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'Device 2, User 1',
-    token: auth.createVerificationToken('device', {}, JWT_DEVICE_SECRET_KEY, 7),
+    token: auth.createCustomToken('device', {}, JWT_DEVICE_SECRET_KEY, 7),
     expiresIn: 7,
     description: 'Device description 2, User 1',
     active: false,
@@ -115,7 +115,7 @@ const user1device2: TestType.DeviceObj = {
 const user3device1: TestType.DeviceObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'Device 1, User 3',
-    token: auth.createVerificationToken('device', {}, JWT_DEVICE_SECRET_KEY, 7),
+    token: auth.createCustomToken('device', {}, JWT_DEVICE_SECRET_KEY, 7),
     expiresIn: 7,
     description: 'Device description 1, User 3',
     active: true,

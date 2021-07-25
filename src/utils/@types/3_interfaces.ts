@@ -1,4 +1,4 @@
-import mongoose, { Document } from 'mongoose';
+import { Document } from 'mongoose';
 import { Callback } from './1_shared';
 import { DeviceForm, User, UserLoginForm, UserSignUpForm } from './2_types';
 
@@ -15,7 +15,7 @@ declare module 'express-serve-static-core' {
     }
 }
 
-export interface UserI extends Document {
+export interface UserD extends Document {
     _id: string;
     firstName: string;
     lastName: string;
@@ -34,13 +34,15 @@ export interface UserI extends Document {
     updatedAt?: string;
 }
 
-export interface ApiI extends Document {
+export type UserI = UserD | null;
+
+export interface ApiD extends Document {
     _id: string;
     name: string;
     url: string;
     key: string;
     value: string;
-    userId?: mongoose.Types.ObjectId;
+    userId?: string;
     active: boolean;
     description: string;
     getKey?(callback: Callback): void;
@@ -48,7 +50,9 @@ export interface ApiI extends Document {
     updatedAt?: string;
 }
 
-export interface DeviceI extends Document {
+export type ApiI = ApiD | null;
+
+export interface DeviceD extends Document {
     _id: string;
     name: string;
     token: string;
@@ -56,10 +60,12 @@ export interface DeviceI extends Document {
     description: string;
     active: boolean;
     notify: boolean;
-    userId?: mongoose.Types.ObjectId;
+    userId?: string;
     createdAt?: string;
     updatedAt?: string;
 }
+
+export type DeviceI = DeviceD | null;
 
 export interface UserJwtI extends User {
     iat: number;

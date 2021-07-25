@@ -3,7 +3,7 @@ import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET_KEY: string = process.env.JWT_SECRET_KEY!;
-const JWT_SECRET_EXPIRES_IN: string = process.env.JWT_SECRET_EXPIRES_IN!;
+const JWT_SECRET_EXPIRES_IN: number = +process.env.JWT_SECRET_EXPIRES_IN!;
 const JWT_DEVICE_SECRET_KEY: string = process.env.JWT_DEVICE_SECRET_KEY!;
 
 const auth: RequestHandler = (req, res, next) => {
@@ -42,11 +42,11 @@ const authDevice: RequestHandler = (req, res, next) => {
 
 const createAccessToken: Type.JwtAccessFn = (user) => {
     return jwt.sign({ _id: user._id, firstName: user.firstName, lastName: user.lastName }, JWT_SECRET_KEY, {
-        expiresIn: JWT_SECRET_EXPIRES_IN,
+        expiresIn: `${JWT_SECRET_EXPIRES_IN}d`,
     });
 };
 
-const createVerificationToken: Type.JwtVerifyFn = (mode, attrs = {}, secretKey, expiresIn) => {
+const createCustomToken: Type.JwtVerifyFn = (mode, attrs = {}, secretKey, expiresIn) => {
     attrs[mode] = mode;
 
     if (expiresIn > 0) {
@@ -58,4 +58,4 @@ const createVerificationToken: Type.JwtVerifyFn = (mode, attrs = {}, secretKey, 
     }
 };
 
-export { auth, authDevice, createAccessToken, createVerificationToken };
+export { auth, authDevice, createAccessToken, createCustomToken };

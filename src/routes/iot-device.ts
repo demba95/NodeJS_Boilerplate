@@ -1,5 +1,5 @@
 import { authDevice } from '@auth';
-import * as iotDeviceCtrl from '@iotDevices';
+import * as iotDeviceCtrl from '@iot-device';
 import { Router } from 'express';
 
 const router: Router = Router();

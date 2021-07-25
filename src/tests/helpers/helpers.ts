@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '~/app';
 import * as TestType from '../__mocks__/@types/types';
 
-const USER_URL: string = '/api/users';
+const USER_URL: string = '/api/user';
 
 export const getLoginToken: TestType.GetLoginTokenFn = async (user) => {
     const userForm: Type.UserLoginForm = {

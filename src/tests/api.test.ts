@@ -6,7 +6,7 @@ import app from '~/app';
 import { setupDatabase, user1, user1api1, user1api2, user3api1 } from './database/database';
 import { getLoginToken } from './helpers/helpers';
 
-const API_URL: string = '/api/apis';
+const API_URL: string = '/api/api';
 const SECRET_KEY_BASE: string = process.env.SECRET_KEY_BASE!;
 
 beforeEach(setupDatabase);
@@ -161,7 +161,7 @@ describe("Api's API", () => {
             .set('Authorization', `Bearer ${token}`)
             .expect(201);
         const api: Type.ApiI = response.body;
-        const apiDoc: Type.ApiI | null = await Api.findById(api._id);
+        const apiDoc: Type.ApiI = await Api.findById(api!._id);
         const keyValue = CryptoJS.AES.decrypt(apiDoc!.key!.toString(), SECRET_KEY_BASE).toString(CryptoJS.enc.Utf8);
         const valueValue = CryptoJS.AES.decrypt(apiDoc!.value!.toString(), SECRET_KEY_BASE).toString(CryptoJS.enc.Utf8);
         expect(keyValue).toBe(apiForm!.key);

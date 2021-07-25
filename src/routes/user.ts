@@ -1,5 +1,5 @@
 import { auth } from '@auth';
-import * as userCtrl from '@users';
+import * as userCtrl from '@user';
 import { Router } from 'express';
 
 const router: Router = Router();

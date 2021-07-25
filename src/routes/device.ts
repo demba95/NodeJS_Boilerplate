@@ -1,5 +1,5 @@
 import { auth } from '@auth';
-import * as deviceCtrl from '@devices';
+import * as deviceCtrl from '@device';
 import { Router } from 'express';
 
 const router: Router = Router();
