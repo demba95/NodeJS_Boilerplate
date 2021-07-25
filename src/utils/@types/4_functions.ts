@@ -58,7 +58,7 @@ export type SendTelegramMsgFn = {
 };
 
 export type EditTelegramMsgFn = {
-    (chatId: string | number, msgId: string | number, msg: string, previewHtml?: boolean): Promise<any>;
+    (chatId: string | number, msgId: string | number, msg: string, disablePreview?: boolean): Promise<any>;
 };
 
 export type GetUserFromMsgFn = {

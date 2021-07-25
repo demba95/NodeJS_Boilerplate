@@ -41,24 +41,24 @@ export const getUserFromMsg: Type.GetUserFromMsgFn = async (ctx) => {
     }
 };
 
-export const sendMsg: Type.SendTelegramMsgFn = async (chatId, msg, previewHtml = false) => {
+export const sendMsg: Type.SendTelegramMsgFn = async (chatId, msg, disablePreview = true) => {
     let options: TelegramType.ExtraReplyMessage = {
         parse_mode: 'HTML',
         disable_web_page_preview: true,
     };
 
-    if (!previewHtml) delete options.disable_web_page_preview;
+    if (!disablePreview) delete options.disable_web_page_preview;
 
     return await bot.telegram.sendMessage(chatId, msg, options);
 };
 
-export const editMsg: Type.EditTelegramMsgFn = async (chatId, msgId, msg, previewHtml = false) => {
+export const editMsg: Type.EditTelegramMsgFn = async (chatId, msgId, msg, disablePreview = true) => {
     let options: TelegramType.ExtraEditMessageText = {
         parse_mode: 'HTML',
         disable_web_page_preview: true,
     };
 
-    if (!previewHtml) delete options.disable_web_page_preview;
+    if (!disablePreview) delete options.disable_web_page_preview;
 
     return await bot.telegram.editMessageText(chatId, +msgId, undefined, msg, options);
 };

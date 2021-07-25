@@ -8,7 +8,7 @@ bot.action('cancel', async (ctx) => {
         const msgId: number = ctx.update.callback_query.message!.message_id;
 
         await telegramHelper.editMsg(chatId, msgId, '<b>Request aborted!</b>');
-        await telegramHelper.deleteMsg(chatId, msgId, 3);
+        await telegramHelper.deleteMsg(chatId, msgId, 2);
     } catch (error) {
         throw error;
     }
