@@ -8,12 +8,6 @@ export type EmailMsg = {
 };
 
 // _ User
-export type User = {
-    _id?: string;
-    firstName: string;
-    lastName: string;
-};
-
 export type UserLoginForm = {
     _id?: string;
     email: string;
@@ -33,22 +27,26 @@ export type UserPasswordForm = {
     confirmPassword?: string;
 };
 
-export type UserSignUpFormExtra = {
+export type UserSignUpForm = {
+    _id?: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
     confirmPassword?: string;
     verifyToken?: string;
 };
 
-export type UserSignUpForm = User & UserLoginForm & UserSignUpFormExtra;
-
-export type UserProfileFormExtra = {
+export type UserProfileForm = {
+    _id?: string;
+    firstName: string;
+    lastName: string;
     password: string;
     email: string;
     newPassword: string;
     confirmNewPassword: string;
     telegramId: string;
 };
-
-export type UserProfileForm = User & UserProfileFormExtra;
 
 // _ API
 export type ApiForm = {
