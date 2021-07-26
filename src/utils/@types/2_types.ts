@@ -48,6 +48,11 @@ export type UserProfileForm = {
     telegramId: string;
 };
 
+export type UserResponseSuccessMsg = {
+    message: string;
+    verifyToken?: string;
+};
+
 // _ API
 export type ApiForm = {
     _id?: string;

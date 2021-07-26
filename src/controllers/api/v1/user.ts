@@ -283,7 +283,7 @@ export const verifyEmail: RequestHandler = async (req, res) => {
     }
 };
 
-export const resendVerifyEmail: RequestHandler = async (req, res) => {
+export const resendEmailVerification: RequestHandler = async (req, res) => {
     const form: Type.UserEmailForm = req.body;
     const { valid, errors } = validate.userEmailForm(form);
     if (!valid) return res.status(400).json(errors);
@@ -292,6 +292,9 @@ export const resendVerifyEmail: RequestHandler = async (req, res) => {
         const user: Type.UserI = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Email not found.' });
         if (user.status === 'activated') return res.json({ message: 'Your account is already verified.' });
+        const response: Type.UserResponseSuccessMsg = {
+            message: 'A verification code was sent to your email.',
+        };
 
         user.verifyToken = auth.createCustomToken(
             'email',
@@ -300,7 +303,16 @@ export const resendVerifyEmail: RequestHandler = async (req, res) => {
             JWT_VERIFICATION_EXPIRES_IN
         );
 
-        res.json({ message: 'A verification code was sent to your email.' });
+        await user.save();
+
+        if (ENV === 'production') {
+            const email = generateEmail.userSignUp(user, req.headers.host!);
+            await sgMail.send(email);
+        } else {
+            response.verifyToken = user.verifyToken;
+        }
+
+        res.json(response);
     } catch (error) {
         res.status(500).json({ message: 'Something went wrong with the email verification.' });
     }
