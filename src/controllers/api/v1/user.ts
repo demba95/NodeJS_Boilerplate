@@ -284,7 +284,6 @@ export const verifyEmail: RequestHandler = async (req, res) => {
             user.email = user.tempEmail;
             user.tempEmail = '';
         }
-
         await user.save();
 
         res.json({ message: 'Thank you! Your email has been verified.' });

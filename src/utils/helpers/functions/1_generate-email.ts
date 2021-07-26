@@ -10,7 +10,7 @@ export const userSignUp: Type.EmailFn<Type.UserI, string> = (user, host) => {
         html: `
                 <h1>Hello ${user!.firstName}</h1>
                 <p>Thanks for registering on our website.</p>
-                <a href="http://${host}/api/users/email/${user!.verifyToken}">Click here to verify your account</a>
+                <a href="http://${host}/api/user/email/${user!.verifyToken}">Click here to verify your account</a>
             `,
     };
 };
@@ -22,7 +22,7 @@ export const updateUserEmail: Type.EmailFn<Type.UserI, string> = (user, host) =>
         subject: 'Verify your email',
         html: `
                 <h1>Hello ${user!.firstName}</h1>
-                <a href="http://${host}/api/users/email/${user!.verifyToken}">Click here to confirm your new email</a>
+                <a href="http://${host}/api/user/email/${user!.verifyToken}">Click here to confirm your new email</a>
             `,
     };
 };
