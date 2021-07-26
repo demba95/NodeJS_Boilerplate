@@ -77,7 +77,7 @@ export const signUpUser: RequestHandler = async (req, res) => {
         const user: Type.UserI = await User.findOne({ email: form.email });
         if (user) return res.status(400).json({ message: 'Email already in use.' });
 
-        const response: { message: string; verifyToken?: string } = {
+        const response: Type.UserResponseSuccessMsg = {
             message: 'Your account has been created. Please check your email to verify your account.',
         };
 
@@ -92,8 +92,12 @@ export const signUpUser: RequestHandler = async (req, res) => {
         await newUser.save();
 
         if (ENV === 'production') {
-            const email = generateEmail.userSignUp(newUser, req.headers.host!);
-            await sgMail.send(email);
+            try {
+                const email = generateEmail.userSignUp(user, req.headers.host!);
+                await sgMail.send(email);
+            } catch (error) {
+                return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
+            }
         } else {
             response.verifyToken = form.verifyToken;
         }
@@ -116,7 +120,7 @@ export const loginUser: RequestHandler = async (req, res) => {
 
         if (await checkTimeElapsed(user, res)) {
             user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
-                const response: { message: string; verifyToken?: string } = {
+                const response: Type.UserResponseSuccessMsg = {
                     message: 'Please verify your email first.',
                 };
                 if (matchPassword) {
@@ -170,7 +174,7 @@ export const updateUser: RequestHandler = async (req, res) => {
 
         user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
             if (matchPassword) {
-                const response: { message: string; verifyToken?: string } = {
+                const response: Type.UserResponseSuccessMsg = {
                     message: 'Your profile has been updated.',
                 };
 
@@ -208,8 +212,14 @@ export const updateUser: RequestHandler = async (req, res) => {
 
                     try {
                         if (ENV === 'production') {
-                            const email = generateEmail.updateUserEmail(user, req.headers.host!);
-                            await sgMail.send(email);
+                            try {
+                                const email = generateEmail.updateUserEmail(user, req.headers.host!);
+                                await sgMail.send(email);
+                            } catch (error) {
+                                return res
+                                    .status(500)
+                                    .json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
+                            }
                         } else {
                             response.verifyToken = user.verifyToken;
                         }
@@ -306,8 +316,12 @@ export const resendEmailVerification: RequestHandler = async (req, res) => {
         await user.save();
 
         if (ENV === 'production') {
-            const email = generateEmail.userSignUp(user, req.headers.host!);
-            await sgMail.send(email);
+            try {
+                const email = generateEmail.userSignUp(user, req.headers.host!);
+                await sgMail.send(email);
+            } catch (error) {
+                return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
+            }
         } else {
             response.verifyToken = user.verifyToken;
         }
@@ -326,7 +340,7 @@ export const resetPassword: RequestHandler = async (req, res) => {
     try {
         const user: Type.UserI = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Email not found.' });
-        const response: { message: string; verifyToken?: string } = {
+        const response: Type.UserResponseSuccessMsg = {
             message: 'Please check your email to reset your password.',
         };
 
@@ -339,8 +353,12 @@ export const resetPassword: RequestHandler = async (req, res) => {
         await user.save();
 
         if (ENV === 'production') {
-            const email = generateEmail.resetUserPassword(user);
-            await sgMail.send(email);
+            try {
+                const email = generateEmail.resetUserPassword(user);
+                await sgMail.send(email);
+            } catch (error) {
+                return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
+            }
         } else {
             response.verifyToken = user.verifyToken;
         }
@@ -372,7 +390,7 @@ export const updatePassword: RequestHandler = async (req, res) => {
             return res
                 .status(404)
                 .json({ message: 'Your token has expired, please reset your password and try again.' });
-        const response: { message: string; verifyToken?: string } = {
+        const response: Type.UserResponseSuccessMsg = {
             message: 'Password updated successfully.',
         };
 
@@ -381,8 +399,12 @@ export const updatePassword: RequestHandler = async (req, res) => {
         await user.save();
 
         if (ENV === 'production') {
-            const email = generateEmail.updateUserPassword(user);
-            await sgMail.send(email);
+            try {
+                const email = generateEmail.updateUserPassword(user);
+                await sgMail.send(email);
+            } catch (error) {
+                return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
+            }
         }
 
         res.json(response);
