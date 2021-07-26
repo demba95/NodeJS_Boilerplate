@@ -10,7 +10,6 @@ export const getLoginToken: TestType.GetLoginTokenFn = async (user) => {
         email: user.email!,
         password: user.password!,
     };
-    const response1: TestType.LoginResponse = await request(app).post(`${USER_URL}/login`).send(userForm).expect(200);
-    const token: string = response1.body;
-    return token;
+    const response: TestType.LoginResponse = await request(app).post(`${USER_URL}/login`).send(userForm).expect(200);
+    return response.body;
 };

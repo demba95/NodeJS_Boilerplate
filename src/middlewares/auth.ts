@@ -41,7 +41,7 @@ const authDevice: RequestHandler = (req, res, next) => {
 };
 
 const createAccessToken: Type.JwtAccessFn = (user) => {
-    return jwt.sign({ _id: user._id, firstName: user.firstName, lastName: user.lastName }, JWT_SECRET_KEY, {
+    return jwt.sign({ _id: user!._id, firstName: user!.firstName, lastName: user!.lastName }, JWT_SECRET_KEY, {
         expiresIn: `${JWT_SECRET_EXPIRES_IN}d`,
     });
 };

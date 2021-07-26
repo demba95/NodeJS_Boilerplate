@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { Context } from 'telegraf';
 import { Obj } from './1_shared';
-import { EmailMsg, User } from './2_types';
+import { EmailMsg } from './2_types';
 import { UserI } from './3_interfaces';
 
 // _ Email
@@ -32,7 +32,7 @@ export type UpdateDocumentFn = {
 
 // _ JWT
 export type JwtAccessFn = {
-    (user: User): string;
+    (user: UserI): string;
 };
 
 export type JwtVerifyFn = {

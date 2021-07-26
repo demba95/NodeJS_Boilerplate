@@ -1,17 +1,10 @@
 import { Document } from 'mongoose';
 import { Callback } from './1_shared';
-import { DeviceForm, User, UserLoginForm, UserSignUpForm } from './2_types';
 
 declare module 'express-serve-static-core' {
     export interface Request {
-        user?: UserJwtI | UserLoginForm | UserSignUpForm;
-        device?: DeviceI | DeviceForm;
-    }
-}
-
-declare module 'express-serve-static-core' {
-    export interface Request {
-        user?: UserJwtI | UserLoginForm | UserSignUpForm;
+        user?: UserJwtI;
+        device?: DeviceJwtI;
     }
 }
 
@@ -67,12 +60,17 @@ export interface DeviceD extends Document {
 
 export type DeviceI = DeviceD | null;
 
-export interface UserJwtI extends User {
+export interface UserJwtI {
+    _id: string;
+    firstName: string;
+    lastName: string;
     iat: number;
     exp: number;
 }
 
-export interface DeviceJwtI extends DeviceForm {
+export interface DeviceJwtI {
+    _id: string;
+    userId: string;
     iat: number;
     exp?: number;
 }
