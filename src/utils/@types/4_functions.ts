@@ -1,8 +1,16 @@
 import { Response } from 'express';
+import mongoose from 'mongoose';
 import { Context } from 'telegraf';
+import { InlineKeyboardMarkup, ReplyKeyboardMarkup } from 'telegraf/typings/core/types/typegram';
+import { Markup } from 'telegraf/typings/markup';
 import { Obj } from './1_shared';
 import { EmailMsg } from './2_types';
 import { UserI } from './3_interfaces';
+
+// _ Shared
+export type TitleCaseFn = {
+    (txt: string): string;
+};
 
 // _ Email
 export type EmailFn<U, H> = {
@@ -30,6 +38,10 @@ export type UpdateDocumentFn = {
     (document: Obj, body: Obj, permit: string[]): void;
 };
 
+export type ObjectIdFn = {
+    (id: string): mongoose.Types.ObjectId;
+};
+
 // _ JWT
 export type JwtAccessFn = {
     (user: UserI): string;
@@ -49,18 +61,60 @@ export type CheckTimeElapsedFn = {
 };
 
 // _ Telegram
-export type DeleteTelegramMsgFn = {
-    (chatId: string | number, msgId: string | number, time?: number): Promise<void>;
-};
-
-export type SendTelegramMsgFn = {
-    (chatId: string | number, msg: string, previewHtml?: boolean): Promise<any>;
-};
-
-export type EditTelegramMsgFn = {
-    (chatId: string | number, msgId: string | number, msg: string, disablePreview?: boolean): Promise<any>;
-};
-
-export type GetUserFromMsgFn = {
+export type GetUserFn = {
     (ctx: Context): Promise<UserI>;
+};
+
+export type DeleteMsgGetUserFn = {
+    (ctx: Context): Promise<UserI>;
+};
+
+export type SendMsgFn = {
+    (ctx: Context, msg: string, disablePreview?: boolean, personal?: boolean): Promise<number>;
+};
+
+export type SendMsgDeleteMsgFn = {
+    (ctx: Context, msg: string, time?: number): Promise<void>;
+};
+
+export type SendInLineKeyboardFn = {
+    (
+        ctx: Context,
+        msg: string,
+        keyboard: Markup<InlineKeyboardMarkup>,
+        disablePreview?: boolean,
+        personal?: boolean
+    ): Promise<number>;
+};
+
+export type SendKeyboardFn = {
+    (
+        ctx: Context,
+        msg: string,
+        keyboard: Markup<ReplyKeyboardMarkup>,
+        disablePreview?: boolean,
+        personal?: boolean
+    ): Promise<number>;
+};
+
+export type EditMsgFn = {
+    (ctx: Context, msg: string, msgId?: number, disablePreview?: boolean): Promise<void>;
+};
+
+export type EditMsgDeleteMsgFn = {
+    (ctx: Context, msg: string, msgId: number, time?: number): void;
+};
+
+export type EditInLineKeyboardFn = {
+    (
+        ctx: Context,
+        msg: string,
+        keyboard: Markup<InlineKeyboardMarkup>,
+        msgId?: number,
+        disablePreview?: boolean
+    ): Promise<void>;
+};
+
+export type DeleteMsgFn = {
+    (ctx: Context, newMsgId?: number, time?: number): Promise<void>;
 };

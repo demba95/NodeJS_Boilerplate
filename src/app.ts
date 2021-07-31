@@ -22,10 +22,6 @@ app.use('/api/iot-device', iotDeviceRoutes);
 app.use('/api/user', userRoutes);
 app.use(bot.webhookCallback(secretPath));
 
-bot.catch(async (error: any, ctx) => {
-    await ctx.reply(error.msg, { parse_mode: 'HTML' });
-});
-
 app.get('/*', (_: Request, res: Response) => {
     res.status(404).json({ message: "Path doesn't exist." });
 });
