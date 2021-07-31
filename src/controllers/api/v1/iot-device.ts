@@ -2,7 +2,6 @@ import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import Device from '@models/device';
 import User from '@models/user';
-import * as telegramHelper from '@telegram-helper';
 import { RequestHandler } from 'express';
 
 export const notify: RequestHandler = async (req, res) => {
@@ -24,13 +23,12 @@ export const notify: RequestHandler = async (req, res) => {
             if (!user!.isTelegramVerified) return res.status(400).json({ message: 'Telegram not verified.' });
 
             const msg: string = `<b>Device:</b> ${device.name.toUpperCase()}\
-                                \n\
-                                \n   <u>Msg:</u> ${data.message}`;
+                                 \n\
+                                 \n   <u>Msg:</u> ${data.message}`;
             const { message_id: msgId }: any = await bot.telegram.sendMessage(user!.telegramId, msg, {
                 parse_mode: 'HTML',
             });
-
-            await telegramHelper.deleteMsg(user!.telegramId, msgId);
+            await bot.telegram.deleteMessage(user!.telegramId, msgId);
         }
 
         res.json('Server received your message!');

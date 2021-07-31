@@ -1,5 +1,5 @@
 import * as auth from '@auth';
-import * as generateEmail from '@cFunctions';
+import * as CF from '@cFunctions';
 import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import Api from '@models/api';
@@ -93,7 +93,7 @@ export const signUpUser: RequestHandler = async (req, res) => {
 
         if (ENV === 'production') {
             try {
-                const email = generateEmail.userSignUp(user, req.headers.host!);
+                const email = CF.userSignUp(user, req.headers.host!);
                 await sgMail.send(email);
             } catch (error) {
                 return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
@@ -213,7 +213,7 @@ export const updateUser: RequestHandler = async (req, res) => {
                     try {
                         if (ENV === 'production') {
                             try {
-                                const email = generateEmail.updateUserEmail(user, req.headers.host!);
+                                const email = CF.updateUserEmail(user, req.headers.host!);
                                 await sgMail.send(email);
                             } catch (error) {
                                 return res
@@ -316,7 +316,7 @@ export const resendEmailVerification: RequestHandler = async (req, res) => {
 
         if (ENV === 'production') {
             try {
-                const email = generateEmail.userSignUp(user, req.headers.host!);
+                const email = CF.userSignUp(user, req.headers.host!);
                 await sgMail.send(email);
             } catch (error) {
                 return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
@@ -353,7 +353,7 @@ export const resetPassword: RequestHandler = async (req, res) => {
 
         if (ENV === 'production') {
             try {
-                const email = generateEmail.resetUserPassword(user);
+                const email = CF.resetUserPassword(user);
                 await sgMail.send(email);
             } catch (error) {
                 return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
@@ -399,7 +399,7 @@ export const updatePassword: RequestHandler = async (req, res) => {
 
         if (ENV === 'production') {
             try {
-                const email = generateEmail.updateUserPassword(user);
+                const email = CF.updateUserPassword(user);
                 await sgMail.send(email);
             } catch (error) {
                 return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
