@@ -16,6 +16,7 @@ const JWT_VERIFICATION_EXPIRES_IN: number = +process.env.JWT_VERIFICATION_EXPIRE
 const LOGIN_WAIT_TIME: number = +process.env.LOGIN_WAIT_TIME!;
 const LOGIN_MAX_TRY: number = +process.env.LOGIN_MAX_TRY!;
 const ENV: string = process.env.ENV!;
+const TELEGRAM_TIMEOUT_CHAT: number = +process.env.TELEGRAM_TIMEOUT_CHAT!;
 
 export const addTry: Type.AddTryFn = async (user, res) => {
     try {
@@ -195,8 +196,27 @@ export const updateUser: RequestHandler = async (req, res) => {
                     user.isTelegramVerified = false;
 
                     if (ENV !== 'test') {
-                        const msg: string = 'Please send /verify to confirm your telegram.';
-                        await bot.telegram.sendMessage(form.telegramId, msg, { parse_mode: 'HTML' });
+                        const chatId: string = form.telegramId;
+                        const msg: string = `Hey <b>${user.firstName} ${user.lastName}</b>!\
+                                             \n\
+                                             \nPlease send /verify to activate your telegram.`;
+                        const { message_id: msgId }: Type.MessageId = await bot.telegram.sendMessage(chatId, msg, {
+                            parse_mode: 'HTML',
+                        });
+
+                        setTimeout(
+                            async () => {
+                                try {
+                                    await bot.telegram.deleteMessage(chatId, +msgId);
+                                } catch (error) {
+                                    console.error(error);
+                                }
+                            },
+                            TELEGRAM_TIMEOUT_CHAT * 1000,
+                            bot,
+                            chatId,
+                            msgId
+                        );
                     }
                 }
                 if (user.email !== form.email) {
@@ -224,7 +244,9 @@ export const updateUser: RequestHandler = async (req, res) => {
                             response.verifyToken = user.verifyToken;
                         }
                     } catch (error) {
-                        res.status(500).json({ message: 'Something went wrong sending you the email verification.' });
+                        res.status(500).json({
+                            message: 'Something went wrong while sending you the email verification.',
+                        });
                     }
                 } else {
                     await user.save();
@@ -382,9 +404,7 @@ export const updatePassword: RequestHandler = async (req, res) => {
     if (!valid) return res.status(400).json(errors);
 
     try {
-        const user: Type.UserI = await User.findOne({
-            verifyToken: token,
-        });
+        const user: Type.UserI = await User.findOne({ verifyToken: token });
         if (!user)
             return res
                 .status(404)

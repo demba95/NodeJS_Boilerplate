@@ -1,9 +1,8 @@
 import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
+import User from '@models/user';
 import * as TH from '@telegram-helper';
 import { Markup } from 'telegraf';
-
-const URL_FRONTEND: string = process.env.URL_FRONTEND!;
 
 bot.command('start', async (ctx) => {
     try {
@@ -18,19 +17,14 @@ bot.command('start', async (ctx) => {
 
 bot.command('verify', async (ctx) => {
     const telegramId: number = ctx.from.id;
-    const name: string = `${ctx!.from!.first_name} ${ctx!.from!.last_name}`;
     let msg: string = '';
 
     try {
-        const user = await TH.deleteMsgGetUser(ctx);
+        await TH.deleteMsg(ctx, 0, 0);
+        const user: Type.UserI = await User.findOne({ telegramId });
 
         if (!user) {
-            msg = `Hey <b>${name}</b>!\
-                   \n\
-                   \n   Sorry! User not found.\
-                   \n\
-                   \n   Please sign up <a href="${URL_FRONTEND}/users/profile">here</a> to enable notifications.\
-                   \n   Your telegram id is <a href="tg://user?id=${telegramId}">${telegramId}</a>`;
+            throw { type: 'USER_NOT_REGISTERED', message: 'User not found.' };
         } else if (user && !user.isTelegramVerified) {
             user.isTelegramVerified = true;
             await user.save();
@@ -43,10 +37,7 @@ bot.command('verify', async (ctx) => {
 
         await TH.sendMsgDeleteMsg(ctx, msg);
     } catch (error) {
-        throw {
-            type: 'INTERNAL_ERROR',
-            msg: 'Something went wrong. Please try again.',
-        };
+        throw error;
     }
 });
 
@@ -62,25 +53,28 @@ bot.command('help', async (ctx) => {
     if (chatType === 'private') {
         msg = `CHAT COMMANDS\
                \n\
-               \n   <b><u>Other:</u></b>\
+               \n   <b><u>Private:</u></b>\
                \n      /command1 »\
                \n      /command2 »\
                \n\
                \n   <b><u>Other:</u></b>\
                \n      /me (your profile info)\
-               \n      /help`;
+               \n      /help (list of commands)`;
+
         keyboardButtons = new Array('/command1', '/command2', '/me', '/help');
         keyboardConfig.columns = 2;
         keyboardConfig.rows = 2;
     } else {
         msg = `GROUP COMMANDS\
                \n\
-               \n   <b><u>Other:</u></b>\
+               \n   <b><u>Group:</u></b>\
                \n      /command1 »\
                \n      /command2 »\
-               \n      /command3 »\
-               \n      /help`;
-        keyboardButtons = new Array('/command1', '/command2', '/command3', '/help');
+               \n\
+               \n   <b><u>Other:</u></b>\
+               \n      /me (your profile info)\
+               \n      /help (list of commands)`;
+        keyboardButtons = new Array('/command1', '/command2', '/me', '/help');
         keyboardConfig.columns = 2;
         keyboardConfig.rows = 2;
     }
@@ -88,13 +82,10 @@ bot.command('help', async (ctx) => {
     const keyboard: Type.ReplyKeyboard = Markup.keyboard(keyboardButtons, keyboardConfig).oneTime().resize();
 
     try {
-        await TH.deleteMsg(ctx, 0, 0);
+        await TH.deleteMsgGetUser(ctx);
         await TH.sendKeyboard(ctx, msg, keyboard, true, false);
     } catch (error) {
-        throw {
-            type: 'INTERNAL_ERROR',
-            msg: 'Something went wrong. Please try again.',
-        };
+        throw error;
     }
 });
 
@@ -118,10 +109,7 @@ bot.command('me', async (ctx) => {
                              \n———————————————————————`;
         await TH.sendInLineKeyboard(ctx, msg, keyboard);
     } catch (error) {
-        throw {
-            type: 'INTERNAL_ERROR',
-            msg: 'Something went wrong. Please try again.',
-        };
+        throw error;
     }
 });
 
@@ -149,9 +137,19 @@ bot.command('info', async (ctx) => {
             await TH.sendInLineKeyboard(ctx, msg, keyboard);
         }
     } catch (error) {
-        throw {
-            type: 'INTERNAL_ERROR',
-            msg: 'Something went wrong. Please try again.',
-        };
+        throw error;
+    }
+});
+
+bot.hears(/\/(.+)/i, async (ctx) => {
+    const msg: string = `Sorry, command /${ctx.match[1]!} doesn't exist or it's incorrect.\
+                         \nSend /help to view the available commands.`;
+
+    try {
+        await TH.deleteMsgGetUser(ctx);
+        await TH.sendMsgDeleteMsg(ctx, msg);
+    } catch (error) {
+        if (error.type === 'USER_NOT_REGISTERED' || error.type === 'USER_NOT_VERIFIED') throw error;
+        throw { type: 'INTERNAL_ERROR', message: 'Something went wrong while executing your command.' };
     }
 });

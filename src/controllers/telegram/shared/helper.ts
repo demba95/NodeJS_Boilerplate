@@ -1,46 +1,37 @@
 import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import User from '@models/user';
+import * as TH from '@telegram-helper';
 
 const TELEGRAM_TIMEOUT_CHAT: number = +process.env.TELEGRAM_TIMEOUT_CHAT!;
-const URL_FRONTEND: string = process.env.URL_FRONTEND!;
 
 export const getUser: Type.GetUserFn = async (ctx) => {
     const telegramId: number = ctx!.from!.id;
+    let message: string = '';
 
     try {
-        let msg: string = '';
         const user: Type.UserI = await User.findOne({ telegramId });
 
-        if (!user) {
-            msg = `Hello <b>${ctx!.from!.first_name} ${ctx!.from!.last_name}</b>!\
-                   \n\
-                   \n   Please sign up <a href="${URL_FRONTEND}/users/profile">here</a> to enable notifications.\
-                   \n   Your telegram id is <a href="tg://user?id=${telegramId}">${telegramId}</a>`;
-            throw { type: 'NOT_FOUND', msg };
+        if (user) {
+            if (!user.isTelegramVerified) {
+                message = `Hello <b>${ctx!.from!.first_name} ${ctx!.from!.last_name}</b>!\
+                           \n\
+                           \n   Your account hasn't been verified yet.\
+                           \n   Please send /verify to activate your telegram.`;
+                throw { type: 'USER_NOT_VERIFIED', message };
+            }
+            return user;
+        } else {
+            message = 'User not found.';
+            throw { type: 'USER_NOT_REGISTERED', message };
         }
-        if (!user.isTelegramVerified) {
-            msg = `Hello <b>${ctx!.from!.first_name} ${ctx!.from!.last_name}</b>!\
-                   \n\
-                   \n   Please send /verify to activate your telegram.\
-                   \n   Your telegram id is <a href="tg://user?id=${telegramId}">${telegramId}</a>`;
-            throw { type: 'NOT_VERIFIED', msg };
-        }
-
-        return user;
     } catch (error) {
-        if (error.type === 'NOT_FOUND' || error.type === 'NOT_VERIFIED') {
-            throw {
-                type: error.type,
-                msg: error.msg,
-            };
-        }
-
+        if (error.type === 'USER_NOT_REGISTERED' || error.type === 'USER_NOT_VERIFIED') throw error;
         throw {
             type: 'TELEGRAM_ERROR',
-            msg: `Something went wrong finding your telegram id.\
-                  \n\
-                  \n   <b>ERROR:</b> ${error.message}`,
+            message: `Something went wrong while finding your telegram id.\
+                      \n\
+                      \n   <b>ERROR:</b> ${error.message}`,
         };
     }
 };
@@ -69,9 +60,9 @@ export const sendMsg: Type.SendMsgFn = async (ctx, msg, disablePreview = true, p
     } catch (error) {
         throw {
             type: 'TELEGRAM_ERROR',
-            msg: `Something went wrong sending a new message.\
-                  \n\
-                  \n   <b>ERROR:</b> ${error.message}`,
+            message: `Something went wrong while sending a new message.\
+                      \n\
+                      \n   <b>ERROR:</b> ${error.message}`,
         };
     }
 };
@@ -108,20 +99,16 @@ export const sendInLineKeyboard: Type.SendInLineKeyboardFn = async (
     } catch (error) {
         throw {
             type: 'TELEGRAM_ERROR',
-            msg: `Something went wrong sending a new message.\
-                  \n\
-                  \n   <b>ERROR:</b> ${error.message}`,
+            message: `Something went wrong while sending a new message.\
+                      \n\
+                      \n   <b>ERROR:</b> ${error.message}`,
         };
     }
 };
 
 export const sendKeyboard: Type.SendKeyboardFn = async (ctx, msg, keyboard, disablePreview = true, personal = true) => {
     const chatId: number = personal ? ctx.from!.id : ctx.chat!.id;
-    const options: Type.ExtraReplyMessage = {
-        parse_mode: 'HTML',
-        ...keyboard,
-        disable_web_page_preview: true,
-    };
+    const options: Type.ExtraReplyMessage = { parse_mode: 'HTML', ...keyboard, disable_web_page_preview: true };
 
     if (!disablePreview) delete options.disable_web_page_preview;
 
@@ -131,9 +118,9 @@ export const sendKeyboard: Type.SendKeyboardFn = async (ctx, msg, keyboard, disa
     } catch (error) {
         throw {
             type: 'TELEGRAM_ERROR',
-            msg: `Something went wrong sending a new message.\
-                  \n\
-                  \n   <b>ERROR:</b> ${error.message}`,
+            message: `Something went wrong while sending a new message.\
+                      \n\
+                      \n   <b>ERROR:</b> ${error.message}`,
         };
     }
 };
@@ -153,9 +140,9 @@ export const editMsg: Type.EditMsgFn = async (ctx, msg, msgId, disablePreview = 
     } catch (error) {
         throw {
             type: 'TELEGRAM_ERROR',
-            msg: `Something went wrong editing your message.\
-                  \n\
-                  \n   <b>ERROR:</b> ${error.message}`,
+            message: `Something went wrong while editing your message.\
+                      \n\
+                      \n   <b>ERROR:</b> ${error.message}`,
         };
     }
 };
@@ -192,9 +179,9 @@ export const editInLineKeyboard: Type.EditInLineKeyboardFn = async (
     } catch (error) {
         throw {
             type: 'TELEGRAM_ERROR',
-            msg: `Something went wrong editing your message.\
-                  \n\
-                  \n   <b>ERROR:</b> ${error.message}`,
+            message: `Something went wrong while editing your message.\
+                      \n\
+                      \n   <b>ERROR:</b> ${error.message}`,
         };
     }
 };
@@ -208,10 +195,10 @@ export const deleteMsg: Type.DeleteMsgFn = async (ctx, newMsgId, time = TELEGRAM
             try {
                 await bot.telegram.deleteMessage(chatId.toString(), +msgId);
             } catch (error) {
-                const msg: string = `Something went wrong deleting your message.\
+                const msg: string = `Something went wrong while deleting your message.\
                                      \n\
                                      \n   <b>ERROR:</b> ${error.message}`;
-                await bot.telegram.sendMessage(chatId, msg, { parse_mode: 'HTML' });
+                await TH.sendMsgDeleteMsg(ctx, msg);
             }
         },
         time * 1000,

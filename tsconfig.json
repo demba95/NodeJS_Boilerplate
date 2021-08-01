@@ -22,6 +22,7 @@
             "~/*": ["./*"],
             "@config/*": ["./config/*"],
             "@controllers/*": ["./controllers/*"],
+            "@telegram": ["./controllers/telegram/telegram.ts"],
             "@telegram-helper": ["./controllers/telegram/shared/helper.ts"],
             "@api": ["./controllers/api/v1/api.ts"],
             "@device": ["./controllers/api/v1/device.ts"],

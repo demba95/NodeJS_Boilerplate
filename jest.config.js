@@ -14,6 +14,7 @@ module.exports = {
         '~/(.*)': '<rootDir>/src/$1',
         '@config/(.*)': '<rootDir>/src/config/$1',
         '@controllers/(.*)': '<rootDir>/src/controllers/$1',
+        '@telegram': '<rootDir>/src/controllers/telegram/telegram.ts',
         '@telegram-helper': '<rootDir>/src/controllers/telegram/shared/helper.ts',
         '@api': '<rootDir>/src/controllers/api/v1/api.ts',
         '@device': '<rootDir>/src/controllers/api/v1/device.ts',
