@@ -99,7 +99,7 @@ bot.command('me', async (ctx) => {
         const keyboard: Type.InLineKeyboard = Markup.inlineKeyboard(menu);
 
         const msg: string = `———————————————————————\
-                             \n                        YOUR PROFILE\
+                             \n                              YOUR PROFILE\
                              \n\
                              \n   <u>First Name:</u>    <b>${ctx.from.first_name}</b>\
                              \n   <u>Last Name:</u>    <b>${ctx.from.last_name}</b>\
@@ -128,7 +128,7 @@ bot.command('info', async (ctx) => {
             const keyboard: Type.InLineKeyboard = Markup.inlineKeyboard(menu);
 
             const msg: string = `———————————————————————\
-                                 \n                            CHAT INFO\
+                                 \n                                CHAT INFO\
                                  \n\
                                  \n   <u>Chat Title:</u>    <b>${title.toUpperCase()}</b>\
                                  \n   <u>Chat Id:</u>        <b>${chatId}</b>\

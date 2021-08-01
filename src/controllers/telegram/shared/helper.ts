@@ -3,7 +3,7 @@ import * as Type from '@cTypes';
 import User from '@models/user';
 import * as TH from '@telegram-helper';
 
-const TELEGRAM_TIMEOUT_CHAT: number = +process.env.TELEGRAM_TIMEOUT_CHAT!;
+const TELEGRAM_CLEAR_CHAT_MSG: number = +process.env.TELEGRAM_CLEAR_CHAT_MSG!;
 
 export const getUser: Type.GetUserFn = async (ctx) => {
     const telegramId: number = ctx!.from!.id;
@@ -186,7 +186,7 @@ export const editInLineKeyboard: Type.EditInLineKeyboardFn = async (
     }
 };
 
-export const deleteMsg: Type.DeleteMsgFn = async (ctx, newMsgId, time = TELEGRAM_TIMEOUT_CHAT) => {
+export const deleteMsg: Type.DeleteMsgFn = async (ctx, newMsgId, time = TELEGRAM_CLEAR_CHAT_MSG) => {
     const chatId: number = ctx.chat!.id;
     const msgId: number = newMsgId ? newMsgId : ctx.message!.message_id;
 

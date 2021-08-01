@@ -16,7 +16,7 @@ const JWT_VERIFICATION_EXPIRES_IN: number = +process.env.JWT_VERIFICATION_EXPIRE
 const LOGIN_WAIT_TIME: number = +process.env.LOGIN_WAIT_TIME!;
 const LOGIN_MAX_TRY: number = +process.env.LOGIN_MAX_TRY!;
 const ENV: string = process.env.ENV!;
-const TELEGRAM_TIMEOUT_CHAT: number = +process.env.TELEGRAM_TIMEOUT_CHAT!;
+const TELEGRAM_CLEAR_CHAT_MSG: number = +process.env.TELEGRAM_CLEAR_CHAT_MSG!;
 
 export const addTry: Type.AddTryFn = async (user, res) => {
     try {
@@ -212,7 +212,7 @@ export const updateUser: RequestHandler = async (req, res) => {
                                     console.error(error);
                                 }
                             },
-                            TELEGRAM_TIMEOUT_CHAT * 1000,
+                            TELEGRAM_CLEAR_CHAT_MSG * 1000,
                             bot,
                             chatId,
                             msgId
