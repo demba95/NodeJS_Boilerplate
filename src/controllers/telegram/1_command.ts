@@ -3,11 +3,6 @@ import * as Type from '@cTypes';
 import User from '@models/user';
 import * as TH from '@telegram-helper';
 import { Markup } from 'telegraf';
-import './command/expense';
-import './command/expense-category';
-import './command/link';
-import './command/todo';
-import './command/todo-category';
 
 bot.command('start', async (ctx) => {
     try {
@@ -58,67 +53,28 @@ bot.command('help', async (ctx) => {
     if (chatType === 'private') {
         msg = `CHAT COMMANDS\
                \n\
-               \n   <b><u>Links:</u></b>\
-               \n      <b>Add new link</b> (send the URL)\
-               \n      /links (list of links)\
-               \n      /deletelink\
-               \n\
-               \n   <b><u>Todos:</u></b>\
-               \n      /todos (list of todos)\
-               \n      /newtodo <b><i>new_todo</i></b>\
-               \n      /deletetodo\
-               \n\
-               \n   <b><u>Todo's Category:</u></b>\
-               \n      /todocategory (list of categories)\
-               \n      /newtodocategory <b><i>new_category</i></b>\
-               \n      /renametodocategory <b><i>old = new</i></b>\
-               \n      /deletetodocategory\
-               \n\
-               \n   <b><u>Expenses:</u></b>\
-               \n      <b>Add new expense</b> (send "$x.xx name")\
-               \n      /balance ($ current month)\
-               \n      /expense (list of expenses)\
-               \n      /expensehistory (list of expenses by month)\
-               \n      /deleteexp\
-               \n\
-               \n   <b><u>Expense's Category:</u></b>\
-               \n      /expcategory (list of categories)\
-               \n      /newexpcategory <b><i>new_category</i></b>\
-               \n      /renameexpcategory <b><i>old = new</i></b>\
-               \n      /addusertoexpcategory <b><i>telegram_id</i></b>\
-               \n      /deleteexpcategory\
+               \n   <b><u>Private:</u></b>\
+               \n      /command1 »\
+               \n      /command2 »\
                \n\
                \n   <b><u>Other:</u></b>\
                \n      /me (your profile info)\
                \n      /help (list of commands)`;
 
-        keyboardButtons = new Array(
-            '/link',
-            '/deletelink',
-            '/todo',
-            '/deletetodo',
-            '/todocategory',
-            '/deletetodocategory',
-            '/balance',
-            '/expense',
-            '/expensehistory',
-            '/deleteexp',
-            '/expcategory',
-            '/deleteexpcategory',
-            '/me',
-            '/help'
-        );
+        keyboardButtons = new Array('/command1', '/command2', '/me', '/help');
         keyboardConfig.columns = 2;
         keyboardConfig.rows = 7;
     } else {
         msg = `GROUP COMMANDS\
                \n\
-               \n   <b><u>Other:</u></b>\
+               \n   <b><u>Group:</u></b>\
                \n      /command1 »\
                \n      /command2 »\
-               \n      /command3 »\
-               \n      /help`;
-        keyboardButtons = new Array('/command1', '/command2', '/command3', '/help');
+               \n\
+               \n   <b><u>Other:</u></b>\
+               \n      /me (your profile info)\
+               \n      /help (list of commands)`;
+        keyboardButtons = new Array('/command1', '/command2', '/me', '/help');
         keyboardConfig.columns = 2;
         keyboardConfig.rows = 2;
     }

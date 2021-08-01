@@ -1,10 +1,5 @@
 import { bot } from '@config/telegram';
 import * as TH from '@telegram-helper';
-import './action/expense';
-import './action/expense-category';
-import './action/link';
-import './action/todo';
-import './action/todo-category';
 
 bot.action('cancel', async (ctx) => {
     const msgId: number = ctx.update.callback_query.message!.message_id;
