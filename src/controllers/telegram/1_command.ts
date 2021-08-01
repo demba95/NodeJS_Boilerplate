@@ -63,7 +63,7 @@ bot.command('help', async (ctx) => {
 
         keyboardButtons = new Array('/command1', '/command2', '/me', '/help');
         keyboardConfig.columns = 2;
-        keyboardConfig.rows = 7;
+        keyboardConfig.rows = 2;
     } else {
         msg = `GROUP COMMANDS\
                \n\
