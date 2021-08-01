@@ -1,10 +1,10 @@
 import '@config/database';
 import { bot, secretPath } from '@config/telegram';
-import '@controllers/telegram/telegram';
 import apiRoutes from '@routes/api';
 import deviceRoutes from '@routes/device';
 import iotDeviceRoutes from '@routes/iot-device';
 import userRoutes from '@routes/user';
+import '@telegram';
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
 import helmet from 'helmet';
