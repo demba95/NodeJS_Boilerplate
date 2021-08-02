@@ -82,6 +82,7 @@ export type SendInLineKeyboardFn = {
         ctx: Context,
         msg: string,
         keyboard: Markup<InlineKeyboardMarkup>,
+        telegramId?: number,
         disablePreview?: boolean,
         personal?: boolean
     ): Promise<number>;
@@ -114,5 +115,5 @@ export type DeleteMsgFn = {
 };
 
 export type GetTempFn = {
-    (ctx: Context, tempKey: string): Obj;
+    (ctx: Context, tempKey: string): Promise<Obj>;
 };

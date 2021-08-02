@@ -50,13 +50,15 @@ bot.command('help', async (ctx) => {
     if (chatType === 'private') {
         msg = `CHAT COMMANDS\
                \n\
-               \n   <b><u>Private:</u></b>\
-               \n      /command1 »\
-               \n      /command2 »\
+               \n<b><u>Private:</u></b>\
                \n\
-               \n   <b><u>Other:</u></b>\
-               \n      /me (your profile info)\
-               \n      /help (list of commands)`;
+               \n/command1 »\
+               \n/command2 »\
+               \n\
+               \n<b><u>Other:</u></b>\
+               \n\
+               \n/me (your profile info)\
+               \n/help (list of commands)`;
 
         keyboardButtons = new Array('/command1', '/command2', '/me', '/help');
         keyboardConfig.columns = 2;
@@ -64,13 +66,15 @@ bot.command('help', async (ctx) => {
     } else {
         msg = `GROUP COMMANDS\
                \n\
-               \n   <b><u>Group:</u></b>\
-               \n      /command1 »\
-               \n      /command2 »\
+               \n<b><u>Group:</u></b>\
                \n\
-               \n   <b><u>Other:</u></b>\
-               \n      /me (your profile info)\
-               \n      /help (list of commands)`;
+               \n/command1 »\
+               \n/command2 »\
+               \n\
+               \n<b><u>Other:</u></b>\
+               \n\
+               \n/me (your profile info)\
+               \n/help (list of commands)`;
         keyboardButtons = new Array('/command1', '/command2', '/me', '/help');
         keyboardConfig.columns = 2;
         keyboardConfig.rows = 2;

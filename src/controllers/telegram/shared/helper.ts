@@ -81,10 +81,11 @@ export const sendInLineKeyboard: Type.SendInLineKeyboardFn = async (
     ctx,
     msg,
     keyboard,
+    telegramId = 0,
     disablePreview = true,
     personal = true
 ) => {
-    const chatId: number = personal ? ctx.from!.id : ctx.chat!.id;
+    const chatId: number = telegramId ? telegramId : personal ? ctx.from!.id : ctx.chat!.id;
     const options: Type.ExtraReplyMessage = {
         parse_mode: 'HTML',
         ...keyboard,
@@ -208,6 +209,8 @@ export const getTemp: Type.GetTempFn = async (ctx, tempKey) => {
             message: 'Sorry! Server has been rebooted.\nPlease try again.',
         };
     } else {
-        return await temp[tempKey];
+        return await new Promise((resolve, _) => {
+            resolve(temp[tempKey]);
+        });
     }
 };
