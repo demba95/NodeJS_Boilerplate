@@ -98,23 +98,21 @@ export type SendKeyboardFn = {
 };
 
 export type EditMsgFn = {
-    (ctx: Context, msg: string, msgId?: number, disablePreview?: boolean): Promise<void>;
+    (ctx: Context, msg: string, disablePreview?: boolean): Promise<void>;
 };
 
 export type EditMsgDeleteMsgFn = {
-    (ctx: Context, msg: string, msgId: number, time?: number): void;
+    (ctx: Context, msg: string, time?: number): void;
 };
 
 export type EditInLineKeyboardFn = {
-    (
-        ctx: Context,
-        msg: string,
-        keyboard: Markup<InlineKeyboardMarkup>,
-        msgId?: number,
-        disablePreview?: boolean
-    ): Promise<void>;
+    (ctx: Context, msg: string, keyboard: Markup<InlineKeyboardMarkup>, disablePreview?: boolean): Promise<void>;
 };
 
 export type DeleteMsgFn = {
-    (ctx: Context, newMsgId?: number, time?: number): Promise<void>;
+    (ctx: Context, msgId?: number, time?: number): Promise<void>;
+};
+
+export type GetTempFn = {
+    (ctx: Context, tempKey: string): Obj;
 };

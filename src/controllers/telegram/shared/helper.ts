@@ -2,6 +2,7 @@ import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import User from '@models/user';
 import * as TH from '@telegram-helper';
+import temp from '~/tmp/temp';
 
 const TELEGRAM_CLEAR_CHAT_MSG: number = +process.env.TELEGRAM_CLEAR_CHAT_MSG!;
 
@@ -70,8 +71,7 @@ export const sendMsg: Type.SendMsgFn = async (ctx, msg, disablePreview = true, p
 export const sendMsgDeleteMsg: Type.SendMsgDeleteMsgFn = async (ctx, msg, time) => {
     try {
         const newMsgId = await sendMsg(ctx, msg);
-        time && (await deleteMsg(ctx, newMsgId, time));
-        !time && (await deleteMsg(ctx, newMsgId));
+        await deleteMsg(ctx, newMsgId, time);
     } catch (error) {
         throw error;
     }
@@ -125,9 +125,7 @@ export const sendKeyboard: Type.SendKeyboardFn = async (ctx, msg, keyboard, disa
     }
 };
 
-export const editMsg: Type.EditMsgFn = async (ctx, msg, msgId, disablePreview = true) => {
-    const chatId: number = ctx.chat!.id;
-    if (!msgId) msgId = ctx.message!.message_id;
+export const editMsg: Type.EditMsgFn = async (ctx, msg, disablePreview = true) => {
     const options: Type.ExtraEditMessageText = {
         parse_mode: 'HTML',
         disable_web_page_preview: true,
@@ -136,7 +134,7 @@ export const editMsg: Type.EditMsgFn = async (ctx, msg, msgId, disablePreview = 
     if (!disablePreview) delete options.disable_web_page_preview;
 
     try {
-        await bot.telegram.editMessageText(chatId, +msgId, undefined, msg, options);
+        await ctx.editMessageText(msg, options);
     } catch (error) {
         throw {
             type: 'TELEGRAM_ERROR',
@@ -147,25 +145,16 @@ export const editMsg: Type.EditMsgFn = async (ctx, msg, msgId, disablePreview = 
     }
 };
 
-export const editMsgDeleteMsg: Type.EditMsgDeleteMsgFn = async (ctx, msg, msgId, time) => {
+export const editMsgDeleteMsg: Type.EditMsgDeleteMsgFn = async (ctx, msg, time) => {
     try {
-        await editMsg(ctx, msg, msgId);
-        time && (await deleteMsg(ctx, msgId, time));
-        !time && (await deleteMsg(ctx, msgId));
+        await editMsg(ctx, msg);
+        await deleteMsg(ctx, 0, time);
     } catch (error) {
         throw error;
     }
 };
 
-export const editInLineKeyboard: Type.EditInLineKeyboardFn = async (
-    ctx,
-    msg,
-    keyboard,
-    msgId,
-    disablePreview = true
-) => {
-    const chatId: number = ctx.chat!.id;
-    if (!msgId) msgId = ctx.message!.message_id;
+export const editInLineKeyboard: Type.EditInLineKeyboardFn = async (ctx, msg, keyboard, disablePreview = true) => {
     const options: Type.ExtraEditMessageText = {
         parse_mode: 'HTML',
         ...keyboard,
@@ -175,7 +164,7 @@ export const editInLineKeyboard: Type.EditInLineKeyboardFn = async (
     if (!disablePreview) delete options.disable_web_page_preview;
 
     try {
-        await bot.telegram.editMessageText(chatId, +msgId, undefined, msg, options);
+        await ctx.editMessageText(msg, options);
     } catch (error) {
         throw {
             type: 'TELEGRAM_ERROR',
@@ -186,24 +175,39 @@ export const editInLineKeyboard: Type.EditInLineKeyboardFn = async (
     }
 };
 
-export const deleteMsg: Type.DeleteMsgFn = async (ctx, newMsgId, time = TELEGRAM_CLEAR_CHAT_MSG) => {
-    const chatId: number = ctx.chat!.id;
-    const msgId: number = newMsgId ? newMsgId : ctx.message!.message_id;
+export const deleteMsg: Type.DeleteMsgFn = async (ctx, msgId, time = TELEGRAM_CLEAR_CHAT_MSG) => {
+    // @ts-ignore
+    if (!msgId) msgId = ctx.message ? ctx.message.message_id : ctx.update.callback_query.message.message_id;
 
-    setTimeout(
-        async () => {
-            try {
-                await bot.telegram.deleteMessage(chatId.toString(), +msgId);
-            } catch (error) {
-                const msg: string = `Something went wrong while deleting your message.\
-                                     \n\
-                                     \n   <b>ERROR:</b> ${error.message}`;
-                await TH.sendMsgDeleteMsg(ctx, msg);
-            }
-        },
-        time * 1000,
-        bot,
-        chatId,
-        msgId
-    );
+    if (+time === 0) {
+        await ctx.deleteMessage(+msgId!);
+    } else {
+        setTimeout(
+            async () => {
+                try {
+                    await ctx.deleteMessage(+msgId!);
+                } catch (error) {
+                    const msg: string = `Something went wrong while deleting your message.\
+                                         \n\
+                                         \n   <b>ERROR:</b> ${error.message}`;
+                    await TH.sendMsgDeleteMsg(ctx, msg);
+                }
+            },
+            time * 1000,
+            bot,
+            msgId
+        );
+    }
+};
+
+export const getTemp: Type.GetTempFn = async (ctx, tempKey) => {
+    if (!temp[tempKey]) {
+        await deleteMsg(ctx, 0, 0);
+        throw {
+            type: 'SERVER_REBOOTED',
+            message: 'Sorry! Server has been rebooted.\nPlease try again.',
+        };
+    } else {
+        return await temp[tempKey];
+    }
 };
