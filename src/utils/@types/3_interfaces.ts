@@ -8,7 +8,7 @@ declare module 'express-serve-static-core' {
     }
 }
 
-export interface UserD extends Document {
+interface UserD extends Document {
     _id: string;
     firstName: string;
     lastName: string;
@@ -29,7 +29,7 @@ export interface UserD extends Document {
 
 export type UserI = UserD | null;
 
-export interface ApiD extends Document {
+interface ApiD extends Document {
     _id: string;
     name: string;
     url: string;
@@ -45,7 +45,7 @@ export interface ApiD extends Document {
 
 export type ApiI = ApiD | null;
 
-export interface DeviceD extends Document {
+interface DeviceD extends Document {
     _id: string;
     name: string;
     token: string;
