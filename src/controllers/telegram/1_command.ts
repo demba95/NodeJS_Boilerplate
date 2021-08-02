@@ -43,11 +43,8 @@ bot.command('verify', async (ctx) => {
 
 bot.command('help', async (ctx) => {
     const chatType: string = ctx.chat.type;
+    const keyboardConfig: Type.InLineKeyboardConfig = { columns: 0, rows: 0 };
     let keyboardButtons: string[] = [];
-    const keyboardConfig: Type.InLineKeyboardConfig = {
-        columns: 0,
-        rows: 0,
-    };
     let msg: string = '';
 
     if (chatType === 'private') {
@@ -123,7 +120,7 @@ bot.command('info', async (ctx) => {
     try {
         const user = await TH.deleteMsgGetUser(ctx);
 
-        if (user && user.admin) {
+        if (user!.admin) {
             menu.push([Markup.button.callback('Dismiss', 'dismiss')]);
             const keyboard: Type.InLineKeyboard = Markup.inlineKeyboard(menu);
 
