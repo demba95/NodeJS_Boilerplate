@@ -1,5 +1,5 @@
 import * as auth from '@auth';
-import { updateDocument } from '@cFunctions';
+import * as CF from '@cFunctions';
 import * as Type from '@cTypes';
 import Device from '@models/device';
 import * as validate from '@validator';
@@ -10,7 +10,7 @@ const permittedFields: string[] = ['name', 'expiresIn', 'description', 'active']
 
 export const newDevice: RequestHandler = async (req, res) => {
     const form: Type.DeviceForm = req.body;
-    const { valid, errors } = validate.DeviceForm(form);
+    const { valid, errors } = validate.deviceForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -68,7 +68,7 @@ export const getDevice: RequestHandler = async (req, res) => {
 export const updateDevice: RequestHandler = async (req, res) => {
     const iotId: string = req.params.id!;
     const form: Type.DeviceForm = req.body;
-    const { valid, errors } = validate.DeviceForm(form);
+    const { valid, errors } = validate.deviceForm(form);
     if (!valid) return res.status(400).json(errors);
 
     try {
@@ -88,7 +88,7 @@ export const updateDevice: RequestHandler = async (req, res) => {
                 JWT_DEVICE_SECRET_KEY,
                 +form.expiresIn!
             );
-        updateDocument(device, req.body, permittedFields);
+        CF.updateDocument(device, req.body, permittedFields);
         await device.save();
 
         res.json({ message: 'Device has been updated successfully.', data: device });

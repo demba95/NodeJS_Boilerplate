@@ -1,7 +1,7 @@
 import * as Type from '@cTypes';
-import { checkProperty } from './1_shared';
+import { checkProperty } from './shared';
 
-export const DeviceForm: Type.ValidatorFn<Type.DeviceForm> = (data) => {
+export const deviceForm: Type.ValidatorFn<Type.DeviceForm> = (data) => {
     const { expiresIn } = data;
     const errors: Type.Obj = {};
 

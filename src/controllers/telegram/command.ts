@@ -59,7 +59,6 @@ bot.command('help', async (ctx) => {
                \n\
                \n/me (your profile info)\
                \n/help (list of commands)`;
-
         keyboardButtons = new Array('/command1', '/command2', '/me', '/help');
         keyboardConfig.columns = 2;
         keyboardConfig.rows = 2;

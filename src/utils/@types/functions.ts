@@ -3,9 +3,9 @@ import mongoose from 'mongoose';
 import { Context } from 'telegraf';
 import { InlineKeyboardMarkup, ReplyKeyboardMarkup } from 'telegraf/typings/core/types/typegram';
 import { Markup } from 'telegraf/typings/markup';
-import { Obj } from './1_shared';
-import { EmailMsg } from './2_types';
-import { UserI } from './3_interfaces';
+import { UserI } from './interfaces';
+import { Obj } from './shared';
+import { EmailMsg } from './types';
 
 // _ Shared
 export type TitleCaseFn = {

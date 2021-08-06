@@ -1,4 +1,4 @@
-import { updateDocument } from '@cFunctions';
+import * as CF from '@cFunctions';
 import * as Type from '@cTypes';
 import Api from '@models/api';
 import * as validate from '@validator';
@@ -99,7 +99,7 @@ export const updateApi: RequestHandler = async (req, res) => {
 
         const api = await Api.findById(apiId);
         if (!api) return res.status(404).json({ message: 'API not found.' });
-        updateDocument(api, req.body, permittedFields);
+        CF.updateDocument(api, req.body, permittedFields);
         await api.save();
 
         res.json({ message: 'API has been updated successfully.' });

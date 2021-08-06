@@ -1,5 +1,5 @@
 import * as Type from '@cTypes';
-import { checkProperty, isEmail } from './1_shared';
+import { checkProperty, isEmail } from './shared';
 
 const PASSWORD_LENGTH: number = +process.env.PASSWORD_LEN!;
 
