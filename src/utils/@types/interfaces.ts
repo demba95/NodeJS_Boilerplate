@@ -1,5 +1,5 @@
 import { Document } from 'mongoose';
-import { Callback } from './1_shared';
+import { Callback } from './shared';
 
 declare module 'express-serve-static-core' {
     export interface Request {

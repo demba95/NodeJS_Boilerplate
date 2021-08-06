@@ -29,7 +29,7 @@ module.exports = {
                     '@models': './src/models',
                     '@routes': './src/routes',
                     '@utils': './src/utils',
-                    '@cTypes': './src/utils/@types/types.ts',
+                    '@cTypes': './src/utils/@types',
                     '@helpers': './src/utils/helpers',
                     '@cFunctions': './src/utils/helpers/functions',
                     '@validator': './src/utils/helpers/validator',

@@ -22,7 +22,7 @@
             "~/*": ["./*"],
             "@config/*": ["./config/*"],
             "@controllers/*": ["./controllers/*"],
-            "@telegram": ["./controllers/telegram/telegram.ts"],
+            "@telegram": ["./controllers/telegram/0_telegram.ts"],
             "@telegram-helper": ["./controllers/telegram/shared/helper.ts"],
             "@api": ["./controllers/api/v1/api.ts"],
             "@device": ["./controllers/api/v1/device.ts"],
@@ -33,10 +33,10 @@
             "@models/*": ["./models/*"],
             "@routes/*": ["./routes/*"],
             "@utils/*": ["./utils/*"],
-            "@cTypes": ["./utils/@types/types.ts"],
+            "@cTypes": ["./utils/@types/0_types.ts"],
             "@helpers/*": ["./utils/helpers/*"],
-            "@cFunctions": ["./utils/helpers/functions/functions.ts"],
-            "@validator": ["./utils/helpers/validator/validator.ts"]
+            "@cFunctions": ["./utils/helpers/functions/0_functions.ts"],
+            "@validator": ["./utils/helpers/validator/0_validator.ts"]
         },
         "typeRoots": ["./node_modules/@types", "./src/utils/@types"],
         "esModuleInterop": true,

@@ -1,5 +1,5 @@
 import * as Type from '@cTypes';
-import { checkProperty } from './1_shared';
+import { checkProperty } from './shared';
 
 export const apiForm: Type.ValidatorFn<Type.ApiForm> = (data) => {
     const errors: Type.Obj = {};
