@@ -3,13 +3,14 @@ import Api from '@models/api';
 import CryptoJS from 'crypto-js';
 import request from 'supertest';
 import app from '~/app';
-import { setupDatabase, user1, user1api1, user1api2, user3api1 } from './database/database';
+import { closeDatabase, setupDatabase, user1, user1api1, user1api2, user3api1 } from './database/database';
 import { getLoginToken } from './helpers/helpers';
 
 const API_URL: string = '/api/api';
 const SECRET_KEY_BASE: string = process.env.SECRET_KEY_BASE!;
 
 beforeEach(setupDatabase);
+afterAll(closeDatabase);
 
 describe("Api's API", () => {
     it('Should create new API', async () => {
