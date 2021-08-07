@@ -31,7 +31,7 @@
             "@middlewares/*": ["./middlewares/*"],
             "@auth": ["./middlewares/auth.ts"],
             "@models/*": ["./models/*"],
-            "@routes/*": ["./routes/*"],
+            "@routes": ["./routes/0_api.ts"],
             "@utils/*": ["./utils/*"],
             "@cTypes": ["./utils/@types/0_types.ts"],
             "@helpers/*": ["./utils/helpers/*"],

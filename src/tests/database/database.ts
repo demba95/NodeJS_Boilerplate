@@ -139,6 +139,10 @@ const setupDatabase = async () => {
     await new Device(user3device1).save();
 };
 
+const closeDatabase = async () => {
+    mongoose.connection.close();
+};
+
 export {
     user1,
     user2,
@@ -152,4 +156,5 @@ export {
     user1device2,
     user3device1,
     setupDatabase,
+    closeDatabase,
 };

@@ -23,7 +23,7 @@ module.exports = {
         '@middlewares/(.*)': '<rootDir>/src/middlewares/$1',
         '@auth': '<rootDir>/src/middlewares/auth.ts',
         '@models/(.*)': '<rootDir>/src/models/$1',
-        '@routes/(.*)': '<rootDir>/src/routes/$1',
+        '@routes': '<rootDir>/src/routes/0_api.ts',
         '@utils/(.*)': '<rootDir>/src/utils/$1',
         '@cTypes': '<rootDir>/src/utils/@types/0_types.ts',
         '@helpers/(.*)': '<rootDir>/src/utils/helpers/$1',
