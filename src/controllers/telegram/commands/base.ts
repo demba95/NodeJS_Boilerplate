@@ -1,7 +1,7 @@
 import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import User from '@models/user';
-import * as TH from '@telegram-helpers';
+import * as TH from '@tHelpers';
 import { Markup } from 'telegraf';
 
 bot.command('start', async (ctx) => {

@@ -2,7 +2,7 @@ import * as auth from '@auth';
 import * as CF from '@cFunctions';
 import * as Type from '@cTypes';
 import Device from '@models/device';
-import * as validate from '@validator';
+import * as validate from '@validators';
 import { RequestHandler } from 'express';
 
 const JWT_DEVICE_SECRET_KEY: string = process.env.JWT_DEVICE_SECRET_KEY!;

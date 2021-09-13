@@ -1,6 +1,6 @@
 import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
-import * as TH from '@telegram-helpers';
+import * as TH from '@tHelpers';
 
 const TELEGRAM_CLEAR_CHAT_MSG: number = +process.env.TELEGRAM_CLEAR_CHAT_MSG!;
 

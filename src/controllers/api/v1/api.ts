@@ -1,7 +1,7 @@
 import * as CF from '@cFunctions';
 import * as Type from '@cTypes';
 import Api from '@models/api';
-import * as validate from '@validator';
+import * as validate from '@validators';
 import { RequestHandler } from 'express';
 
 const permittedFields: string[] = ['name', 'key', 'value', 'url', 'description', 'active'];

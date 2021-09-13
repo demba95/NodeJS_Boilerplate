@@ -1,5 +1,5 @@
 import { bot } from '@config/telegram';
-import * as TH from '@telegram-helpers';
+import * as TH from '@tHelpers';
 import { Context } from 'telegraf';
 import './actions/base';
 import './commands/base';

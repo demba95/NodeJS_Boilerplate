@@ -1,5 +1,5 @@
 import { bot } from '@config/telegram';
-import * as TH from '@telegram-helpers';
+import * as TH from '@tHelpers';
 
 bot.action('cancel', async (ctx) => {
     const msg: string = '<b>Request aborted!</b>';

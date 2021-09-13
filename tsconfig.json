@@ -24,7 +24,7 @@
             "@config/*": ["./config/*"],
             "@controllers/*": ["./controllers/*"],
             "@telegram": ["./controllers/telegram/telegram.ts"],
-            "@telegram-helpers": ["./controllers/telegram/helpers/helpers.ts"],
+            "@tHelpers": ["./controllers/telegram/helpers/helpers.ts"],
             "@api": ["./controllers/api/v1/api.ts"],
             "@device": ["./controllers/api/v1/device.ts"],
             "@iot-device": ["./controllers/api/v1/iot-device.ts"],
@@ -38,7 +38,7 @@
             "@cTypes": ["./utils/@types/types.ts"],
             "@helpers/*": ["./utils/helpers/*"],
             "@cFunctions": ["./utils/helpers/functions.ts"],
-            "@validator": ["./utils/helpers/validator.ts"]
+            "@validators": ["./utils/helpers/validators.ts"]
         },
         "typeRoots": ["./node_modules/@types", "./src/utils/@types/*"],
         "esModuleInterop": true,

@@ -1,7 +1,7 @@
 import * as Type from '@cTypes';
 import User from '@models/user';
-import * as TH from '@telegram-helpers';
 import temp from '@temp';
+import * as TH from '@tHelpers';
 
 export const getUser: Type.GetUserFn = async (ctx) => {
     const telegramId: string = ctx!.from!.id.toString();

@@ -5,7 +5,7 @@ import * as Type from '@cTypes';
 import Api from '@models/api';
 import User from '@models/user';
 import sgMail from '@sendgrid/mail';
-import * as validate from '@validator';
+import * as validate from '@validators';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
