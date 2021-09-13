@@ -12,13 +12,12 @@ const auth: RequestHandler = (req, res, next) => {
     try {
         if (token) {
             token = token.replace('Bearer ', '');
-            const user = <Type.UserJwtI>jwt.verify(token, JWT_SECRET_KEY);
-            req.user = user;
+            req.user = <Type.UserJwtI>jwt.verify(token, JWT_SECRET_KEY);
             next();
         } else {
             res.status(401).json({ message: 'Token not found.' });
         }
-    } catch (error) {
+    } catch (error: any) {
         return res.status(401).json({ message: 'Not authorized, invalid token.' });
     }
 };
@@ -29,33 +28,28 @@ const authDevice: RequestHandler = (req, res, next) => {
     try {
         if (token) {
             token = token.replace('Bearer ', '');
-            const device = <Type.DeviceJwtI>jwt.verify(token, JWT_DEVICE_SECRET_KEY);
-            req.device = device;
+            req.device = <Type.DeviceJwtI>jwt.verify(token, JWT_DEVICE_SECRET_KEY);
             next();
         } else {
             res.status(401).json({ message: 'Token not found.' });
         }
-    } catch (error) {
+    } catch (error: any) {
         return res.status(401).json({ message: 'Not authorized, invalid token.' });
     }
 };
 
 const createAccessToken: Type.JwtAccessFn = (user) => {
-    return jwt.sign({ _id: user!._id, firstName: user!.firstName, lastName: user!.lastName }, JWT_SECRET_KEY, {
-        expiresIn: `${JWT_SECRET_EXPIRES_IN}d`,
-    });
+    return jwt.sign(
+        { _id: user!._id, firstName: user!.firstName, lastName: user!.lastName, admin: user!.admin },
+        JWT_SECRET_KEY,
+        { expiresIn: `${JWT_SECRET_EXPIRES_IN}d` }
+    );
 };
 
 const createCustomToken: Type.JwtVerifyFn = (mode, attrs = {}, secretKey, expiresIn) => {
     attrs[mode] = mode;
-
-    if (expiresIn > 0) {
-        return jwt.sign(attrs, secretKey, {
-            expiresIn: `${expiresIn}d`,
-        });
-    } else {
-        return jwt.sign(attrs, secretKey);
-    }
+    if (expiresIn > 0) return jwt.sign(attrs, secretKey, { expiresIn: `${expiresIn}d` });
+    return jwt.sign(attrs, secretKey);
 };
 
 export { auth, authDevice, createAccessToken, createCustomToken };

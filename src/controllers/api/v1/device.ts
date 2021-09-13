@@ -32,7 +32,7 @@ export const newDevice: RequestHandler = async (req, res) => {
         newDevice.userId = req.user!._id;
 
         res.status(201).json(await newDevice.save());
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while creating a new device.' });
     }
 };
@@ -47,7 +47,7 @@ export const getDevices: RequestHandler = async (req, res) => {
             .limit(docs);
 
         res.json(devices);
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while getting your devices.' });
     }
 };
@@ -60,7 +60,7 @@ export const getDevice: RequestHandler = async (req, res) => {
         if (!device) return res.status(404).json({ message: 'Device not found.' });
 
         res.json(device);
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while getting your device.' });
     }
 };
@@ -92,7 +92,7 @@ export const updateDevice: RequestHandler = async (req, res) => {
         await device.save();
 
         res.json({ message: 'Device has been updated successfully.', data: device });
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while updating your device.' });
     }
 };
@@ -108,7 +108,7 @@ export const deleteDevice: RequestHandler = async (req, res) => {
         if (deletedIoT) return res.json({ message: 'Device has been deleted successfully.' });
 
         res.status(404).json({ message: 'Device Id not found. Please make sure you have entered the correct id.' });
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while deleting your device.' });
     }
 };

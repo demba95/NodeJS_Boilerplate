@@ -1,66 +1,8 @@
-import { Response } from 'express';
-import mongoose from 'mongoose';
+import { Obj, UserI } from '@cTypes';
 import { Context } from 'telegraf';
 import { InlineKeyboardMarkup, ReplyKeyboardMarkup } from 'telegraf/typings/core/types/typegram';
 import { Markup } from 'telegraf/typings/markup';
-import { UserI } from './interfaces';
-import { Obj } from './shared';
-import { EmailMsg } from './types';
 
-// _ Shared
-export type TitleCaseFn = {
-    (txt: string): string;
-};
-
-// _ Email
-export type EmailFn<U, H> = {
-    (user: U, host?: H): EmailMsg;
-};
-
-// _ Validator
-export type CheckFn<T> = {
-    (value: T): boolean;
-};
-
-export type CheckPropertyFn = {
-    (propertyName: string, data: Obj, length?: number | undefined): boolean;
-};
-
-export type ValidatorFn<T> = {
-    (data: T): {
-        errors: Obj;
-        valid: boolean;
-    };
-};
-
-// _ MongoDB
-export type UpdateDocumentFn = {
-    (document: Obj, body: Obj, permit: string[]): void;
-};
-
-export type ObjectIdFn = {
-    (id: string): mongoose.Types.ObjectId;
-};
-
-// _ JWT
-export type JwtAccessFn = {
-    (user: UserI): string;
-};
-
-export type JwtVerifyFn = {
-    (mode: string, attrs: Obj, secretKey: string, expiresIn: number): string;
-};
-
-// _ User
-export type AddTryFn = {
-    (user: UserI, res: Response): void;
-};
-
-export type CheckTimeElapsedFn = {
-    (user: UserI, res: Response): Promise<boolean>;
-};
-
-// _ Telegram
 export type GetUserFn = {
     (ctx: Context): Promise<UserI>;
 };

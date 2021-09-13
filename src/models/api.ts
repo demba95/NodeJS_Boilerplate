@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 const SECRET_KEY_BASE: string = process.env.SECRET_KEY_BASE!;
 
-const apiSchema = new Schema(
+const apiSchema = new Schema<Type.ApiI>(
     {
         name: {
             type: String,
@@ -18,7 +18,6 @@ const apiSchema = new Schema(
             required: true,
             trim: true,
         },
-
         key: {
             type: String,
             required: true,

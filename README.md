@@ -5,18 +5,12 @@
 <h1 id='contents'>Table of Contents</h1>
 
 - [NODE.JS BOILERPLATE](#nodejs-boilerplate)
-  - [Postman](#postman)
-  - [Init Node](#init-node)
-  - [Create Folder and Files](#create-folder-and-files)
-  - [Install Packages](#install-packages)
-    - [Init Typescript](#init-typescript)
-    - [package.json](#packagejson)
+  - [Init Typescript](#init-typescript)
+  - [package.json](#packagejson)
   - [Environment Variables](#environment-variables)
   - [Database Connection](#database-connection)
     - [MongoDB](#mongodb)
       - [Warnings](#warnings)
-  - [Controllers](#controllers)
-    - [Users Controllers](#users-controllers)
   - [Middlewares](#middlewares)
     - [Authorization](#authorization)
   - [Models](#models)
@@ -48,148 +42,7 @@
 
 # NODE.JS BOILERPLATE
 
-## Postman
-
-[Go Back to Contents](#contents)
-
-- [Postman - API Calls](https://github.com/Roger-Takeshita/Node.js_Boilerplate/blob/main/Boilerplate%20-%20Backend.postman_collection.json)
-
-## Init Node
-
-[Go Back to Contents](#contents)
-
-- Create a new node project
-
-  ```Bash
-    npm init
-
-    # name: node.js_boilerplate
-    # version: (1.0.0)
-    # description: Node.js Boilerplate
-    # entry point: (index.js)
-    # test command:
-    # git repository: (your_repos_url)
-    # keywords:
-    # author: your_name
-    # license: (ISC)
-  ```
-
-## Create Folder and Files
-
-[Go Back to Contents](#contents)
-
-- Mkdir/Touch Files
-
-  ```Bash
-    touch -n env/dev.env
-    touch -n env/prod.env
-    touch -n env/test.env
-    touch -n src/config/database.ts
-    touch -n src/controllers/users.ts
-    touch -n src/middlewares/auth.ts
-    touch -n src/models/user.ts
-    touch -n src/routes/users.ts
-    touch -n src/tests/**mocks**/@sendgrid/mail.ts
-    touch -n src/tests/**mocks**/@types/types.ts
-    touch -n src/tests/database/database.ts
-    touch -n src/tests/user.test.ts
-    touch -n src/utils/@types/types.ts
-    touch -n src/utils/helpers/message.ts
-    touch -n src/utils/helpers/validator.ts
-    touch -n src/app.ts
-    touch -n src/index.ts
-    touch -n babel.config.js
-  ```
-
-- Final Structure
-
-  ```Bash
-    .
-    ├── env
-    │   ├── dev.env
-    │   ├── prod.env
-    │   └── test.env
-    ├── src
-    │   ├── config
-    │   │   └── database.ts
-    │   ├── controllers
-    │   │   └── users.ts
-    │   ├── middlewares
-    │   │   └── auth.ts
-    │   ├── models
-    │   │   └── user.ts
-    │   ├── routes
-    │   │   └── users.ts
-    │   ├── tests
-    │   │   ├── __mocks__
-    │   │   │   ├── @sendgrid
-    │   │   │   │   └── mail.ts
-    │   │   │   └── @types
-    │   │   │       └── types.ts
-    │   │   ├── database
-    │   │   │   └── database.ts
-    │   │   └── user.test.ts
-    │   ├── utils
-    │   │   ├── @types
-    │   │   │   └── types.ts
-    │   │   └── helpers
-    │   │       ├── message.ts
-    │   │       └── validator.ts
-    │   ├── app.ts
-    │   └── index.ts
-    ├── babel.config.js
-    ├── jest.config.js
-    ├── package-lock.json
-    ├── package.json
-    └── tsconfig.json
-  ```
-
-## Install Packages
-
-[Go Back to Contents](#contents)
-
-- Install the following dependencies:
-
-  ```Bash
-    # npm i @sendgrid/mail bcrypt cors env-cmd express helmet jsonwebtoken mongoose morgan
-
-    npm i @sendgrid/mail
-    npm i bcrypt
-    npm i cors
-    npm i env-cmd
-    npm i express
-    npm i helmet
-    npm i jsonwebtoken
-    npm i mongoose
-    npm i morgan
-
-    # Dev Dependencies
-    # npm i -D @types/bcrypt @types/cors @types/express @types/jsonwebtoken @types/mongoose @types/morgan @types/node @types/validator @types/jest @types/supertest jest ts-jest supertest ts-node-dev tsconfig-paths typescript @babel/cli @babel/core @babel/node @babel/preset-env @babel/preset-typescript babel-plugin-module-resolver
-
-    npm i -D @babel/cli
-    npm i -D @babel/core
-    npm i -D @babel/node
-    npm i -D @babel/preset-env
-    npm i -D @babel/preset-typescript
-    npm i -D @types/bcrypt
-    npm i -D @types/cors
-    npm i -D @types/express
-    npm i -D @types/jest
-    npm i -D @types/jsonwebtoken
-    npm i -D @types/mongoose
-    npm i -D @types/morgan
-    npm i -D @types/node
-    npm i -D @types/supertest
-    npm i -D babel-plugin-module-resolver
-    npm i -D jest
-    npm i -D supertest
-    npm i -D ts-jest
-    npm i -D ts-node-dev
-    npm i -D tsconfig-paths
-    npm i -D typescript
-  ```
-
-### Init Typescript
+## Init Typescript
 
 [Go Back to Contents](#contents)
 
@@ -243,7 +96,7 @@
     }
   ```
 
-### package.json
+## package.json
 
 [Go Back to Contents](#contents)
 
@@ -349,29 +202,27 @@
 - In `env/dev.env`
 
   ```Bash
-    DATABASE_URL=mongodb://127.0.0.1:27017/BackendDB
-    JWT_SECRET_KEY=super_secrete_key_1
-    JWT_SECRET_EXPIRES_IN=7d
-    JWT_VERIFICATION_SECRET_KEY=super_secret_key_2
-    JWT_VERIFICATION_EXPIRES_IN=7d
-    SENDGRID_KEY=send_grid_key
-    SENDGRID_EMAIL=your_email_address
+    ENV=test
+    JWT_DEVICE_SECRET_KEY=MyUltra$3cr3tK3yIoT
+    JWT_SECRET_EXPIRES_IN=7
+    JWT_SECRET_KEY=SuperSecretKey
+    JWT_VERIFICATION_EXPIRES_IN=7
+    JWT_VERIFICATION_SECRET_KEY=SuperSecretKeyVerification
+    LOGIN_MAX_TRY=2
+    LOGIN_WAIT_TIME=2
     PASSWORD_LEN=4
     PORT=3001
-  ```
-
-- In `env/test.env`
-
-  ```Bash
-    DATABASE_URL=mongodb://127.0.0.1:27017/BackendDB-Test
-    JWT_SECRET_KEY=super_secrete_key_1_test
-    JWT_SECRET_EXPIRES_IN=7d
-    JWT_VERIFICATION_SECRET_KEY=super_secret_key_2_test
-    JWT_VERIFICATION_EXPIRES_IN=7d
-    SENDGRID_KEY=send_grid_key
-    SENDGRID_EMAIL=your_email_address
-    PASSWORD_LEN=4
-    PORT=3001
+    SECRET_KEY_BASE=replace-me
+    SENDGRID_EMAIL=replace-me
+    SENDGRID_KEY=replace-me
+    TELEGRAM_ADM_ID=replace-me
+    TELEGRAM_BOT_TOKEN=replace-me
+    TELEGRAM_GROUP_ID=replace-me
+    TELEGRAM_CLEAR_CHAT_MSG=15
+    TELEGRAM_CLEAR_GROUP_MSG=15
+    TELEGRAM_WEBHOOK=replace-me
+    URL_DATABASE=mongodb://127.0.0.1:27017/BackendBoilerplateDB
+    URL_FRONTEND=http://127.0.0.1:3000
   ```
 
 ## Database Connection
@@ -434,310 +285,6 @@
     > DeprecationWarning: collection.findAndModify is deprecated. Use findOneAndUpdate, findOneAndReplace or findOneAndDelete instead.
     - **findByIdAndUpdate** method bypass mongoose. It performs a direct operation on the database, this means that if we have a middleware, it won't be executed.
 
-## Controllers
-
-### Users Controllers
-
-[Go Back to Contents](#contents)
-
-- In `src/controllers/users.ts`
-
-  ```TypeScript
-    import { RequestHandler } from 'express';
-    import User from '@models/user';
-    import sgMail from '@sendgrid/mail';
-    import jwt from 'jsonwebtoken';
-    import * as auth from '@middlewares/auth';
-    import * as validator from '@helpers/validator';
-    import * as Msg from '@helpers/message';
-    import * as Type from '@cTypes/types';
-
-    sgMail.setApiKey(process.env.SENDGRID_KEY!);
-
-    const JWT_VERIFICATION_SECRET_KEY = process.env.JWT_VERIFICATION_SECRET_KEY!;
-
-    const signUpUser: RequestHandler = async (req, res) => {
-        const form: Type.SignUpForm = req.body;
-        const { valid, errors } = validator.validateSignUpData(form);
-        if (!valid) return res.status(400).json(errors);
-
-        try {
-            const user: Type.UserI | null = await User.findOne({ email: form.email });
-            if (user) return res.status(400).json({ message: 'ERROR: Email already in use.' });
-
-            delete form.confirmPassword;
-            form.verifyToken = auth.createVerificationToken('email');
-            const newUser: Type.UserI = new User(form);
-            await newUser.save();
-
-            const msg = Msg.signUp(newUser, req.headers.host!);
-            await sgMail.send(msg);
-
-            res.status(201).json({
-                message: 'Your account has been created. Please check your email to verify your account.',
-            });
-        } catch (error) {
-            res.status(500).json({
-                message:
-                    'ERROR: Something went wrong while trying to sign up. Please try again later or contact our support.',
-            });
-        }
-    };
-
-    const loginUser: RequestHandler = async (req, res) => {
-        const form: Type.LoginForm = req.body;
-
-        const { valid, errors } = validator.validateLoginData(form);
-        if (!valid) return res.status(400).json(errors);
-
-        try {
-            const user: Type.UserI | null = await User.findOne({ email: form.email });
-            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
-
-            user.comparePassword(form.password, (_: any, matchPassword: boolean) => {
-                if (matchPassword) {
-                    if (user.isEmailVerified) {
-                        const token = auth.createAccessToken(user);
-                        return res.json(token);
-                    }
-
-                    return res.status(403).json({
-                        message: 'ERROR: Please verify your email first.',
-                    });
-                }
-
-                res.status(403).json({ message: 'ERROR: Wrong credentials.' });
-            });
-        } catch (error) {
-            res.status(500).json({
-                message:
-                    'ERROR: Something went wrong while trying to login. Please try again later or contact our support.',
-            });
-        }
-    };
-
-    const getUser: RequestHandler = async (req, res) => {
-        try {
-            const user: Type.UserI | null = await User.findOne({
-                _id: req.user!._id,
-            }).select('-tempEmail');
-            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
-
-            res.json(user);
-        } catch (error) {
-            res.status(500).json({
-                message:
-                    'ERROR: Something went wrong while trying to get profile. Please try again later or contact our support.',
-            });
-        }
-    };
-
-    const updateUser: RequestHandler = async (req, res) => {
-        const form: Type.UpdateUserForm = req.body;
-        const { valid, errors } = validator.validateUpdateData(form);
-        if (!valid) return res.status(400).json(errors);
-
-        try {
-            const user: Type.UserI | null = await User.findOne({
-                _id: req.user!._id,
-            });
-            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
-
-            if (form.newEmail) {
-                const email: Type.UserI | null = await User.findOne({
-                    email: form.newEmail,
-                });
-                if (email)
-                    return res.status(400).json({
-                        message: `ERROR: Email (${form.newEmail}) is already in use.`,
-                    });
-            }
-
-            user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
-                if (matchPassword) {
-                    if (form.firstName) user.firstName = form.firstName;
-                    if (form.lastName) user.lastName = form.lastName;
-                    if (form.newPassword) user.password = form.newPassword;
-                    if (form.newEmail) {
-                        user.tempEmail = form.newEmail;
-
-                        user.verifyToken = auth.createVerificationToken('email');
-                        await user.save();
-
-                        try {
-                            const msg = Msg.updateEmail(user, req.headers.host!);
-                            await sgMail.send(msg);
-                        } catch (error) {
-                            res.status(500).json({
-                                message:
-                                    'ERROR: Something went wrong sending you the email verification. Please try again later.',
-                            });
-                        }
-                    } else {
-                        await user.save();
-                    }
-
-                    return res.json(user);
-                }
-
-                res.status(403).json({ message: 'ERROR: Wrong credentials.' });
-            });
-        } catch (error) {
-            res.status(500).json({
-                message: 'ERROR: Something went wrong while updating. Please try again later or contact our support.',
-            });
-        }
-    };
-
-    const deleteUser: RequestHandler = async (req, res) => {
-        const form: Type.DeleteForm = req.body;
-        const { valid, errors } = validator.validatePassword(form);
-        if (!valid) return res.status(400).json(errors);
-
-        try {
-            const user: Type.UserI | null = await User.findOne({ _id: req.user!._id });
-            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
-
-            user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
-                if (matchPassword) {
-                    await user.remove();
-                    return res.json({ message: 'Your account has been deleted.' });
-                }
-
-                res.status(403).json({ message: 'ERROR: Wrong password.' });
-            });
-        } catch (error) {
-            res.status(500).json({
-                message: 'ERROR: Something went wrong while deleting. Please try again later or contact our support.',
-            });
-        }
-    };
-
-    const verifyEmail: RequestHandler = async (req, res) => {
-        const token: string = req.params.verifyToken!;
-
-        try {
-            jwt.verify(token, JWT_VERIFICATION_SECRET_KEY);
-        } catch (error) {
-            return res.status(401).json({ message: 'ERROR: Expired email token.' });
-        }
-
-        try {
-            const user: Type.UserI | null = await User.findOne({
-                verifyToken: token,
-            });
-            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
-
-            user.verifyToken = '';
-            user.isEmailVerified = true;
-
-            if (user.tempEmail) {
-                user.email = user.tempEmail;
-                user.tempEmail = '';
-            }
-
-            await user.save();
-
-            res.json({ message: 'Thank you! Your email has been verified.' });
-        } catch (error) {
-            res.status(500).json({
-                message: 'ERROR: Something went wrong verifying your account. Please try again later.',
-            });
-        }
-    };
-
-    const resendVerifyEmail: RequestHandler = async (req, res) => {
-        const form: Type.EmailForm = req.body;
-        const { valid, errors } = validator.validateEmail(form);
-        if (!valid) return res.status(400).json(errors);
-
-        try {
-            const user: Type.UserI | null = await User.findOne({ email: form.email });
-            if (!user) return res.status(404).json({ message: 'ERROR: Email not found.' });
-            if (user.isEmailVerified) return res.json({ message: 'Your account is already verified.' });
-
-            user.verifyToken = auth.createVerificationToken('email');
-        } catch (error) {
-            res.status(500).json({
-                message: 'ERROR: Something went wrong with the email verification. Please try again later.',
-            });
-        }
-    };
-
-    const resetPassword: RequestHandler = async (req, res) => {
-        const form: Type.EmailForm = req.body;
-        const { valid, errors } = validator.validateEmail(form);
-        if (!valid) return res.status(400).json(errors);
-
-        try {
-            const user: Type.UserI | null = await User.findOne({ email: form.email });
-            if (!user) return res.status(404).json({ message: 'ERROR: Email not found.' });
-
-            user.verifyToken = auth.createVerificationToken('password');
-            await user.save();
-
-            const msg = Msg.resetPassword(user);
-            await sgMail.send(msg);
-
-            res.json({
-                message: 'Please check your email to reset your password.',
-            });
-        } catch (error) {
-            res.status(500).json({
-                message: 'ERROR: Something went wrong with the email verification. Please try again later.',
-            });
-        }
-    };
-
-    const updatePassword: RequestHandler = async (req, res) => {
-        const token: string = req.params.verifyToken!;
-
-        try {
-            jwt.verify(token, JWT_VERIFICATION_SECRET_KEY);
-        } catch (error) {
-            return res.status(401).json({ message: 'ERROR: Expired password token.' });
-        }
-
-        const form: Type.PasswordForm = req.body;
-        const { valid, errors } = validator.validatePassword(form);
-        if (!valid) return res.status(400).json(errors);
-
-        try {
-            const user: Type.UserI | null = await User.findOne({
-                verifyToken: token,
-            });
-            if (!user) return res.status(404).json({ message: 'ERROR: Wrong credentials.' });
-
-            user.verifyToken = '';
-            user.password = form.password;
-            await user.save();
-
-            const msg = Msg.updatePassword(user);
-            await sgMail.send(msg);
-
-            res.json({
-                message: 'Password updated successfully.',
-            });
-        } catch (error) {
-            res.status(500).json({
-                message: 'ERROR: Something went wrong with the email verification. Please try again later.',
-            });
-        }
-    };
-
-    export default {
-        signUpUser,
-        loginUser,
-        getUser,
-        updateUser,
-        deleteUser,
-        verifyEmail,
-        resendVerifyEmail,
-        resetPassword,
-        updatePassword,
-    };
-  ```
-
 ## Middlewares
 
 ### Authorization
@@ -794,7 +341,7 @@
             } else {
                 res.status(401).json({ message: 'Token not found.' });
             }
-        } catch (error) {
+        } catch (error: any) {
             return res.status(401).json({ message: 'Not authorized, invalid token.' });
         }
     };

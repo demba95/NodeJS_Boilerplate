@@ -1,7 +1,7 @@
 import { bot } from '@config/telegram';
 import * as Type from '@cTypes';
 import User from '@models/user';
-import * as TH from '@telegram-helper';
+import * as TH from '@telegram-helpers';
 import { Markup } from 'telegraf';
 
 bot.command('start', async (ctx) => {
@@ -10,13 +10,13 @@ bot.command('start', async (ctx) => {
         const msg: string = `Bot is already running...\
                              \nSend /help to view the available commands.`;
         await TH.sendMsg(ctx, msg);
-    } catch (error) {
+    } catch (error: any) {
         throw error;
     }
 });
 
 bot.command('verify', async (ctx) => {
-    const telegramId: number = ctx.from.id;
+    const telegramId: string = ctx.from.id.toString();
     let msg: string = '';
 
     try {
@@ -36,7 +36,7 @@ bot.command('verify', async (ctx) => {
         }
 
         await TH.sendMsgDeleteMsg(ctx, msg);
-    } catch (error) {
+    } catch (error: any) {
         throw error;
     }
 });
@@ -84,7 +84,7 @@ bot.command('help', async (ctx) => {
     try {
         await TH.deleteMsgGetUser(ctx);
         await TH.sendKeyboard(ctx, msg, keyboard, true, false);
-    } catch (error) {
+    } catch (error: any) {
         throw error;
     }
 });
@@ -108,7 +108,7 @@ bot.command('me', async (ctx) => {
                              \n   <u>Telegram Id:</u>  <a href="tg://user?id=${telegramId}">${telegramId}</a>
                              \n———————————————————————`;
         await TH.sendInLineKeyboard(ctx, msg, keyboard);
-    } catch (error) {
+    } catch (error: any) {
         throw error;
     }
 });
@@ -136,20 +136,7 @@ bot.command('info', async (ctx) => {
                                  \n———————————————————————`;
             await TH.sendInLineKeyboard(ctx, msg, keyboard);
         }
-    } catch (error) {
+    } catch (error: any) {
         throw error;
-    }
-});
-
-bot.hears(/\/(.+)/i, async (ctx) => {
-    const msg: string = `Sorry, command /${ctx.match[1]!} doesn't exist or it's incorrect.\
-                         \nSend /help to view the available commands.`;
-
-    try {
-        await TH.deleteMsgGetUser(ctx);
-        await TH.sendMsgDeleteMsg(ctx, msg);
-    } catch (error) {
-        if (error.type === 'USER_NOT_REGISTERED' || error.type === 'USER_NOT_VERIFIED') throw error;
-        throw { type: 'INTERNAL_ERROR', message: 'Something went wrong while executing your command.' };
     }
 });
