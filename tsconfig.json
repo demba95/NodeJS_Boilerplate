@@ -32,7 +32,7 @@
             "@middlewares/*": ["./middlewares/*"],
             "@auth": ["./middlewares/auth.ts"],
             "@models/*": ["./models/*"],
-            "@routes": ["./routes/apis.ts"],
+            "@routes": ["./routes/routes.ts"],
             "@temp": ["./tmp/temp.ts"],
             "@utils/*": ["./utils/*"],
             "@cTypes": ["./utils/@types/types.ts"],
