@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import apiRoutes from './api';
-import deviceRoutes from './device';
-import iotDeviceRoutes from './iot-device';
-import userRoutes from './user';
+import apiRoutes from './api/api';
+import deviceRoutes from './api/device';
+import iotDeviceRoutes from './api/iot-device';
+import userRoutes from './api/user';
 
 const router: Router = Router();
 

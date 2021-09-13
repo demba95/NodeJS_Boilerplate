@@ -24,7 +24,7 @@ module.exports = {
         '@middlewares/(.*)': '<rootDir>/src/middlewares/$1',
         '@auth': '<rootDir>/src/middlewares/auth.ts',
         '@models/(.*)': '<rootDir>/src/models/$1',
-        '@routes': '<rootDir>/src/routes/apis.ts',
+        '@routes': '<rootDir>/src/routes/routes.ts',
         '@temp': '<rootDir>/src/tmp/temp.ts',
         '@utils/(.*)': '<rootDir>/src/utils/$1',
         '@cTypes': '<rootDir>/src/utils/@types/types.ts',
