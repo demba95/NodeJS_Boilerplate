@@ -7,7 +7,7 @@ import * as TestType from '../__mocks__/@types/types';
 
 const JWT_DEVICE_SECRET_KEY: string = process.env.JWT_DEVICE_SECRET_KEY!;
 
-const user1: TestType.UserObj = {
+export const user1: TestType.UserObj = {
     _id: mongoose.Types.ObjectId(),
     firstName: 'User name 1',
     lastName: 'User last name 1',
@@ -18,7 +18,7 @@ const user1: TestType.UserObj = {
     isTelegramVerified: true,
 };
 
-const user2: TestType.UserObj = {
+export const user2: TestType.UserObj = {
     _id: mongoose.Types.ObjectId(),
     firstName: 'User name 2',
     lastName: 'User last name 2',
@@ -29,7 +29,7 @@ const user2: TestType.UserObj = {
     isTelegramVerified: false,
 };
 
-const user3: TestType.UserObj = {
+export const user3: TestType.UserObj = {
     _id: mongoose.Types.ObjectId(),
     firstName: 'User name 3',
     lastName: 'User last name 3',
@@ -40,7 +40,7 @@ const user3: TestType.UserObj = {
     isTelegramVerified: true,
 };
 
-const user4: TestType.UserObj = {
+export const user4: TestType.UserObj = {
     _id: mongoose.Types.ObjectId(),
     firstName: 'User name 4',
     lastName: 'User last name 4',
@@ -51,7 +51,7 @@ const user4: TestType.UserObj = {
     isTelegramVerified: true,
 };
 
-const user5: TestType.UserObj = {
+export const user5: TestType.UserObj = {
     _id: mongoose.Types.ObjectId(),
     firstName: 'User name 5',
     lastName: 'User last name 5',
@@ -62,7 +62,7 @@ const user5: TestType.UserObj = {
     isTelegramVerified: true,
 };
 
-const user1api1: TestType.ApiObj = {
+export const user1api1: TestType.ApiObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'Api 1, User 1',
     key: 'Api key 1, User 1',
@@ -72,7 +72,7 @@ const user1api1: TestType.ApiObj = {
     userId: user1._id,
 };
 
-const user1api2: TestType.ApiObj = {
+export const user1api2: TestType.ApiObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'Api 2, User 1',
     key: 'Api key 2, User 1',
@@ -82,7 +82,7 @@ const user1api2: TestType.ApiObj = {
     userId: user1._id,
 };
 
-const user3api1: TestType.ApiObj = {
+export const user3api1: TestType.ApiObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'Api 1, User 3',
     key: 'Api key 1, User 3',
@@ -92,7 +92,7 @@ const user3api1: TestType.ApiObj = {
     userId: user3._id,
 };
 
-const user1device1: TestType.DeviceObj = {
+export const user1device1: TestType.DeviceObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'Device 1, User 1',
     token: auth.createCustomToken('device', {}, JWT_DEVICE_SECRET_KEY, 7),
@@ -102,7 +102,7 @@ const user1device1: TestType.DeviceObj = {
     userId: user1._id,
 };
 
-const user1device2: TestType.DeviceObj = {
+export const user1device2: TestType.DeviceObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'Device 2, User 1',
     token: auth.createCustomToken('device', {}, JWT_DEVICE_SECRET_KEY, 7),
@@ -112,7 +112,7 @@ const user1device2: TestType.DeviceObj = {
     userId: user1._id,
 };
 
-const user3device1: TestType.DeviceObj = {
+export const user3device1: TestType.DeviceObj = {
     _id: mongoose.Types.ObjectId(),
     name: 'Device 1, User 3',
     token: auth.createCustomToken('device', {}, JWT_DEVICE_SECRET_KEY, 7),
@@ -122,7 +122,7 @@ const user3device1: TestType.DeviceObj = {
     userId: user3._id,
 };
 
-const setupDatabase = async () => {
+export const setupDatabase = async () => {
     await User.deleteMany({});
     await new User(user1).save();
     await new User(user2).save();
@@ -139,22 +139,6 @@ const setupDatabase = async () => {
     await new Device(user3device1).save();
 };
 
-const closeDatabase = async () => {
+export const closeDatabase = async () => {
     mongoose.connection.close();
-};
-
-export {
-    user1,
-    user2,
-    user3,
-    user4,
-    user5,
-    user1api1,
-    user1api2,
-    user3api1,
-    user1device1,
-    user1device2,
-    user3device1,
-    setupDatabase,
-    closeDatabase,
 };
