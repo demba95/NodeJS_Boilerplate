@@ -5,7 +5,7 @@ import * as Type from '@cTypes';
 import Api from '@models/api';
 import User from '@models/user';
 import sgMail from '@sendgrid/mail';
-import * as validate from '@validator';
+import * as validate from '@validators';
 import { RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -39,7 +39,7 @@ export const addTry: Type.AddTryFn = async (user, res) => {
             });
 
         res.status(400).json({ message: `You have been blocked for ${waitTime} mins.` });
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while trying to login.' });
     }
 };
@@ -96,7 +96,7 @@ export const signUpUser: RequestHandler = async (req, res) => {
             try {
                 const email = CF.userSignUp(user, req.headers.host!);
                 await sgMail.send(email);
-            } catch (error) {
+            } catch (error: any) {
                 return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
             }
         } else {
@@ -104,7 +104,7 @@ export const signUpUser: RequestHandler = async (req, res) => {
         }
 
         res.status(201).json(response);
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while trying to sign up.' });
     }
 };
@@ -143,7 +143,7 @@ export const loginUser: RequestHandler = async (req, res) => {
                 }
             });
         }
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while trying to login.' });
     }
 };
@@ -154,7 +154,7 @@ export const getUser: RequestHandler = async (req, res) => {
         if (!user) return res.status(404).json({ message: 'Wrong credentials.' });
 
         res.json(user);
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while trying to get profile.' });
     }
 };
@@ -208,7 +208,7 @@ export const updateUser: RequestHandler = async (req, res) => {
                             async () => {
                                 try {
                                     await bot.telegram.deleteMessage(chatId, +msgId);
-                                } catch (error) {
+                                } catch (error: any) {
                                     console.error(error);
                                 }
                             },
@@ -235,7 +235,7 @@ export const updateUser: RequestHandler = async (req, res) => {
                             try {
                                 const email = CF.updateUserEmail(user, req.headers.host!);
                                 await sgMail.send(email);
-                            } catch (error) {
+                            } catch (error: any) {
                                 return res
                                     .status(500)
                                     .json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
@@ -243,7 +243,7 @@ export const updateUser: RequestHandler = async (req, res) => {
                         } else {
                             response.verifyToken = user.verifyToken;
                         }
-                    } catch (error) {
+                    } catch (error: any) {
                         res.status(500).json({
                             message: 'Something went wrong while sending you the email verification.',
                         });
@@ -257,7 +257,7 @@ export const updateUser: RequestHandler = async (req, res) => {
 
             res.status(403).json({ message: 'Wrong credentials.' });
         });
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while updating.' });
     }
 };
@@ -280,7 +280,7 @@ export const deleteUser: RequestHandler = async (req, res) => {
 
             res.status(403).json({ message: 'Wrong password.' });
         });
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong while deleting your user.' });
     }
 };
@@ -290,7 +290,7 @@ export const verifyEmail: RequestHandler = async (req, res) => {
 
     try {
         jwt.verify(token, JWT_VERIFICATION_SECRET_KEY);
-    } catch (error) {
+    } catch (error: any) {
         return res.status(401).json({ message: 'Expired email token.' });
     }
 
@@ -309,7 +309,7 @@ export const verifyEmail: RequestHandler = async (req, res) => {
         await user.save();
 
         res.json({ message: 'Thank you! Your email has been verified.' });
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong verifying your account.' });
     }
 };
@@ -340,7 +340,7 @@ export const resendEmailVerification: RequestHandler = async (req, res) => {
             try {
                 const email = CF.userSignUp(user, req.headers.host!);
                 await sgMail.send(email);
-            } catch (error) {
+            } catch (error: any) {
                 return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
             }
         } else {
@@ -348,7 +348,7 @@ export const resendEmailVerification: RequestHandler = async (req, res) => {
         }
 
         res.json(response);
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong with the email verification.' });
     }
 };
@@ -377,7 +377,7 @@ export const resetPassword: RequestHandler = async (req, res) => {
             try {
                 const email = CF.resetUserPassword(user);
                 await sgMail.send(email);
-            } catch (error) {
+            } catch (error: any) {
                 return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
             }
         } else {
@@ -385,7 +385,7 @@ export const resetPassword: RequestHandler = async (req, res) => {
         }
 
         res.json(response);
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong with the email verification.' });
     }
 };
@@ -395,7 +395,7 @@ export const updatePassword: RequestHandler = async (req, res) => {
 
     try {
         jwt.verify(token, JWT_VERIFICATION_SECRET_KEY);
-    } catch (error) {
+    } catch (error: any) {
         return res.status(401).json({ message: 'Expired password token.' });
     }
 
@@ -421,13 +421,13 @@ export const updatePassword: RequestHandler = async (req, res) => {
             try {
                 const email = CF.updateUserPassword(user);
                 await sgMail.send(email);
-            } catch (error) {
+            } catch (error: any) {
                 return res.status(500).json({ message: `${error.message} - ${error.response.body.errors[0].message}` });
             }
         }
 
         res.json(response);
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ message: 'Something went wrong with the email verification.' });
     }
 };

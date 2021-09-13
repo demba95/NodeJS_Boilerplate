@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-const deviceSchema = new Schema(
+const deviceSchema = new Schema<Type.DeviceI>(
     {
         name: {
             type: String,

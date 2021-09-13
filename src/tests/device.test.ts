@@ -1,15 +1,15 @@
+import app from '@app';
 import * as Type from '@cTypes';
 import request from 'supertest';
-import app from '~/app';
 import { closeDatabase, setupDatabase, user1, user1device1, user1device2, user3device1 } from './database/database';
 import { getLoginToken } from './helpers/helpers';
 
 const DEVICE_URL: string = '/api/device';
 
-beforeEach(setupDatabase);
-afterAll(closeDatabase);
-
 describe("Device's API", () => {
+    beforeEach(setupDatabase);
+    afterAll(closeDatabase);
+
     it('Should create new device', async () => {
         const token: string = await getLoginToken(user1);
         const form: Type.DeviceForm = {

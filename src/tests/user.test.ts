@@ -1,8 +1,8 @@
+import app from '@app';
 import * as Type from '@cTypes';
 import User from '@models/user';
 import jwt from 'jsonwebtoken';
 import request from 'supertest';
-import app from '~/app';
 import { closeDatabase, setupDatabase, user1, user2, user3, user5 } from './database/database';
 import { getLoginToken } from './helpers/helpers';
 import * as TestType from './__mocks__/@types/types';
@@ -14,10 +14,10 @@ const PASSWORD_LEN: number = +process.env.PASSWORD_LEN!;
 const LOGIN_WAIT_TIME: number = +process.env.LOGIN_WAIT_TIME!;
 const LOGIN_MAX_TRY: number = +process.env.LOGIN_MAX_TRY!;
 
-beforeEach(setupDatabase);
-afterAll(closeDatabase);
-
 describe("User's API", () => {
+    beforeEach(setupDatabase);
+    afterAll(closeDatabase);
+
     it('Should sign up new user', async () => {
         const form: Type.UserSignUpForm = {
             email: 'your_email_10@test.com',

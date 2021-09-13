@@ -1,6 +1,6 @@
+import app from '@app';
 import * as Type from '@cTypes';
 import request from 'supertest';
-import app from '~/app';
 import * as TestType from '../__mocks__/@types/types';
 
 const USER_URL: string = '/api/user';

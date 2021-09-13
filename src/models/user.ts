@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 const SALT_ROUNDS: number = 6;
 
-const userSchema = new Schema(
+const userSchema = new Schema<Type.UserI>(
     {
         firstName: {
             type: String,
@@ -85,7 +85,6 @@ userSchema.set('toJSON', {
         delete ret!.password;
         delete ret!.verifyToken;
         delete ret!.status;
-        delete ret!.admin;
         delete ret!.loginCount;
         delete ret!.waitCount;
         delete ret!.createdAt;

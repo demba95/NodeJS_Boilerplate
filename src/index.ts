@@ -1,4 +1,4 @@
-import app from '~/app';
+import app from '@app';
 const port: number = +process.env.PORT! || 3001;
 const ENV: string = process.env.ENV!;
 
