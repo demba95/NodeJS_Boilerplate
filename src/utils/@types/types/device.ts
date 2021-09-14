@@ -11,6 +11,7 @@ interface DeviceD extends Document {
     userId?: string;
     createdAt?: string;
     updatedAt?: string;
+    __v?: number;
 }
 
 export type DeviceI = DeviceD | null;

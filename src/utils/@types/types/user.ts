@@ -18,6 +18,7 @@ interface UserD extends Document {
     waitCount?: Number;
     createdAt?: string;
     updatedAt?: string;
+    __v?: number;
 }
 
 export type UserI = UserD | null;
