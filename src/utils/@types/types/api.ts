@@ -13,6 +13,7 @@ interface ApiD extends Document {
     getKey?(callback: Callback): void;
     createdAt?: string;
     updatedAt?: string;
+    __v?: number;
 }
 
 export type ApiI = ApiD | null;
