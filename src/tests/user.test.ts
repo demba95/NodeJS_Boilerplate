@@ -265,14 +265,14 @@ describe("User's API", () => {
         });
     });
 
-    it('Should login existing user', async () => {
+    it('Should login user - user already exists', async () => {
         const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password,
         };
 
         const response: TestType.LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
-        const userData = <Type.UserJwtI>jwt.verify(response.body, JWT_SECRET_KEY);
+        const userData = <Type.UserJwtI>jwt.verify(response.body.token, JWT_SECRET_KEY);
         const user: Type.UserI = await User.findOne({ email: form.email });
         expect(user).not.toBeNull();
         expect(userData).toMatchObject({
@@ -281,19 +281,20 @@ describe("User's API", () => {
         });
     });
 
-    it('Should NOT login existing user - unverified user', async () => {
+    it('Should NOT login user - unverified user', async () => {
         const form: Type.UserLoginForm = {
             email: user2.email,
             password: user2.password,
         };
 
         const response: TestType.ResponseMsg = await request(app).post(`${USER_URL}/login`).send(form).expect(403);
+
         expect(response.body).toMatchObject({
             message: 'Please verify your email first.',
         });
     });
 
-    it('Should NOT login existing user - temporary ban user', async () => {
+    it('Should NOT login user - temporary ban user', async () => {
         const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password + 'wrong',
@@ -310,7 +311,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should NOT login existing user - suspended user', async () => {
+    it('Should NOT login user - suspended user', async () => {
         const form: Type.UserLoginForm = {
             email: user5.email,
             password: user5.password,
@@ -322,7 +323,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should NOT login existing user - wrong password', async () => {
+    it('Should NOT login user - wrong password', async () => {
         const form: Type.UserLoginForm = {
             email: user1.email,
             password: user1.password + 'wrong_password',
@@ -334,7 +335,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should NOT login existing user - empty password', async () => {
+    it('Should NOT login user - empty password', async () => {
         const form: Type.UserLoginForm = {
             email: user1.email,
             password: '',
@@ -346,7 +347,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should NOT login existing user - invalid email', async () => {
+    it('Should NOT login user - invalid email', async () => {
         const form: Type.UserLoginForm = {
             email: 'your_email_10@test',
             password: user1.password,
@@ -358,7 +359,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should NOT login existing user - empty email', async () => {
+    it('Should NOT login user - empty email', async () => {
         const form: Type.UserLoginForm = {
             email: '',
             password: user1.password,
@@ -370,7 +371,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should NOT login existing user - email not found', async () => {
+    it('Should NOT login user - email not found', async () => {
         const form: Type.UserLoginForm = {
             email: 'user1@notfound.com',
             password: user1.password,
@@ -382,7 +383,7 @@ describe("User's API", () => {
         });
     });
 
-    it('Should NOT login existing user - invalid token', async () => {
+    it('Should NOT login user - invalid token', async () => {
         const invalidToken =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDM0NzQwMDIsImV4cCI6MTYwNDA3ODgwMn0.sDZ06WC2MhtswMgE_4UX7VL_cLD10CMUkjo72ArYfaI';
         const profile: TestType.UserProfile = await request(app)
@@ -493,7 +494,7 @@ describe("User's API", () => {
             password: updateUser.newPassword,
         };
         const response: TestType.LoginResponse = await request(app).post(`${USER_URL}/login`).send(form).expect(200);
-        expect(typeof response.body).toBe('string');
+        expect(typeof response.body.token).toBe('string');
     });
 
     it("Should update user's profile - email", async () => {
@@ -946,7 +947,7 @@ describe("User's API", () => {
         };
 
         const response: TestType.ResponseMsg = await request(app)
-            .post(`${USER_URL}/password/${user!.verifyToken}`)
+            .put(`${USER_URL}/password/${user!.verifyToken}`)
             .send(form2)
             .expect(200);
         expect(response.body).toMatchObject({
@@ -979,7 +980,7 @@ describe("User's API", () => {
 
         await User.findByIdAndDelete(user1._id);
         const response: TestType.ResponseMsg = await request(app)
-            .post(`${USER_URL}/password/${user!.verifyToken}`)
+            .put(`${USER_URL}/password/${user!.verifyToken}`)
             .send(form2)
             .expect(404);
         expect(response.body).toMatchObject({
@@ -1001,7 +1002,7 @@ describe("User's API", () => {
         };
 
         const response: TestType.ResponseMsg = await request(app)
-            .post(`${USER_URL}/password/${user!.verifyToken}`)
+            .put(`${USER_URL}/password/${user!.verifyToken}`)
             .send(form2)
             .expect(400);
         expect(response.body).toMatchObject({
@@ -1024,7 +1025,7 @@ describe("User's API", () => {
         };
 
         const response: TestType.ResponseMsg = await request(app)
-            .post(`${USER_URL}/password/${user!.verifyToken}`)
+            .put(`${USER_URL}/password/${user!.verifyToken}`)
             .send(form2)
             .expect(400);
         expect(response.body).toMatchObject({
@@ -1047,7 +1048,7 @@ describe("User's API", () => {
         };
 
         const response: TestType.ResponseMsg = await request(app)
-            .post(`${USER_URL}/password/${user!.verifyToken}`)
+            .put(`${USER_URL}/password/${user!.verifyToken}`)
             .send(form2)
             .expect(400);
         expect(response.body).toMatchObject({
@@ -1069,7 +1070,7 @@ describe("User's API", () => {
         };
 
         const response: TestType.ResponseMsg = await request(app)
-            .post(`${USER_URL}/password/${user!.verifyToken}`)
+            .put(`${USER_URL}/password/${user!.verifyToken}`)
             .send(form2)
             .expect(400);
         expect(response.body).toMatchObject({
@@ -1090,7 +1091,7 @@ describe("User's API", () => {
             confirmPassword: '12345678',
         };
         const response: TestType.ResponseMsg = await request(app)
-            .post(`${USER_URL}/password/${verifyToken}`)
+            .put(`${USER_URL}/password/${verifyToken}`)
             .send(form)
             .expect(401);
         expect(response.body).toMatchObject({
@@ -1106,7 +1107,7 @@ describe("User's API", () => {
             confirmPassword: '12345678',
         };
         const response: TestType.ResponseMsg = await request(app)
-            .post(`${USER_URL}/password/${verifyToken}`)
+            .put(`${USER_URL}/password/${verifyToken}`)
             .send(form)
             .expect(401);
         expect(response.body).toMatchObject({

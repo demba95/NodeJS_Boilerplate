@@ -63,7 +63,13 @@ export type UserProfileForm = {
     telegramId: string;
 };
 
-export type UserResponseSuccessMsg = {
+export type SignUpUserRes = {
+    message: string;
+    verifyToken?: string;
+};
+
+export type LoginUserRes = {
+    token: string;
     message: string;
     verifyToken?: string;
 };

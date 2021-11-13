@@ -78,7 +78,7 @@ export const signUpUser: RequestHandler = async (req, res) => {
         const user: Type.UserI = await User.findOne({ email: form.email });
         if (user) return res.status(400).json({ message: 'Email already in use.' });
 
-        const response: Type.UserResponseSuccessMsg = {
+        const response: Type.SignUpUserRes = {
             message: 'Your account has been created. Please check your email to verify your account.',
         };
 
@@ -121,7 +121,8 @@ export const loginUser: RequestHandler = async (req, res) => {
 
         if (await checkTimeElapsed(user, res)) {
             user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
-                const response: Type.UserResponseSuccessMsg = {
+                const response: Type.LoginUserRes = {
+                    token: '',
                     message: 'Please verify your email first.',
                 };
                 if (matchPassword) {
@@ -132,7 +133,7 @@ export const loginUser: RequestHandler = async (req, res) => {
                             await user.save();
                         }
                         const token = auth.createAccessToken(user);
-                        return res.json(token);
+                        return res.json({ token });
                     }
 
                     if (ENV !== 'production') response.verifyToken = user.verifyToken;
@@ -175,7 +176,7 @@ export const updateUser: RequestHandler = async (req, res) => {
 
         user.comparePassword(form.password, async (_: any, matchPassword: boolean) => {
             if (matchPassword) {
-                const response: Type.UserResponseSuccessMsg = {
+                const response: Type.SignUpUserRes = {
                     message: 'Your profile has been updated.',
                 };
 
@@ -323,7 +324,7 @@ export const resendEmailVerification: RequestHandler = async (req, res) => {
         const user: Type.UserI = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Email not found.' });
         if (user.status === 'activated') return res.json({ message: 'Your account is already verified.' });
-        const response: Type.UserResponseSuccessMsg = {
+        const response: Type.SignUpUserRes = {
             message: 'A verification code was sent to your email.',
         };
 
@@ -361,7 +362,7 @@ export const resetPassword: RequestHandler = async (req, res) => {
     try {
         const user: Type.UserI = await User.findOne({ email: form.email });
         if (!user) return res.status(404).json({ message: 'Email not found.' });
-        const response: Type.UserResponseSuccessMsg = {
+        const response: Type.SignUpUserRes = {
             message: 'Please check your email to reset your password.',
         };
 
@@ -409,7 +410,7 @@ export const updatePassword: RequestHandler = async (req, res) => {
             return res
                 .status(404)
                 .json({ message: 'Your token has expired, please reset your password and try again.' });
-        const response: Type.UserResponseSuccessMsg = {
+        const response: Type.SignUpUserRes = {
             message: 'Password updated successfully.',
         };
 

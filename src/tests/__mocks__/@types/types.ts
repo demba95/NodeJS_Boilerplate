@@ -1,3 +1,4 @@
+import * as Type from '@cTypes';
 import mongoose from 'mongoose';
 
 export type UserObj = {
@@ -32,7 +33,7 @@ export type DeviceObj = {
 };
 
 export type LoginResponse = {
-    body: string;
+    body: Type.LoginUserRes;
 };
 
 export type ResponseMsg = {
