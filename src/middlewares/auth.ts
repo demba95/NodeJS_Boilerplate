@@ -47,7 +47,7 @@ const createAccessToken: Type.JwtAccessFn = (user) => {
 };
 
 const createCustomToken: Type.JwtVerifyFn = (mode, attrs = {}, secretKey, expiresIn) => {
-    attrs[mode] = mode;
+    attrs['mode'] = mode;
     if (expiresIn > 0) return jwt.sign(attrs, secretKey, { expiresIn: `${expiresIn}d` });
     return jwt.sign(attrs, secretKey);
 };

@@ -11,5 +11,5 @@ export const getLoginToken: TestType.GetLoginTokenFn = async (user) => {
         password: user.password!,
     };
     const response: TestType.LoginResponse = await request(app).post(`${USER_URL}/login`).send(userForm).expect(200);
-    return response.body;
+    return response.body.token;
 };
